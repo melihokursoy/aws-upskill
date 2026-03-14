@@ -22,12 +22,12 @@ Both endpoints require no authentication and always return 200 status code with 
 
 ### Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `status` | string | Service status. Always "healthy" if responding. |
+| Field       | Type   | Description                                       |
+| ----------- | ------ | ------------------------------------------------- |
+| `status`    | string | Service status. Always "healthy" if responding.   |
 | `timestamp` | string | ISO 8601 formatted timestamp of the health check. |
-| `service` | string | Service name ("web" or "api"). |
-| `version` | string | Service version or Git commit SHA. |
+| `service`   | string | Service name ("web" or "api").                    |
+| `version`   | string | Service version or Git commit SHA.                |
 
 ## Endpoints
 
@@ -39,11 +39,13 @@ Both endpoints require no authentication and always return 200 status code with 
 **Status Code:** 200
 
 **Example:**
+
 ```bash
 curl http://localhost:3300/health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -61,11 +63,13 @@ curl http://localhost:3300/health
 **Status Code:** 200
 
 **Example:**
+
 ```bash
 curl http://localhost:3301/health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",

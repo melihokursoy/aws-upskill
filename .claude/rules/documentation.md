@@ -5,6 +5,7 @@
 All new features and endpoints must have corresponding documentation in the `/docs` directory at the project root.
 
 Documentation should be clear, actionable, and include:
+
 - Feature/endpoint overview
 - Response format (for APIs)
 - Usage examples (curl, code snippets)
@@ -41,6 +42,7 @@ docs/
 - When the feature has performance characteristics to know about
 
 **Don't create documentation for:**
+
 - Internal implementation details
 - Code that only developers need to understand (that goes in code comments)
 - Temporary features or experiments
@@ -51,11 +53,13 @@ docs/
 # Feature Name Documentation
 
 ## Overview
+
 Brief description of what the feature does.
 
 ## API/Usage
 
 ### Endpoint Name
+
 - **Path:** endpoint path
 - **Method:** HTTP method
 - **Authentication:** Required? Yes/No
@@ -66,9 +70,11 @@ Example request and response.
 ## Implementation Details
 
 ### Location
+
 Where in the codebase is this implemented?
 
 ### Configuration
+
 Any setup or configuration needed?
 
 ## Integration Examples
@@ -93,6 +99,7 @@ This keeps documentation discoverable and centralized.
 ## Linking to Documentation
 
 When implementing a feature with documentation, reference it in:
+
 - README files
 - Code comments (if the doc explains usage)
 - Spec files (optional, for context)
@@ -100,6 +107,7 @@ When implementing a feature with documentation, reference it in:
 ## Updating Documentation
 
 When the feature changes:
+
 1. Update the documentation file
 2. Include the documentation update in the same commit as the feature change
 3. Documentation and code should always be in sync

@@ -3,6 +3,7 @@
 ## Overview
 
 Implement `/health` endpoints for both web and API services that:
+
 - Return 200 with basic health information
 - Verify the service is running and responding
 - Respond quickly (< 500ms)
@@ -11,6 +12,7 @@ Implement `/health` endpoints for both web and API services that:
 - No database connectivity checks (not available at this time)
 
 **Future-proofing for Kubernetes:**
+
 - Architecture should allow easy addition of `/ready` and `/live` endpoints later
 - Do NOT implement them now, but keep separation of concerns
 
@@ -66,16 +68,19 @@ Both endpoints return JSON with this structure:
 ## Technical Considerations
 
 **Performance:**
+
 - Health check should be lightweight (no I/O or expensive operations)
 - Response time target: under 500ms
 - Minimal overhead to avoid impacting app performance
 
 **Reliability:**
+
 - Health check failures should not crash the app
 - Endpoint should handle concurrent requests
 - Simple and robust implementation
 
 **Future Extensibility:**
+
 - Design health check as a service/utility that can be reused
 - When adding `/ready` and `/live`, reuse existing health check logic
 - Consider health check plugin system if more checks are needed
@@ -83,17 +88,21 @@ Both endpoints return JSON with this structure:
 ## Files to Create/Modify
 
 **Web app:**
+
 - Create: health controller/handler file
 - Modify: web app routing configuration
 
 **API app:**
+
 - Create: health controller/handler file
 - Modify: API app routing configuration
 
 **Documentation:**
+
 - Modify: README or API documentation
 
 **Tests:**
+
 - Create: health endpoint test files (web and API)
 
 ## Success Criteria

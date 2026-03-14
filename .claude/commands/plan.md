@@ -43,32 +43,39 @@ Create a markdown plan document that Plan mode can use directly and save it in \
 Create a checkable todo list in \_spec/<feature_slug>/todos.md organized by implementation phases/checkpoints.
 
 **Guidelines for checkpoint structure:**
+
 - Each checkpoint represents a logical phase that can be implemented, tested, and committed independently
 - Order checkpoints by implementation dependency (what must be done first)
 - Within each checkpoint, order tasks sequentially (prerequisites first)
 - Example structure:
+
   ```markdown
   ## Checkpoint 1 - Phase Name (e.g., "Core Feature")
+
   - [ ] Task that must be done first
   - [ ] Task that depends on above
   - [ ] Verification or testing for this phase
 
   ## Checkpoint 2 - Next Phase (e.g., "Integration")
+
   - [ ] Task for phase 2
   - [ ] Another task
 
   ## Checkpoint 3 - Documentation & Testing
+
   - [ ] Tests
   - [ ] Documentation
   ```
 
 **Why this structure matters:**
+
 - Implementer can work through one checkpoint at a time
 - Each checkpoint can be a separate commit (following Git Workflow from CLAUDE.md)
 - Clear dependencies and what to do next
 - Makes it obvious when a checkpoint is complete and ready to commit
 
 **For each task:**
+
 - Be specific and actionable (not vague)
 - Include acceptance criteria or success indicators where relevant
 - Group related tasks together
@@ -79,22 +86,26 @@ Create a checkable todo list in \_spec/<feature_slug>/todos.md organized by impl
 **E2E Tests are Costly**
 
 E2E tests are expensive to run (they start services, make real HTTP calls, etc.). Only include e2e tests for:
+
 - **Critical business flows** that absolutely must work
 - **Integration points** between services that can't be tested in isolation
 - **User-facing features** with significant business impact
 
 **What to avoid in e2E tests:**
+
 - Testing things already covered by unit/integration tests
 - Testing edge cases (those belong in unit tests)
 - Testing performance characteristics (those belong in performance tests)
 - Testing internal implementation details
 
 **What to include in E2E tests:**
+
 - Happy path flows: "User does X → System responds with Y"
 - Critical integrations: "Service A calls Service B → both respond correctly"
 - End-to-end business scenarios that demonstrate feature value
 
 **Testing Pyramid:**
+
 ```
         /\         E2E Tests (few, critical flows)
        /  \
@@ -108,6 +119,7 @@ E2E tests are expensive to run (they start services, make real HTTP calls, etc.)
 ```
 
 For each feature, ask:
+
 - **What MUST work for the business?** → E2E test
 - **What integrations exist?** → Integration test
 - **What functions need testing?** → Unit test
@@ -115,11 +127,13 @@ For each feature, ask:
 ## Step 7. Update Spec with Resolved Decisions
 
 Once the plan is finalized:
+
 - Read the spec.md file
 - Check for "Open Questions" section
 - Replace it with "Resolved Decisions" section that documents the decisions made in the plan
 - For each open question, add a bullet point with the resolved answer
 - Example:
+
   ```markdown
   ## Resolved Decisions
 
@@ -127,6 +141,7 @@ Once the plan is finalized:
   - **Response codes**: Use 200 for healthy, 503 for degraded
   - **Architecture**: Plan for future extensibility with `/ready` and `/live` endpoints
   ```
+
 - Save the updated spec.md
 
 This ensures the spec documents the actual decisions made, not just open questions.

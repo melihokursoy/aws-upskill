@@ -6,7 +6,6 @@ See these rule files for detailed guidance:
 - [.claude/rules/git-workflow.md](./.claude/rules/git-workflow.md) - Git commit and branch workflow
 - [.claude/rules/documentation.md](./.claude/rules/documentation.md) - Documentation standards for features and endpoints
 
-
 # Self-Improvement Loop
 
 **Purpose**: `.claude/rules/` files capture patterns and mistakes discovered during development, preventing recurring issues.
