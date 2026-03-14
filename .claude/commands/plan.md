@@ -38,14 +38,121 @@ Aask questions iteratively when you cannot decide with options each to chose fro
 
 Create a markdown plan document that Plan mode can use directly and save it in \_spec/<feature_slug>/plan.md.
 
-## Step 6. Create todos
+## Step 6. Create todos with Implementation Checkpoints
 
-create checkable todo list in \_spec/<feature_slug>/todos.md and check what is done during implementation.
+Create a checkable todo list in \_spec/<feature_slug>/todos.md organized by implementation phases/checkpoints.
 
-## Step 7. Final output to the user
+**Guidelines for checkpoint structure:**
 
-After the file is saved, respond to the user with a short summary in this exact format:
+- Each checkpoint represents a logical phase that can be implemented, tested, and committed independently
+- Order checkpoints by implementation dependency (what must be done first)
+- Within each checkpoint, order tasks sequentially (prerequisites first)
+- Example structure:
+
+  ```markdown
+  ## Checkpoint 1 - Phase Name (e.g., "Core Feature")
+
+  - [ ] Task that must be done first
+  - [ ] Task that depends on above
+  - [ ] Verification or testing for this phase
+
+  ## Checkpoint 2 - Next Phase (e.g., "Integration")
+
+  - [ ] Task for phase 2
+  - [ ] Another task
+
+  ## Checkpoint 3 - Documentation & Testing
+
+  - [ ] Tests
+  - [ ] Documentation
+  ```
+
+**Why this structure matters:**
+
+- Implementer can work through one checkpoint at a time
+- Each checkpoint can be a separate commit (following Git Workflow from CLAUDE.md)
+- Clear dependencies and what to do next
+- Makes it obvious when a checkpoint is complete and ready to commit
+
+**For each task:**
+
+- Be specific and actionable (not vague)
+- Include acceptance criteria or success indicators where relevant
+- Group related tasks together
+- Sub-tasks should be indented with `  - [ ]` format
+
+## Testing Strategy Guidelines
+
+**E2E Tests are Costly**
+
+E2E tests are expensive to run (they start services, make real HTTP calls, etc.). Only include e2e tests for:
+
+- **Critical business flows** that absolutely must work
+- **Integration points** between services that can't be tested in isolation
+- **User-facing features** with significant business impact
+
+**What to avoid in e2E tests:**
+
+- Testing things already covered by unit/integration tests
+- Testing edge cases (those belong in unit tests)
+- Testing performance characteristics (those belong in performance tests)
+- Testing internal implementation details
+
+**What to include in E2E tests:**
+
+- Happy path flows: "User does X → System responds with Y"
+- Critical integrations: "Service A calls Service B → both respond correctly"
+- End-to-end business scenarios that demonstrate feature value
+
+**Testing Pyramid:**
+
+```
+        /\         E2E Tests (few, critical flows)
+       /  \
+      /____\
+     /      \    Integration Tests (moderate, API contracts)
+    /        \
+   /___________\
+  /            \  Unit Tests (many, isolated functions)
+ /              \
+/________________\
+```
+
+For each feature, ask:
+
+- **What MUST work for the business?** → E2E test
+- **What integrations exist?** → Integration test
+- **What functions need testing?** → Unit test
+
+## Step 7. Update Spec with Resolved Decisions
+
+Once the plan is finalized:
+
+- Read the spec.md file
+- Check for "Open Questions" section
+- Replace it with "Resolved Decisions" section that documents the decisions made in the plan
+- For each open question, add a bullet point with the resolved answer
+- Example:
+
+  ```markdown
+  ## Resolved Decisions
+
+  - **Database checks**: INCLUDE database connectivity checks (not minimal)
+  - **Response codes**: Use 200 for healthy, 503 for degraded
+  - **Architecture**: Plan for future extensibility with `/ready` and `/live` endpoints
+  ```
+
+- Save the updated spec.md
+
+This ensures the spec documents the actual decisions made, not just open questions.
+
+## Step 8. Final output to the user
+
+After the files are saved, respond to the user with a short summary in this exact format:
 
 plan file: \_specs/<feature_slug>/plan.md
+todos file: \_specs/<feature_slug>/todos.md
 
-Do not repeat the full plan in the chat output unless the user explicitly asks to see it. The main goal is to save the plan file and report where it lives.
+Do not repeat the full plan in the chat output unless the user explicitly asks to see it. The main goal is to save the plan and todos files and report where they live.
+
+Note: The spec.md file has also been updated with resolved decisions.
