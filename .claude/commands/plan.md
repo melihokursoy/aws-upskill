@@ -38,9 +38,41 @@ Aask questions iteratively when you cannot decide with options each to chose fro
 
 Create a markdown plan document that Plan mode can use directly and save it in \_spec/<feature_slug>/plan.md.
 
-## Step 6. Create todos
+## Step 6. Create todos with Implementation Checkpoints
 
-create checkable todo list in \_spec/<feature_slug>/todos.md and check what is done during implementation.
+Create a checkable todo list in \_spec/<feature_slug>/todos.md organized by implementation phases/checkpoints.
+
+**Guidelines for checkpoint structure:**
+- Each checkpoint represents a logical phase that can be implemented, tested, and committed independently
+- Order checkpoints by implementation dependency (what must be done first)
+- Within each checkpoint, order tasks sequentially (prerequisites first)
+- Example structure:
+  ```markdown
+  ## Checkpoint 1 - Phase Name (e.g., "Core Feature")
+  - [ ] Task that must be done first
+  - [ ] Task that depends on above
+  - [ ] Verification or testing for this phase
+
+  ## Checkpoint 2 - Next Phase (e.g., "Integration")
+  - [ ] Task for phase 2
+  - [ ] Another task
+
+  ## Checkpoint 3 - Documentation & Testing
+  - [ ] Tests
+  - [ ] Documentation
+  ```
+
+**Why this structure matters:**
+- Implementer can work through one checkpoint at a time
+- Each checkpoint can be a separate commit (following Git Workflow from CLAUDE.md)
+- Clear dependencies and what to do next
+- Makes it obvious when a checkpoint is complete and ready to commit
+
+**For each task:**
+- Be specific and actionable (not vague)
+- Include acceptance criteria or success indicators where relevant
+- Group related tasks together
+- Sub-tasks should be indented with `  - [ ]` format
 
 ## Step 7. Update Spec with Resolved Decisions
 
