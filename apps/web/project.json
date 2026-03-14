@@ -1,0 +1,28 @@
+{
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^typecheck"],
+      "options": {
+        "cwd": "apps/web",
+        "command": "tsc --build --emitDeclarationOnly"
+      },
+      "inputs": [
+        "{projectRoot}/tsconfig.json",
+        "{projectRoot}/tsconfig.spec.json",
+        "{workspaceRoot}/tsconfig.base.json",
+        "{projectRoot}/src/**/*.ts",
+        "{projectRoot}/src/**/*.tsx",
+        "{projectRoot}/app/**/*.ts",
+        "{projectRoot}/app/**/*.tsx",
+        "{projectRoot}/**/*.{js,jsx,ts,tsx}",
+        "!{projectRoot}/**/*.spec.{ts,tsx}",
+        "!{projectRoot}/**/*.test.{ts,tsx}",
+        "^production"
+      ],
+      "outputs": [],
+      "syncGenerators": ["@nx/js:typescript-sync"]
+    }
+  }
+}

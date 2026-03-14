@@ -1,0 +1,20 @@
+const nextJest = require('next/jest.js');
+
+const createJestConfig = nextJest({
+  dir: './',
+});
+
+const config = {
+  displayName: '@org/web',
+  preset: '../../jest.preset.js',
+  transform: {
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  coverageDirectory: '../../coverage/apps/web',
+  testEnvironment: 'jsdom',
+   forceExit: true,                                                                                      
+     maxWorkers: '50%',     
+};
+
+module.exports = createJestConfig(config);
