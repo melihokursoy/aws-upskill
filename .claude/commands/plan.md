@@ -74,6 +74,44 @@ Create a checkable todo list in \_spec/<feature_slug>/todos.md organized by impl
 - Group related tasks together
 - Sub-tasks should be indented with `  - [ ]` format
 
+## Testing Strategy Guidelines
+
+**E2E Tests are Costly**
+
+E2E tests are expensive to run (they start services, make real HTTP calls, etc.). Only include e2e tests for:
+- **Critical business flows** that absolutely must work
+- **Integration points** between services that can't be tested in isolation
+- **User-facing features** with significant business impact
+
+**What to avoid in e2E tests:**
+- Testing things already covered by unit/integration tests
+- Testing edge cases (those belong in unit tests)
+- Testing performance characteristics (those belong in performance tests)
+- Testing internal implementation details
+
+**What to include in E2E tests:**
+- Happy path flows: "User does X → System responds with Y"
+- Critical integrations: "Service A calls Service B → both respond correctly"
+- End-to-end business scenarios that demonstrate feature value
+
+**Testing Pyramid:**
+```
+        /\         E2E Tests (few, critical flows)
+       /  \
+      /____\
+     /      \    Integration Tests (moderate, API contracts)
+    /        \
+   /___________\
+  /            \  Unit Tests (many, isolated functions)
+ /              \
+/________________\
+```
+
+For each feature, ask:
+- **What MUST work for the business?** → E2E test
+- **What integrations exist?** → Integration test
+- **What functions need testing?** → Unit test
+
 ## Step 7. Update Spec with Resolved Decisions
 
 Once the plan is finalized:

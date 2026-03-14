@@ -4,6 +4,7 @@ See these rule files for detailed guidance:
 
 - [.claude/rules/nx.md](./.claude/rules/nx.md) - Nx workspace patterns and commands
 - [.claude/rules/git-workflow.md](./.claude/rules/git-workflow.md) - Git commit and branch workflow
+- [.claude/rules/documentation.md](./.claude/rules/documentation.md) - Documentation standards for features and endpoints
 
 
 # Self-Improvement Loop
@@ -47,8 +48,9 @@ See these rule files for detailed guidance:
 **Example rule files for this project:**
 
 - `.claude/rules/nx.md` - Nx command patterns and gotchas
-- `.claude/rules/testing.md` - Testing patterns and test-first approach
 - `.claude/rules/git-workflow.md` - Commit, branch, and PR conventions
+- `.claude/rules/documentation.md` - Documentation standards for features and endpoints
+- `.claude/rules/testing.md` - Testing patterns and test-first approach
 
 **Review process:**
 
