@@ -42,10 +42,32 @@ Create a markdown plan document that Plan mode can use directly and save it in \
 
 create checkable todo list in \_spec/<feature_slug>/todos.md and check what is done during implementation.
 
-## Step 7. Final output to the user
+## Step 7. Update Spec with Resolved Decisions
 
-After the file is saved, respond to the user with a short summary in this exact format:
+Once the plan is finalized:
+- Read the spec.md file
+- Check for "Open Questions" section
+- Replace it with "Resolved Decisions" section that documents the decisions made in the plan
+- For each open question, add a bullet point with the resolved answer
+- Example:
+  ```markdown
+  ## Resolved Decisions
+
+  - **Database checks**: INCLUDE database connectivity checks (not minimal)
+  - **Response codes**: Use 200 for healthy, 503 for degraded
+  - **Architecture**: Plan for future extensibility with `/ready` and `/live` endpoints
+  ```
+- Save the updated spec.md
+
+This ensures the spec documents the actual decisions made, not just open questions.
+
+## Step 8. Final output to the user
+
+After the files are saved, respond to the user with a short summary in this exact format:
 
 plan file: \_specs/<feature_slug>/plan.md
+todos file: \_specs/<feature_slug>/todos.md
 
-Do not repeat the full plan in the chat output unless the user explicitly asks to see it. The main goal is to save the plan file and report where it lives.
+Do not repeat the full plan in the chat output unless the user explicitly asks to see it. The main goal is to save the plan and todos files and report where they live.
+
+Note: The spec.md file has also been updated with resolved decisions.
