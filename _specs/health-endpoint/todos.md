@@ -60,6 +60,7 @@
   - Unit tests sufficiently verify endpoint returns 200 with correct response format
   - E2E testing would be redundant (just calling endpoint and checking response)
   - Cost of e2e setup/execution not justified for this simple endpoint
+  - Note: e2e-ci targets are for Nx Agents only; removed from CI since we don't use Nx Cloud
 - [x] Verify no linting errors
 - [x] Verify both endpoints are working via unit tests
 - [x] Ready to commit

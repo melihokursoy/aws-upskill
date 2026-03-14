@@ -20,22 +20,6 @@
           "@org/api-order:build",
           "@org/api-order:serve"
         ]
-      },
-      "e2e-ci": {
-        "executor": "@nx/jest:jest",
-        "outputs": [
-          "{projectRoot}/test-output/jest/coverage"
-        ],
-        "options": {
-          "jestConfig": "apps/api-order-e2e/jest.config.cts",
-          "passWithNoTests": true,
-          "ci": true,
-          "codeCoverage": true
-        },
-        "dependsOn": [
-          "@org/api-order:build",
-          "@org/api-order:serve"
-        ]
       }
     }
   }
