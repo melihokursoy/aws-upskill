@@ -52,14 +52,9 @@ output "nat_gateway_ip" {
 # ECR
 # ---------------------------------------------------------------------------
 
-output "ecr_web_repository_url" {
-  description = "ECR URL for web service images. Used in ECS task definition and push scripts."
-  value       = module.ecr.web_repository_url
-}
-
-output "ecr_api_repository_url" {
-  description = "ECR URL for API service images. Used in ECS task definition and push scripts."
-  value       = module.ecr.api_repository_url
+output "ecr_repository_urls" {
+  description = "Map of service folder name to ECR URL. Keys match app folder names under apps/ (e.g. 'web', 'api-order')."
+  value       = module.ecr.repository_urls
 }
 
 output "ecr_registry_id" {

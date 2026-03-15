@@ -1,21 +1,17 @@
-output "web_repository_url" {
-  description = "ECR repository URL for the web service. Used in ECS task definition and push scripts."
-  value       = aws_ecr_repository.web.repository_url
-}
+# ---------------------------------------------------------------------------
+# ECR Module Outputs
+#
+# repository_urls is a map keyed by the service folder name under apps/.
+# Scripts derive paths as: apps/${service}/Dockerfile
+# Example: { "web" => "...", "api-order" => "..." }
+# ---------------------------------------------------------------------------
 
-output "api_repository_url" {
-  description = "ECR repository URL for the API service. Used in ECS task definition and push scripts."
-  value       = aws_ecr_repository.api.repository_url
-}
-
-output "web_repository_name" {
-  description = "ECR repository name for the web service."
-  value       = aws_ecr_repository.web.name
-}
-
-output "api_repository_name" {
-  description = "ECR repository name for the API service."
-  value       = aws_ecr_repository.api.name
+output "repository_urls" {
+  description = "Map of service folder name to ECR repository URL."
+  value = {
+    "web"       = aws_ecr_repository.web.repository_url
+    "api-order" = aws_ecr_repository.api_order.repository_url
+  }
 }
 
 output "registry_id" {

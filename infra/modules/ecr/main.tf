@@ -60,11 +60,11 @@ resource "aws_ecr_lifecycle_policy" "web" {
 }
 
 # ---------------------------------------------------------------------------
-# API application repository
+# API application repository (service folder: apps/api-order)
 # ---------------------------------------------------------------------------
 
-resource "aws_ecr_repository" "api" {
-  name                 = "${var.project_name}-${var.environment_name}-api"
+resource "aws_ecr_repository" "api_order" {
+  name                 = "${var.project_name}-${var.environment_name}-api-order"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -72,13 +72,13 @@ resource "aws_ecr_repository" "api" {
   }
 
   tags = merge(var.tags, {
-    Name    = "${var.project_name}-${var.environment_name}-api"
-    Service = "api"
+    Name    = "${var.project_name}-${var.environment_name}-api-order"
+    Service = "api-order"
   })
 }
 
-resource "aws_ecr_lifecycle_policy" "api" {
-  repository = aws_ecr_repository.api.name
+resource "aws_ecr_lifecycle_policy" "api_order" {
+  repository = aws_ecr_repository.api_order.name
 
   policy = jsonencode({
     rules = [

@@ -115,3 +115,50 @@ Both dev and staging are single-AZ for cost optimization. VPC CIDRs are kept sep
 | Monthly budget | $50 | $75 |
 
 See `docs/terraform-infrastructure.md` and `docs/terraform-deployment.md` for full details.
+
+## Running Docker Images Locally
+
+```bash
+# Build and run health checks for all services (CI-style verification)
+./infra/scripts/dev-docker.sh verify
+
+# Build images only
+./infra/scripts/dev-docker.sh build
+./infra/scripts/dev-docker.sh build web
+
+# Run a service in the foreground (Ctrl+C to stop)
+./infra/scripts/dev-docker.sh run web        # http://localhost:3300
+./infra/scripts/dev-docker.sh run api-order  # http://localhost:3301
+
+# Remove local images
+./infra/scripts/dev-docker.sh clean
+```
+
+The `verify` command builds, starts both containers in the background, hits `/api/health` on each, prints image sizes, then stops everything.
+
+## Pushing Docker Images to ECR
+
+The `service` argument matches the folder name under `apps/`. The Dockerfile path and ECR repository URL are derived automatically.
+
+```bash
+# Build and push (most common)
+./infra/scripts/build-and-push-ecr.sh <service> <env> [version]
+
+./infra/scripts/build-and-push-ecr.sh web dev
+./infra/scripts/build-and-push-ecr.sh api-order dev
+./infra/scripts/build-and-push-ecr.sh web staging v1.2.3
+./infra/scripts/build-and-push-ecr.sh api-order staging v1.2.3
+
+# Push only (image already built locally)
+./infra/scripts/push-ecr.sh <service> <env> [version]
+
+./infra/scripts/push-ecr.sh web dev
+./infra/scripts/push-ecr.sh api-order staging v1.2.3
+```
+
+**How it works:**
+- `service` = folder name under `apps/` (e.g. `web` → `apps/web/`, `api-order` → `apps/api-order/`)
+- Dockerfile path: `apps/<service>/Dockerfile`
+- ECR URL: looked up from `terraform output ecr_repository_urls` (a map keyed by service name)
+- Version defaults to the current git short SHA if not provided
+- Both `:version` and `:latest` tags are pushed

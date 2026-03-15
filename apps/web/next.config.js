@@ -10,6 +10,9 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  // Standalone output creates a self-contained server for Docker deployment.
+  // Output: apps/web/.next/standalone — copy this + static + public into the image.
+  output: 'standalone',
 };
 
 const plugins = [

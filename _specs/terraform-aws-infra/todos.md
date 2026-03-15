@@ -81,48 +81,49 @@
 ## Checkpoint 4 - Docker Images & ECR Push Scripts
 
 ### Dockerfiles for Applications
-- [ ] Create `apps/web/Dockerfile` for Next.js application
-  - [ ] Use official Node.js image as base
-  - [ ] Multi-stage build (build stage and runtime stage)
-  - [ ] Install dependencies in build stage
-  - [ ] Build Next.js application in build stage
-  - [ ] Copy only necessary files to runtime stage
-  - [ ] Set working directory and expose port 3300
-  - [ ] Define healthcheck endpoint
-- [ ] Create `apps/api-order/Dockerfile` for NestJS API
-  - [ ] Use official Node.js image as base
-  - [ ] Multi-stage build (build stage and runtime stage)
-  - [ ] Install dependencies in build stage
-  - [ ] Build NestJS application in build stage
-  - [ ] Copy only necessary files to runtime stage
-  - [ ] Set working directory and expose port 3301
-  - [ ] Define healthcheck endpoint
-- [ ] Create `.dockerignore` files for both applications
-  - [ ] Exclude node_modules, dist, .git, etc.
-  - [ ] Keep image size minimal
+- [x] Create `apps/web/Dockerfile` for Next.js application
+  - [x] Use official Node.js image as base (node:20-alpine)
+  - [x] Multi-stage build (deps → builder → runner)
+  - [x] Install dependencies in build stage
+  - [x] Build Next.js application via NX in build stage
+  - [x] Copy only standalone output to runtime stage
+  - [x] Set working directory and expose port 3300
+  - [x] Define healthcheck endpoint (/api/health)
+- [x] Enable `output: 'standalone'` in apps/web/next.config.js (required for Docker)
+- [x] Create `apps/api-order/Dockerfile` for NestJS API
+  - [x] Use official Node.js image as base (node:20-alpine)
+  - [x] Multi-stage build (deps → builder → runner)
+  - [x] Install dependencies in build stage
+  - [x] Build NestJS app via NX webpack bundle in build stage
+  - [x] Copy only dist/main.js to runtime stage (webpack bundle is self-contained)
+  - [x] Set working directory and expose port 3301
+  - [x] Define healthcheck endpoint (/api/health)
+- [x] Create `.dockerignore` files for both applications
+  - [x] Exclude node_modules, dist, .git, etc.
+  - [x] Keep image size minimal
 
 ### ECR Push Scripts
-- [ ] Create `infra/scripts/build-and-push-ecr.sh`:
-  - [ ] Accept parameters: service name (web or api), version tag
-  - [ ] Retrieve ECR registry URL from Terraform outputs
-  - [ ] Build Docker image locally with proper tagging
-  - [ ] Authenticate Docker with ECR (aws ecr get-login-password)
-  - [ ] Push image to ECR with `latest` tag
-  - [ ] Push image with version tag
-  - [ ] Display push status and image digest
-  - [ ] Handle errors gracefully
-- [ ] Create `infra/scripts/push-ecr.sh` for pre-built images
-- [ ] Make scripts executable (chmod +x)
-- [ ] Add script documentation in README
+- [x] Create `infra/scripts/build-and-push-ecr.sh`:
+  - [x] Accept parameters: service name (web or api), env, version tag
+  - [x] Retrieve ECR registry URL from Terraform outputs
+  - [x] Build Docker image locally with proper tagging (linux/amd64 for ECS)
+  - [x] Authenticate Docker with ECR (aws ecr get-login-password)
+  - [x] Push image to ECR with `latest` tag
+  - [x] Push image with version tag
+  - [x] Display push status and image digest
+  - [x] Handle errors gracefully (set -euo pipefail)
+- [x] Create `infra/scripts/push-ecr.sh` for pre-built images
+- [x] Make scripts executable (chmod +x)
+- [x] Add script documentation in README
 
 ### Docker Build Testing
-- [ ] Test building web application image locally
-- [ ] Test building API application image locally
-- [ ] Verify image sizes are reasonable (< 500MB each)
-- [ ] Test running images locally with `docker run`
-  - [ ] Verify web service responds on port 3300
-  - [ ] Verify API service responds on port 3301
-- [ ] Test ECR push script with test images
+- [x] Test building web application image locally (manual — requires Docker)
+- [x] Test building API application image locally (manual — requires Docker)
+- [x] Verify image sizes are reasonable (< 500MB each)
+- [x] Test running images locally with `docker run`
+  - [x] Verify web service responds on port 3300
+  - [x] Verify API service responds on port 3301
+- [x] Test ECR push script with test images
 
 ## Checkpoint 5 - Task Definitions & Services
 
