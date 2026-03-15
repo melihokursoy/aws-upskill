@@ -19,3 +19,5 @@ crash.*.log
 
 # Sensitive variable files
 *.auto.tfvars
+
+.env

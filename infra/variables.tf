@@ -46,9 +46,21 @@ variable "vpc_cidr" {
 }
 
 variable "public_subnet_cidr" {
-  description = "CIDR block for the public subnet (ALB)."
+  description = "CIDR block for the primary public subnet (ALB, NAT Gateway)."
   type        = string
   default     = "10.0.1.0/24"
+}
+
+variable "public_subnet_cidr_2" {
+  description = "CIDR block for the secondary public subnet (ALB requires 2 AZs — no workloads deployed here)."
+  type        = string
+  default     = "10.0.3.0/24"
+}
+
+variable "availability_zone_2" {
+  description = "Second availability zone for the ALB secondary public subnet."
+  type        = string
+  default     = "us-east-1b"
 }
 
 variable "private_subnet_cidr" {

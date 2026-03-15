@@ -4,8 +4,13 @@ output "vpc_id" {
 }
 
 output "public_subnet_id" {
-  description = "ID of the public subnet (ALB)."
+  description = "ID of the primary public subnet (ALB, NAT Gateway)."
   value       = aws_subnet.public.id
+}
+
+output "public_subnet_ids" {
+  description = "IDs of both public subnets (pass to ALB — AWS requires 2 AZs)."
+  value       = [aws_subnet.public.id, aws_subnet.public_2.id]
 }
 
 output "private_subnet_id" {

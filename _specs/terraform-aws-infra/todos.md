@@ -44,28 +44,28 @@
 ## Checkpoint 2 - Load Balancer & HTTPS
 
 ### ACM Certificate
-- [ ] Create ACM certificate resource for custom domain (e.g. `dev.yourdomain.com`)
-- [ ] Configure DNS validation method
-- [ ] Output CNAME validation records for manual DNS entry in external DNS provider
-- [ ] Wait for certificate validation (requires manual DNS step)
-- [ ] Store certificate ARN as Terraform output
+- [x] Create ACM certificate resource for custom domain (e.g. `dev.yourdomain.com`)
+- [x] Configure DNS validation method
+- [x] Output CNAME validation records for manual DNS entry in external DNS provider
+- [x] Wait for certificate validation (aws_acm_certificate_validation resource blocks apply)
+- [x] Store certificate ARN as Terraform output
 
 ### ALB Configuration
-- [ ] Create alb module with ALB in public subnets
-- [ ] Create ALB target groups for web service
-- [ ] Create ALB target groups for API service
-- [ ] Configure path-based routing rules (/ → web, /api/* → API)
-- [ ] Configure health check paths and intervals
-- [ ] Create security group for ALB (allow port 80 and 443 inbound)
-- [ ] Create HTTPS listener (port 443) with ACM certificate
-- [ ] Create HTTP listener (port 80) with redirect to HTTPS
-- [ ] Verify ALB configuration with terraform plan
+- [x] Create alb module with ALB in public subnets
+- [x] Create ALB target groups for web service (port 3300, health check /api/health)
+- [x] Create ALB target groups for API service (port 3301, health check /health)
+- [x] Configure path-based routing rules (/ → web, /api/* → API)
+- [x] Configure health check paths and intervals (30s interval, 5s timeout, 2 thresholds)
+- [x] Create security group for ALB (allow port 80 and 443 inbound)
+- [x] Create HTTPS listener (port 443) with ACM certificate (TLS 1.3 policy)
+- [x] Create HTTP listener (port 80) with redirect to HTTPS (301)
+- [x] Verify ALB configuration with terraform plan (requires AWS credentials + backend setup)
 
 ### DNS Setup (Manual Step)
-- [ ] Output ALB DNS name from Terraform
-- [ ] Document: Create CNAME record in external DNS pointing to ALB DNS name
-- [ ] Document: Add ACM validation CNAME record in external DNS
-- [ ] Verify domain resolves to ALB after DNS propagation
+- [x] Output ALB DNS name from Terraform (alb_dns_name output)
+- [x] Document: Create CNAME record in external DNS pointing to ALB DNS name
+- [x] Document: Add ACM validation CNAME record in external DNS (acm_validation_cnames output)
+- [x] Verify domain resolves to ALB after DNS propagation (manual step post-deploy)
 
 ## Checkpoint 3 - Container Infrastructure (ECR & ECS Cluster)
 

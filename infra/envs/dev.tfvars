@@ -12,13 +12,15 @@ owner            = "team"
 cost_center      = "aws-upskill-dev"
 
 # Networking — single-AZ for cost optimization
-vpc_cidr            = "10.0.0.0/16"
-public_subnet_cidr  = "10.0.1.0/24"
-private_subnet_cidr = "10.0.2.0/24"
-availability_zone   = "us-east-1a"
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidr   = "10.0.1.0/24"
+public_subnet_cidr_2 = "10.0.3.0/24" # ALB requires 2 AZs — no workloads deployed here
+private_subnet_cidr  = "10.0.2.0/24"
+availability_zone    = "us-east-1a"
+availability_zone_2  = "us-east-1b" # ALB secondary AZ only
 
 # Domain — replace with your actual dev subdomain
-domain_name = "dev.example.com"
+domain_name = "dev.aws-upskill.codecrib.co.uk"
 
 # ECS task scaling
 min_task_count = 2

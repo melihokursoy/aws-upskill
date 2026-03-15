@@ -14,7 +14,17 @@ variable "vpc_cidr" {
 }
 
 variable "public_subnet_cidr" {
-  description = "CIDR block for the public subnet (ALB)."
+  description = "CIDR block for the first public subnet (ALB, primary AZ)."
+  type        = string
+}
+
+variable "public_subnet_cidr_2" {
+  description = "CIDR block for the second public subnet (ALB requires 2 AZs). No resources deployed here — ALB requirement only."
+  type        = string
+}
+
+variable "availability_zone_2" {
+  description = "Second availability zone for the ALB secondary public subnet."
   type        = string
 }
 
