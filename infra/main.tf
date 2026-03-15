@@ -12,7 +12,6 @@ locals {
     Environment = var.environment_name
     Project     = var.project_name
     ManagedBy   = "terraform"
-    CreatedAt   = timestamp()
     Owner       = var.owner
     CostCenter  = var.cost_center
   }
@@ -45,6 +44,31 @@ module "acm" {
 
   domain_name = var.domain_name
   tags        = local.common_tags
+}
+
+# ---------------------------------------------------------------------------
+# ECR — Container Registries
+# ---------------------------------------------------------------------------
+
+module "ecr" {
+  source = "./modules/ecr"
+
+  environment_name = var.environment_name
+  project_name     = var.project_name
+  tags             = local.common_tags
+}
+
+# ---------------------------------------------------------------------------
+# ECS — Fargate Cluster and CloudWatch Log Groups
+# ---------------------------------------------------------------------------
+
+module "ecs" {
+  source = "./modules/ecs"
+
+  environment_name   = var.environment_name
+  project_name       = var.project_name
+  log_retention_days = var.log_retention_days
+  tags               = local.common_tags
 }
 
 # ---------------------------------------------------------------------------

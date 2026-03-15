@@ -49,6 +49,54 @@ output "nat_gateway_ip" {
 }
 
 # ---------------------------------------------------------------------------
+# ECR
+# ---------------------------------------------------------------------------
+
+output "ecr_web_repository_url" {
+  description = "ECR URL for web service images. Used in ECS task definition and push scripts."
+  value       = module.ecr.web_repository_url
+}
+
+output "ecr_api_repository_url" {
+  description = "ECR URL for API service images. Used in ECS task definition and push scripts."
+  value       = module.ecr.api_repository_url
+}
+
+output "ecr_registry_id" {
+  description = "AWS account ID owning the ECR registries (used for docker login)."
+  value       = module.ecr.registry_id
+}
+
+# ---------------------------------------------------------------------------
+# ECS Cluster
+# ---------------------------------------------------------------------------
+
+output "ecs_cluster_name" {
+  description = "ECS cluster name."
+  value       = module.ecs.cluster_name
+}
+
+output "ecs_cluster_arn" {
+  description = "ECS cluster ARN."
+  value       = module.ecs.cluster_arn
+}
+
+output "log_group_web" {
+  description = "CloudWatch log group for web service (/aws/ecs/web)."
+  value       = module.ecs.web_log_group_name
+}
+
+output "log_group_api" {
+  description = "CloudWatch log group for API service (/aws/ecs/api)."
+  value       = module.ecs.api_log_group_name
+}
+
+output "log_group_alb" {
+  description = "CloudWatch log group for ALB access logs (/aws/alb/web-api)."
+  value       = module.ecs.alb_log_group_name
+}
+
+# ---------------------------------------------------------------------------
 # ACM Certificate
 # ---------------------------------------------------------------------------
 

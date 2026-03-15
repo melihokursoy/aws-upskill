@@ -504,7 +504,7 @@ infra/
   - `Environment`: dev or staging (from variable)
   - `Project`: terraform-aws-infra (or application name)
   - `ManagedBy`: terraform
-  - `CreatedAt`: deployment timestamp
+  - ~~`CreatedAt`~~: removed — `timestamp()` causes inconsistent plan errors in Terraform (value differs between plan and apply phases)
   - `Owner`: team or organization name
 
 **AWS Console Filtering:**

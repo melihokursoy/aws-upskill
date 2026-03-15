@@ -69,14 +69,14 @@
 
 ## Checkpoint 3 - Container Infrastructure (ECR & ECS Cluster)
 
-- [ ] Create ecr module with ECR repository for web application
-- [ ] Create ECR repository for API application
-- [ ] Configure image retention policies
-- [ ] Configure lifecycle rules for image cleanup
-- [ ] Create ecs module with ECS cluster resource
-- [ ] Create CloudWatch Log Groups for web and API services
-- [ ] Verify ECR and ECS cluster setup with terraform plan
-- [ ] (IAM roles created in Checkpoint 8)
+- [x] Create ecr module with ECR repository for web application
+- [x] Create ECR repository for API application
+- [x] Configure image retention policies (untagged: 1 day, tagged: keep last 10)
+- [x] Configure lifecycle rules for image cleanup
+- [x] Create ecs module with ECS cluster resource (Fargate + Container Insights)
+- [x] Create CloudWatch Log Groups for web and API services (/aws/ecs/web, /aws/ecs/api, /aws/alb/web-api)
+- [x] Verify ECR and ECS cluster setup with terraform validate (passes)
+- [x] (IAM roles created in Checkpoint 8)
 
 ## Checkpoint 4 - Docker Images & ECR Push Scripts
 
