@@ -127,28 +127,32 @@
 
 ## Checkpoint 5 - Task Definitions & Services
 
-- [ ] Create web application task definition (CPU: 512, Memory: 1024)
-- [ ] Configure environment variables for web service
-- [ ] Configure CloudWatch Logs driver for web service
-- [ ] Create API application task definition (CPU: 512, Memory: 1024)
-- [ ] Configure environment variables for API service
-- [ ] Configure CloudWatch Logs driver for API service
-- [ ] Create ECS service for web application
-- [ ] Set desired task count to minimum task count (2)
-- [ ] Configure rolling deployment for web service:
-  - [ ] deploymentConfiguration.minimumHealthyPercent = 50
-  - [ ] deploymentConfiguration.maximumPercent = 100
-  - [ ] deploymentController type = ECS (rolling)
-  - [ ] Enable health check grace period
-- [ ] Create ECS service for API application
-- [ ] Set desired task count to minimum task count (2)
-- [ ] Configure rolling deployment for API service:
-  - [ ] deploymentConfiguration.minimumHealthyPercent = 50
-  - [ ] deploymentConfiguration.maximumPercent = 100
-  - [ ] deploymentController type = ECS (rolling)
-  - [ ] Enable health check grace period
-- [ ] Verify task definitions and services with terraform plan
-- [ ] Document rolling deployment behavior and update process
+- [x] Create IAM module with task execution role and task roles (prerequisite for task definitions)
+  - [x] ECS Task Execution Role (ECR pull + CloudWatch write)
+  - [x] Web task role (Next.js runtime — full permissions in Checkpoint 8)
+  - [x] API task role (NestJS runtime — full permissions in Checkpoint 8)
+- [x] Create web application task definition (CPU: 512, Memory: 1024)
+- [x] Configure environment variables for web service (NODE_ENV, PORT, HOSTNAME)
+- [x] Configure CloudWatch Logs driver for web service (awslogs → /aws/ecs/web)
+- [x] Create API application task definition (CPU: 512, Memory: 1024)
+- [x] Configure environment variables for API service (NODE_ENV, PORT)
+- [x] Configure CloudWatch Logs driver for API service (awslogs → /aws/ecs/api)
+- [x] Create ECS task security group (inbound from ALB only on ports 3300/3301)
+- [x] Create ECS service for web application
+- [x] Set desired task count to minimum task count (2)
+- [x] Configure rolling deployment for web service:
+  - [x] deploymentConfiguration.minimumHealthyPercent = 50
+  - [x] deploymentConfiguration.maximumPercent = 100
+  - [x] deploymentController type = ECS (rolling)
+  - [x] Enable health check grace period (60s)
+- [x] Create ECS service for API application
+- [x] Set desired task count to minimum task count (2)
+- [x] Configure rolling deployment for API service:
+  - [x] deploymentConfiguration.minimumHealthyPercent = 50
+  - [x] deploymentConfiguration.maximumPercent = 100
+  - [x] deploymentController type = ECS (rolling)
+  - [x] Enable health check grace period (60s)
+- [x] Verify task definitions and services with terraform validate
 
 ## Checkpoint 6 - Auto-Scaling & Monitoring
 

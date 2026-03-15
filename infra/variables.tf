@@ -85,8 +85,20 @@ variable "domain_name" {
 }
 
 # ---------------------------------------------------------------------------
-# ECS Task Scaling
+# ECS Task Sizing & Scaling
 # ---------------------------------------------------------------------------
+
+variable "task_cpu" {
+  description = "CPU units for each ECS task (512 = 0.5 vCPU, 1024 = 1 vCPU)."
+  type        = number
+  default     = 512
+}
+
+variable "task_memory" {
+  description = "Memory in MiB for each ECS task."
+  type        = number
+  default     = 1024
+}
 
 variable "min_task_count" {
   description = "Minimum number of ECS tasks per service."

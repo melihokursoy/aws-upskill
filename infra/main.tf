@@ -59,16 +59,15 @@ module "ecr" {
 }
 
 # ---------------------------------------------------------------------------
-# ECS — Fargate Cluster and CloudWatch Log Groups
+# IAM — Task Execution Role and Service Task Roles
 # ---------------------------------------------------------------------------
 
-module "ecs" {
-  source = "./modules/ecs"
+module "iam" {
+  source = "./modules/iam"
 
-  environment_name   = var.environment_name
-  project_name       = var.project_name
-  log_retention_days = var.log_retention_days
-  tags               = local.common_tags
+  environment_name = var.environment_name
+  project_name     = var.project_name
+  tags             = local.common_tags
 }
 
 # ---------------------------------------------------------------------------
@@ -84,4 +83,41 @@ module "alb" {
   public_subnet_ids = module.vpc.public_subnet_ids
   certificate_arn   = module.acm.certificate_arn
   tags              = local.common_tags
+}
+
+# ---------------------------------------------------------------------------
+# ECS — Fargate Cluster, Task Definitions, Services
+# ---------------------------------------------------------------------------
+
+module "ecs" {
+  source = "./modules/ecs"
+
+  environment_name   = var.environment_name
+  project_name       = var.project_name
+  region             = var.region
+  log_retention_days = var.log_retention_days
+  tags               = local.common_tags
+
+  # Networking
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_id     = module.vpc.private_subnet_id
+  alb_security_group_id = module.alb.alb_security_group_id
+
+  # Load balancer target groups
+  web_target_group_arn = module.alb.web_target_group_arn
+  api_target_group_arn = module.alb.api_target_group_arn
+
+  # IAM roles
+  execution_role_arn = module.iam.execution_role_arn
+  web_task_role_arn  = module.iam.web_task_role_arn
+  api_task_role_arn  = module.iam.api_task_role_arn
+
+  # Container images (ECR repository URLs — tag appended inside task definition)
+  web_image = module.ecr.repository_urls["web"]
+  api_image = module.ecr.repository_urls["api-order"]
+
+  # Task sizing and scaling
+  task_cpu       = var.task_cpu
+  task_memory    = var.task_memory
+  min_task_count = var.min_task_count
 }

@@ -89,14 +89,17 @@ run_service() {
 health_check() {
   local svc="$1"
   local port
+  local path
 
   if [[ "$svc" == "web" ]]; then
     port=$WEB_PORT
+    path="/nextapi/health"
   else
     port=$API_PORT
+    path="/api/health"
   fi
 
-  local url="http://localhost:${port}/api/health"
+  local url="http://localhost:${port}${path}"
   local max_attempts=15
   local attempt=0
 

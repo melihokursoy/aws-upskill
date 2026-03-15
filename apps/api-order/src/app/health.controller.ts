@@ -8,7 +8,7 @@ export class HealthController {
     return {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      service: 'api',
+      service: 'order-api',
       version: process.env.APP_VERSION || '1.0.0',
     };
   }

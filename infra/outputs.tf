@@ -63,7 +63,26 @@ output "ecr_registry_id" {
 }
 
 # ---------------------------------------------------------------------------
-# ECS Cluster
+# IAM
+# ---------------------------------------------------------------------------
+
+output "ecs_execution_role_arn" {
+  description = "ARN of the ECS task execution role."
+  value       = module.iam.execution_role_arn
+}
+
+output "web_task_role_arn" {
+  description = "ARN of the web service task role."
+  value       = module.iam.web_task_role_arn
+}
+
+output "api_task_role_arn" {
+  description = "ARN of the API service task role."
+  value       = module.iam.api_task_role_arn
+}
+
+# ---------------------------------------------------------------------------
+# ECS Cluster & Services
 # ---------------------------------------------------------------------------
 
 output "ecs_cluster_name" {
@@ -74,6 +93,21 @@ output "ecs_cluster_name" {
 output "ecs_cluster_arn" {
   description = "ECS cluster ARN."
   value       = module.ecs.cluster_arn
+}
+
+output "ecs_web_service_name" {
+  description = "ECS service name for the web application."
+  value       = module.ecs.web_service_name
+}
+
+output "ecs_api_service_name" {
+  description = "ECS service name for the API application."
+  value       = module.ecs.api_service_name
+}
+
+output "ecs_tasks_security_group_id" {
+  description = "Security group ID attached to ECS tasks."
+  value       = module.ecs.ecs_tasks_security_group_id
 }
 
 output "log_group_web" {

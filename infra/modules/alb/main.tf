@@ -72,7 +72,7 @@ resource "aws_lb" "main" {
 # ---------------------------------------------------------------------------
 # Target Groups
 # ECS tasks register themselves with these target groups.
-# Health check on /health — both web and API must implement this endpoint.
+# Health checks: web → /nextapi/health, api → /api/health
 # ---------------------------------------------------------------------------
 
 resource "aws_lb_target_group" "web" {
@@ -83,7 +83,7 @@ resource "aws_lb_target_group" "web" {
   target_type = "ip" # Required for ECS Fargate (tasks have IP addresses, not instance IDs)
 
   health_check {
-    path                = "/api/health"
+    path                = "/nextapi/health"
     protocol            = "HTTP"
     interval            = 30
     timeout             = 5
