@@ -109,7 +109,7 @@ resource "aws_lb_target_group" "api" {
   target_type = "ip" # Required for ECS Fargate
 
   health_check {
-    path                = "/health"
+    path                = "/api/health"
     protocol            = "HTTP"
     interval            = 30
     timeout             = 5

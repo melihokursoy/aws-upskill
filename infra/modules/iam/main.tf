@@ -86,3 +86,40 @@ resource "aws_iam_role" "api_task" {
     Purpose = "NestJS API runtime permissions"
   })
 }
+
+# ---------------------------------------------------------------------------
+# X-Ray Write Policy
+# Attached to both task roles so app containers can send traces to X-Ray.
+# PutTraceSegments: send trace data, PutTelemetryRecords: send sampling stats.
+# GetSamplingRules/GetSamplingTargets: X-Ray SDK fetches dynamic sampling rules.
+# ---------------------------------------------------------------------------
+
+data "aws_iam_policy_document" "xray_write" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "xray_write" {
+  name        = "${var.project_name}-${var.environment_name}-xray-write"
+  description = "Allows ECS task containers to send traces and telemetry to X-Ray"
+  policy      = data.aws_iam_policy_document.xray_write.json
+}
+
+resource "aws_iam_role_policy_attachment" "web_task_xray" {
+  role       = aws_iam_role.web_task.name
+  policy_arn = aws_iam_policy.xray_write.arn
+}
+
+resource "aws_iam_role_policy_attachment" "api_task_xray" {
+  role       = aws_iam_role.api_task.name
+  policy_arn = aws_iam_policy.xray_write.arn
+}

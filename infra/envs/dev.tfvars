@@ -22,6 +22,10 @@ availability_zone_2  = "us-east-1b" # ALB secondary AZ only
 # Domain — replace with your actual dev subdomain
 domain_name = "dev.aws-upskill.codecrib.co.uk"
 
+# ECS task sizing — minimum Fargate size for cost optimization
+task_cpu    = 256   # 0.25 vCPU (minimum)
+task_memory = 512   # 512 MiB — reduced after webpack bundling eliminated node_modules at runtime
+
 # ECS task scaling
 min_task_count = 2
 max_task_count = 4

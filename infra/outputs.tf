@@ -110,6 +110,11 @@ output "ecs_tasks_security_group_id" {
   value       = module.ecs.ecs_tasks_security_group_id
 }
 
+output "cloudwatch_dashboard_name" {
+  description = "CloudWatch dashboard name for infrastructure overview."
+  value       = module.monitoring.dashboard_name
+}
+
 output "log_group_web" {
   description = "CloudWatch log group for web service (/aws/ecs/web)."
   value       = module.ecs.web_log_group_name

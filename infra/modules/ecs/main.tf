@@ -261,8 +261,8 @@ resource "aws_ecs_service" "web" {
 
   # Rolling deployment — ECS stops one old task, starts one new task at a time
   deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 100
-  health_check_grace_period_seconds  = 60
+  deployment_maximum_percent         = 200
+  health_check_grace_period_seconds  = 120
 
   deployment_controller {
     type = "ECS"
@@ -301,8 +301,8 @@ resource "aws_ecs_service" "api" {
   launch_type     = "FARGATE"
 
   deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 100
-  health_check_grace_period_seconds  = 60
+  deployment_maximum_percent         = 200
+  health_check_grace_period_seconds  = 120
 
   deployment_controller {
     type = "ECS"

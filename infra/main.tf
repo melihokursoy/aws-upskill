@@ -86,6 +86,40 @@ module "alb" {
 }
 
 # ---------------------------------------------------------------------------
+# Auto-Scaling — Target tracking for ECS services
+# ---------------------------------------------------------------------------
+
+module "autoscaling" {
+  source = "./modules/autoscaling"
+
+  environment_name = var.environment_name
+  project_name     = var.project_name
+  cluster_name     = module.ecs.cluster_name
+  web_service_name = module.ecs.web_service_name
+  api_service_name = module.ecs.api_service_name
+  min_task_count   = var.min_task_count
+  max_task_count   = var.max_task_count
+}
+
+# ---------------------------------------------------------------------------
+# Monitoring — CloudWatch alarms and dashboard
+# ---------------------------------------------------------------------------
+
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  environment_name = var.environment_name
+  project_name     = var.project_name
+  region           = var.region
+  tags             = local.common_tags
+  cluster_name     = module.ecs.cluster_name
+  web_service_name = module.ecs.web_service_name
+  api_service_name = module.ecs.api_service_name
+  alb_arn_suffix   = module.alb.alb_arn_suffix
+  min_task_count   = var.min_task_count
+}
+
+# ---------------------------------------------------------------------------
 # ECS — Fargate Cluster, Task Definitions, Services
 # ---------------------------------------------------------------------------
 

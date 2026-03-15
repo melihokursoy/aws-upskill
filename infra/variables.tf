@@ -89,15 +89,15 @@ variable "domain_name" {
 # ---------------------------------------------------------------------------
 
 variable "task_cpu" {
-  description = "CPU units for each ECS task (512 = 0.5 vCPU, 1024 = 1 vCPU)."
+  description = "CPU units for each ECS task. Minimum Fargate size: 256 (0.25 vCPU)."
   type        = number
-  default     = 512
+  default     = 256
 }
 
 variable "task_memory" {
   description = "Memory in MiB for each ECS task."
   type        = number
-  default     = 1024
+  default     = 512
 }
 
 variable "min_task_count" {
