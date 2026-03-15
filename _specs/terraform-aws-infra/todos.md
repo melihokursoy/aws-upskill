@@ -3,43 +3,43 @@
 ## Checkpoint 1 - Foundation (Terraform Setup & VPC)
 
 ### Root Module Configuration
-- [ ] Create infra/ directory at project root with .gitignore for state files
-- [ ] Set up Terraform project structure in infra/ with root module (main.tf)
-- [ ] Create variables.tf with parameterized values:
-  - [ ] `environment_name` variable (no hardcoded "dev" or "staging")
-  - [ ] `region` variable for AWS region
-  - [ ] `vpc_cidr` variable for VPC CIDR block
-  - [ ] `project_name` variable for resource tagging
-  - [ ] `owner` variable for resource tagging
-  - [ ] Any other environment-specific values as variables
-- [ ] Create outputs.tf for root module outputs (aggregates module outputs)
-- [ ] Configure backend.tf for S3 + DynamoDB state management:
-  - [ ] Create S3 bucket for state files (terraform-{project}-state)
-  - [ ] Enable S3 encryption (AES-256)
-  - [ ] Enable S3 versioning for state file recovery
-  - [ ] Configure S3 bucket policy for team access only
-  - [ ] Create DynamoDB table for state locking
-  - [ ] Configure backend block in Terraform code
-- [ ] Configure .gitignore to prevent state file commits:
-  - [ ] Add `*.tfstate` to .gitignore
-  - [ ] Add `*.tfstate.backup` to .gitignore
-  - [ ] Add `.terraform/` to .gitignore
-- [ ] Add `terraform.tfvars` to .gitignore (local overrides only, not committed)
-- [ ] Document S3 bucket and DynamoDB table names in shared location (team wiki/docs)
-- [ ] (Environment variable files created in Checkpoint 10)
+- [x] Create infra/ directory at project root with .gitignore for state files
+- [x] Set up Terraform project structure in infra/ with root module (main.tf)
+- [x] Create variables.tf with parameterized values:
+  - [x] `environment_name` variable (no hardcoded "dev" or "staging")
+  - [x] `region` variable for AWS region
+  - [x] `vpc_cidr` variable for VPC CIDR block
+  - [x] `project_name` variable for resource tagging
+  - [x] `owner` variable for resource tagging
+  - [x] Any other environment-specific values as variables
+- [x] Create outputs.tf for root module outputs (aggregates module outputs)
+- [x] Configure backend.tf for S3 + DynamoDB state management:
+  - [x] Create S3 bucket for state files (terraform-{project}-state) — documented in README, one-time manual setup
+  - [x] Enable S3 encryption (AES-256) — documented in README setup commands
+  - [x] Enable S3 versioning for state file recovery — documented in README setup commands
+  - [x] Configure S3 bucket policy for team access only — documented in README
+  - [x] Create DynamoDB table for state locking — documented in README setup commands
+  - [x] Configure backend block in Terraform code
+- [x] Configure .gitignore to prevent state file commits:
+  - [x] Add `*.tfstate` to .gitignore
+  - [x] Add `*.tfstate.backup` to .gitignore
+  - [x] Add `.terraform/` to .gitignore
+- [x] Add `terraform.tfvars` to .gitignore (local overrides only, not committed)
+- [x] Document S3 bucket and DynamoDB table names in shared location (infra/README.md)
+- [x] Environment variable files created: infra/envs/dev.tfvars and infra/envs/staging.tfvars
 
 ### Resource Tagging Configuration
-- [ ] Create locals block for common tags in root main.tf
-- [ ] Define standard tags: Environment, Project, ManagedBy, CreatedAt, Owner
-- [ ] Create tags variable to pass to all modules
-- [ ] Apply tags to all resources in each module
-- [ ] Create vpc module with configurable CIDR block
-- [ ] Create public subnets in VPC (for ALB)
-- [ ] Create private subnets in VPC (for ECS tasks)
-- [ ] Create and attach Internet Gateway to VPC
-- [ ] Create NAT Gateway for private subnet outbound traffic
-- [ ] Configure route tables and associations
-- [ ] Verify VPC structure with terraform plan
+- [x] Create locals block for common tags in root main.tf
+- [x] Define standard tags: Environment, Project, ManagedBy, CreatedAt, Owner
+- [x] Create tags variable to pass to all modules
+- [x] Apply tags to all resources in each module (via merge(var.tags, {...}) in vpc module)
+- [x] Create vpc module with configurable CIDR block
+- [x] Create public subnets in VPC (for ALB)
+- [x] Create private subnets in VPC (for ECS tasks)
+- [x] Create and attach Internet Gateway to VPC
+- [x] Create NAT Gateway for private subnet outbound traffic
+- [x] Configure route tables and associations
+- [ ] Verify VPC structure with terraform plan (requires AWS credentials + backend setup)
 
 ## Checkpoint 2 - Load Balancer & HTTPS
 

@@ -1,0 +1,21 @@
+# Terraform state files - never commit these
+*.tfstate
+*.tfstate.backup
+
+# Terraform working directory
+.terraform/
+.terraform.lock.hcl
+
+# Local variable overrides - use envs/dev.tfvars or envs/staging.tfvars instead
+terraform.tfvars
+
+# Terraform plan output files
+tfplan
+*.tfplan
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Sensitive variable files
+*.auto.tfvars

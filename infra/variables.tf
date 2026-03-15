@@ -1,0 +1,113 @@
+# ---------------------------------------------------------------------------
+# Root Module Variables
+# All environment-specific values come from envs/dev.tfvars or envs/staging.tfvars
+# No hardcoded environment names anywhere in this codebase
+# ---------------------------------------------------------------------------
+
+variable "environment_name" {
+  description = "Deployment environment name (dev or staging). Passed via -var-file."
+  type        = string
+
+  validation {
+    condition     = contains(["dev", "staging"], var.environment_name)
+    error_message = "environment_name must be 'dev' or 'staging'."
+  }
+}
+
+variable "region" {
+  description = "AWS region to deploy resources into."
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "project_name" {
+  description = "Project name used for resource naming and tagging."
+  type        = string
+}
+
+variable "owner" {
+  description = "Team or individual responsible for this infrastructure (used in tags)."
+  type        = string
+}
+
+variable "cost_center" {
+  description = "Cost center identifier for billing and cost allocation tags."
+  type        = string
+}
+
+# ---------------------------------------------------------------------------
+# Networking
+# ---------------------------------------------------------------------------
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC."
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "public_subnet_cidr" {
+  description = "CIDR block for the public subnet (ALB)."
+  type        = string
+  default     = "10.0.1.0/24"
+}
+
+variable "private_subnet_cidr" {
+  description = "CIDR block for the private subnet (ECS tasks, RDS)."
+  type        = string
+  default     = "10.0.2.0/24"
+}
+
+variable "availability_zone" {
+  description = "Availability zone for single-AZ deployment (dev/staging cost optimization)."
+  type        = string
+  default     = "us-east-1a"
+}
+
+# ---------------------------------------------------------------------------
+# Domain & HTTPS
+# ---------------------------------------------------------------------------
+
+variable "domain_name" {
+  description = "Custom domain name for this environment (e.g. dev.yourdomain.com). Used for ACM certificate."
+  type        = string
+}
+
+# ---------------------------------------------------------------------------
+# ECS Task Scaling
+# ---------------------------------------------------------------------------
+
+variable "min_task_count" {
+  description = "Minimum number of ECS tasks per service."
+  type        = number
+  default     = 2
+}
+
+variable "max_task_count" {
+  description = "Maximum number of ECS tasks per service."
+  type        = number
+  default     = 4
+}
+
+# ---------------------------------------------------------------------------
+# Monitoring
+# ---------------------------------------------------------------------------
+
+variable "log_retention_days" {
+  description = "CloudWatch log retention period in days."
+  type        = number
+  default     = 7
+}
+
+# ---------------------------------------------------------------------------
+# Cost / Budgets
+# ---------------------------------------------------------------------------
+
+variable "monthly_budget_amount" {
+  description = "Monthly AWS budget limit for this environment in USD."
+  type        = number
+}
+
+variable "budget_alert_email" {
+  description = "Email address to receive budget alert notifications."
+  type        = string
+}
