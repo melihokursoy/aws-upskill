@@ -20,6 +20,12 @@ infra/
 │   ├── deploy.sh                # Terraform deploy wrapper (plan/apply/destroy)
 │   ├── build-and-push-ecr.sh   # Build Docker image and push to ECR
 │   └── push-ecr.sh             # Push pre-built image to ECR
+├── scripts/
+│   ├── deploy.sh                # Terraform deploy wrapper (plan/apply/destroy)
+│   ├── build-and-push-ecr.sh   # Build Docker image and push to ECR
+│   ├── push-ecr.sh             # Push pre-built image to ECR
+│   ├── force-cleanup.sh        # Manual unblock for stuck terraform destroy
+│   └── test-connectivity.sh    # Post-deploy health check script
 └── modules/
     ├── vpc/             # VPC, subnets, IGW, NAT Gateway, route tables
     ├── alb/             # Application Load Balancer + HTTPS listeners
@@ -28,9 +34,10 @@ infra/
     ├── ecs/             # ECS Fargate cluster and services
     ├── autoscaling/     # Target tracking auto-scaling policies
     ├── rds/             # PostgreSQL RDS database
-    ├── s3/              # S3 buckets
     ├── iam/             # IAM roles and policies
-    └── monitoring/      # CloudWatch log groups, alarms, dashboards
+    ├── ssm/             # Parameter Store entries for app configuration
+    ├── monitoring/      # CloudWatch log groups, alarms, dashboards
+    └── budgets/         # AWS Budgets monthly cost alerts
 ```
 
 ## Prerequisites
@@ -115,6 +122,57 @@ Both dev and staging are single-AZ for cost optimization. VPC CIDRs are kept sep
 | Monthly budget | $50 | $75 |
 
 See `docs/terraform-infrastructure.md` and `docs/terraform-deployment.md` for full details.
+
+---
+
+## Key Design Decisions
+
+### No Magic Strings
+
+No environment names, account IDs, ARNs, or resource names are hardcoded in Terraform code.
+All environment-specific values come from `envs/dev.tfvars` or `envs/staging.tfvars`.
+Resource names use `${var.project_name}-${var.environment_name}-*` interpolation throughout.
+ARNs and IDs are always passed between modules via outputs — never copy-pasted strings.
+
+### Cross-Module Security Group Rules
+
+Security groups that reference a SG from another module use `aws_security_group_rule`
+resources in the root module (`main.tf`) rather than inline `ingress` blocks inside modules.
+Inline blocks using a cross-module SG ID are opaque strings to Terraform's dependency graph
+and cause `DependencyViolation` errors during destroy. Root-module rules give Terraform
+explicit edges so rules are deleted before either SG.
+
+See `.claude/rules/terraform-security-groups.md` for the full rule.
+
+### Separate `aws_route` Resources
+
+Route tables have no inline `route` blocks. Routes are standalone `aws_route` resources.
+This gives Terraform an explicit dependency edge: route deleted before IGW/NAT GW is
+detached. Inline routes caused 10+ minute destroy stalls.
+
+### No null_resource Provisioners
+
+All destroy ordering is handled by Terraform's dependency graph and built-in provider
+waiters (`aws_ecs_service` waits for INACTIVE state, `aws_db_instance` waits for deletion).
+`null_resource` destroy provisioners caused double-delete race conditions and have been removed.
+
+---
+
+## Outputs Reference
+
+After `terraform apply`, run `terraform output` to see all values. Key outputs:
+
+| Output                            | Description                                     |
+|----------------------------------|-------------------------------------------------|
+| `alb_dns_name`                   | ALB hostname — use as DNS CNAME target          |
+| `acm_validation_cnames`          | DNS records needed to validate ACM certificate  |
+| `ecs_cluster_name`               | ECS cluster name                                |
+| `ecr_repository_urls`            | Map of ECR URLs keyed by service name           |
+| `rds_endpoint`                   | RDS hostname (also written to SSM)              |
+| `rds_root_password_secret_name`  | Secrets Manager secret name for RDS password    |
+| `ecs_tasks_security_group_id`    | ECS tasks SG ID                                 |
+
+Full list: `infra/outputs.tf`
 
 ## Running Docker Images Locally
 

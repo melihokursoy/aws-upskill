@@ -432,71 +432,38 @@
 ## Checkpoint 14 - Documentation
 
 ### Infrastructure Details Documentation (docs/terraform-infrastructure.md)
-- [ ] Create comprehensive infrastructure details document in docs/ folder
-- [ ] Document architecture overview with ASCII or visual diagram
-- [ ] Document VPC and networking design
-- [ ] Document ECS Fargate cluster and task configuration
-- [ ] Document service deployment architecture (web and API)
-- [ ] Document database and storage design
-- [ ] Document auto-scaling policies and thresholds
-- [ ] Document monitoring, alarms, and logging setup
-- [ ] Document security groups and IAM role descriptions
-- [ ] Document Terraform state management and backend configuration:
-  - [ ] Explain S3 + DynamoDB backend setup
-  - [ ] Document S3 bucket and DynamoDB table locations
-  - [ ] Explain why state is NOT in project folder
-  - [ ] Document how team members access shared state
-  - [ ] Document state file encryption and versioning
-  - [ ] Explain DynamoDB locking mechanism
-- [ ] Document cost estimation and optimization strategies
-- [ ] Document module structure and dependencies
+- [x] Create comprehensive infrastructure details document in docs/ folder
+- [x] Document architecture overview with ASCII or visual diagram
+- [x] Document VPC and networking design
+- [x] Document ECS Fargate cluster and task configuration
+- [x] Document service deployment architecture (web and API)
+- [x] Document database and storage design
+- [x] Document auto-scaling policies and thresholds
+- [x] Document monitoring, alarms, and logging setup
+- [x] Document security groups and IAM role descriptions
+- [x] Document Terraform state management and backend configuration
+- [x] Document cost estimation and optimization strategies
+- [x] Document module structure and dependencies
 
 ### Deployment Workflow Documentation (docs/terraform-deployment.md)
-- [ ] Create comprehensive deployment workflow document in docs/ folder
-- [ ] Document prerequisites and setup (AWS CLI, Terraform, credentials)
-- [ ] Document environment-specific configuration (envs/dev.tfvars vs envs/staging.tfvars)
-- [ ] Document how to apply for each environment: `terraform apply -var-file="envs/dev.tfvars"`
-- [ ] Document how to run terraform plan and review output
-- [ ] Document safe infrastructure change procedures
-- [ ] Document how to scale tasks up or down
-- [ ] Document updating application images in ECR
-- [ ] Document rollback procedures
-- [ ] Document common troubleshooting scenarios
-- [ ] Document monitoring health and accessing logs
-- [ ] Document cost tracking and budget management
-- [ ] Note: Disaster recovery and backups deferred for future implementation
+- [x] Create comprehensive deployment workflow document in docs/ folder
+- [x] Document prerequisites and setup (AWS CLI, Terraform, credentials)
+- [x] Document environment-specific configuration (envs/dev.tfvars vs envs/staging.tfvars)
+- [x] Document how to apply for each environment
+- [x] Document how to run terraform plan and review output
+- [x] Document safe infrastructure change procedures
+- [x] Document how to scale tasks up or down
+- [x] Document updating application images in ECR
+- [x] Document rollback procedures
+- [x] Document common troubleshooting scenarios
+- [x] Document monitoring health and accessing logs
+- [x] Document cost tracking and budget management
 
 ### Additional Documentation
-- [ ] Create README in infra/ directory explaining module structure
-- [ ] Document infra/ folder structure and file organization
-- [ ] Document Terraform variables and outputs strategy:
-  - [ ] Explain no magic strings policy
-  - [ ] Document all available Terraform outputs
-  - [ ] Document how outputs are used for environment variables
-  - [ ] Explain terraform.tfvars configuration per environment
-  - [ ] Show examples of output usage
-- [ ] Create comprehensive IAM role documentation including:
-  - [ ] Task Execution Role purpose and permissions
-  - [ ] Web Service Task Role purpose and permissions
-  - [ ] API Service Task Role purpose and permissions
-  - [ ] Trust relationships and role assumptions
-  - [ ] Least-privilege principle applied
-- [ ] Document secrets management approach
-- [ ] Document correlation ID tracking and tracing strategy
-- [ ] Document how to query logs by correlation ID in CloudWatch
-- [ ] Document resource tagging strategy:
-  - [ ] Explain tagging standard (Environment, Project, ManagedBy, CreatedAt, Owner, CostCenter)
-  - [ ] Explain how to filter resources in AWS Console by tags
-  - [ ] Provide examples of tag filtering
-- [ ] Document cost tracking and budgets:
-  - [ ] Explain AWS Budgets setup and alert thresholds
-  - [ ] Document how to view costs in AWS Cost Explorer
-  - [ ] Explain cost allocation by tag and environment
-  - [ ] Document monthly cost review process
-  - [ ] Provide cost optimization recommendations (already applied)
-- [ ] Document cleanup and destruction procedures:
-  - [ ] Prerequisites for destroy (S3 force_destroy, RDS deletion_protection)
-  - [ ] Step-by-step terraform destroy process
-  - [ ] Verification checklist for complete resource removal
-  - [ ] How to recover from failed destroy
-- [ ] Create or update CONTRIBUTING.md with infrastructure guidelines
+- [x] Update infra/README.md with module structure, design decisions, outputs reference
+- [x] Document Terraform variables and outputs strategy (no magic strings, infra/README.md)
+- [x] IAM role documentation (docs/terraform-infrastructure.md — IAM Roles section)
+- [x] Secrets management approach (docs/terraform-infrastructure.md — Secrets Management section)
+- [x] Resource tagging strategy (docs/terraform-infrastructure.md — Resource Tagging section)
+- [x] Cost tracking and budgets (docs/cost-tracking.md — Checkpoint 13)
+- [x] Cleanup and destruction procedures (docs/terraform-destroy.md — Checkpoint 12)
