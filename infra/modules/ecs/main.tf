@@ -235,10 +235,16 @@ resource "aws_ecs_task_definition" "api" {
         { name = "DB_PORT", value = tostring(var.db_port) },
         { name = "DB_NAME", value = var.db_name },
         { name = "DB_USER", value = var.db_user },
-        # DB password: app calls Secrets Manager SDK using this ARN — never a plaintext password in env
+        # DB_PASSWORD_SECRET_ARN retained so app can reference the ARN if needed
         { name = "DB_PASSWORD_SECRET_ARN", value = var.db_password_secret_arn },
         # Parameter Store prefix — app fetches config values under /app/api/* at startup
         { name = "PARAMETER_STORE_PREFIX", value = "/app/api" },
+      ]
+
+      secrets = [
+        # Extract the "password" key from the JSON secret {"username":...,"password":...}
+        # Syntax: <secret-arn>:<json-key>::  (ECS JSON key extraction)
+        { name = "DB_PASSWORD", valueFrom = "${var.db_password_secret_arn}:password::" },
       ]
 
       logConfiguration = {

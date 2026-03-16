@@ -64,9 +64,15 @@ variable "availability_zone_2" {
 }
 
 variable "private_subnet_cidr" {
-  description = "CIDR block for the private subnet (ECS tasks, RDS)."
+  description = "CIDR block for the primary private subnet (ECS tasks, RDS in primary AZ)."
   type        = string
   default     = "10.0.2.0/24"
+}
+
+variable "private_subnet_cidr_2" {
+  description = "CIDR block for the secondary private subnet (AZ2 — required by RDS DB subnet group, no workloads deployed here)."
+  type        = string
+  default     = "10.0.4.0/24"
 }
 
 variable "availability_zone" {

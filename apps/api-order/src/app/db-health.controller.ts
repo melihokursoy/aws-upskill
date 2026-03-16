@@ -14,6 +14,8 @@ export class DbHealthController {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       connectionTimeoutMillis: 3000,
+      // RDS requires SSL — rejectUnauthorized: false accepts the self-signed RDS cert
+      ssl: { rejectUnauthorized: false },
     });
 
     try {

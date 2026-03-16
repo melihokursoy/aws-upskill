@@ -24,15 +24,16 @@ locals {
 module "vpc" {
   source = "./modules/vpc"
 
-  environment_name     = var.environment_name
-  project_name         = var.project_name
-  vpc_cidr             = var.vpc_cidr
-  public_subnet_cidr   = var.public_subnet_cidr
-  public_subnet_cidr_2 = var.public_subnet_cidr_2
-  private_subnet_cidr  = var.private_subnet_cidr
-  availability_zone    = var.availability_zone
-  availability_zone_2  = var.availability_zone_2
-  tags                 = local.common_tags
+  environment_name      = var.environment_name
+  project_name          = var.project_name
+  vpc_cidr              = var.vpc_cidr
+  public_subnet_cidr    = var.public_subnet_cidr
+  public_subnet_cidr_2  = var.public_subnet_cidr_2
+  private_subnet_cidr   = var.private_subnet_cidr
+  private_subnet_cidr_2 = var.private_subnet_cidr_2
+  availability_zone     = var.availability_zone
+  availability_zone_2   = var.availability_zone_2
+  tags                  = local.common_tags
 }
 
 # ---------------------------------------------------------------------------
@@ -139,6 +140,7 @@ module "rds" {
   # Networking
   vpc_id                      = module.vpc.vpc_id
   private_subnet_id           = module.vpc.private_subnet_id
+  private_subnet_id_2         = module.vpc.private_subnet_id_2
   availability_zone           = var.availability_zone
   ecs_tasks_security_group_id = module.ecs.ecs_tasks_security_group_id
 

@@ -15,6 +15,9 @@ FROM node:20-alpine AS deps
 WORKDIR /monorepo
 
 COPY package.json package-lock.json ./
+# Copy workspace package.json files so npm installs all workspace dependencies
+# (e.g. pg declared in apps/api-order/package.json) into the root node_modules
+COPY apps/api-order/package.json ./apps/api-order/
 RUN npm install
 
 # ---------------------------------------------------------------------------

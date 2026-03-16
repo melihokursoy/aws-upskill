@@ -43,7 +43,7 @@ resource "aws_secretsmanager_secret" "rds_root_password" {
 
   tags = merge(var.tags, {
     Name    = "${var.project_name}-${var.environment_name}-rds-root-password"
-    Purpose = "RDS root password — read by NestJS API at startup via Secrets Manager SDK"
+    Purpose = "RDS root password - read by NestJS API at startup via Secrets Manager SDK"
   })
 }
 
@@ -70,8 +70,8 @@ resource "aws_secretsmanager_secret_version" "rds_root_password" {
 
 resource "aws_db_subnet_group" "postgres" {
   name        = "${var.project_name}-${var.environment_name}-rds"
-  description = "RDS subnet group for ${var.project_name} ${var.environment_name} (single-AZ, private subnet)"
-  subnet_ids  = [var.private_subnet_id]
+  description = "RDS subnet group for ${var.project_name} ${var.environment_name}. Spans 2 AZs as required by AWS, but RDS instance runs in primary AZ only (single-AZ, cost optimized)."
+  subnet_ids  = [var.private_subnet_id, var.private_subnet_id_2]
 
   tags = merge(var.tags, {
     Name = "${var.project_name}-${var.environment_name}-rds-subnet-group"

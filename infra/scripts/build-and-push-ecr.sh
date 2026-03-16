@@ -76,11 +76,48 @@ for cmd in docker aws terraform git jq; do
   fi
 done
 
+log() { echo "[$(date '+%H:%M:%S')] $*"; }
+
+log "   Service      : $SERVICE"
+log "   Environment  : $ENV"
+log "   Version      : $VERSION"
+log "   Dockerfile   : $DOCKERFILE"
+
+# ---------------------------------------------------------------------------
+# Build Docker image (first — fail fast before any AWS operations)
+# ---------------------------------------------------------------------------
+
+log "==> Building Docker image..."
+cd "$REPO_ROOT"
+
+docker build \
+  --file "$DOCKERFILE" \
+  --tag "${SERVICE}:${VERSION}" \
+  --tag "${SERVICE}:latest" \
+  --platform linux/amd64 \
+  .
+
+log "   Build complete."
+
+# ---------------------------------------------------------------------------
+# Image size check
+# ---------------------------------------------------------------------------
+
+MAX_SIZE_MB=500
+IMAGE_SIZE_BYTES=$(docker inspect --format='{{.Size}}' "${SERVICE}:${VERSION}")
+IMAGE_SIZE_MB=$(( IMAGE_SIZE_BYTES / 1024 / 1024 ))
+
+log "   Image size: ${IMAGE_SIZE_MB}MB (limit: ${MAX_SIZE_MB}MB)"
+
+if [[ $IMAGE_SIZE_MB -gt $MAX_SIZE_MB ]]; then
+  echo "ERROR: Image size ${IMAGE_SIZE_MB}MB exceeds the ${MAX_SIZE_MB}MB limit."
+  echo "       Review the Dockerfile to reduce image size before pushing."
+  exit 1
+fi
+
 # ---------------------------------------------------------------------------
 # Read Terraform outputs
 # ---------------------------------------------------------------------------
-
-log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
 log "==> Reading Terraform outputs for environment: $ENV"
 cd "$INFRA_DIR"
@@ -101,12 +138,6 @@ fi
 REGISTRY_ID=$(terraform output -raw ecr_registry_id)
 REGION=$(terraform output -raw region)
 
-log "   Service      : $SERVICE"
-log "   Environment  : $ENV"
-log "   Version      : $VERSION"
-log "   Repository   : $REPO_URL"
-log "   Dockerfile   : $DOCKERFILE"
-
 # ---------------------------------------------------------------------------
 # Authenticate Docker with ECR
 # ---------------------------------------------------------------------------
@@ -116,40 +147,11 @@ aws ecr get-login-password --region "$REGION" | \
   docker login --username AWS --password-stdin "${REGISTRY_ID}.dkr.ecr.${REGION}.amazonaws.com"
 
 # ---------------------------------------------------------------------------
-# Build Docker image
+# Tag and push to ECR
 # ---------------------------------------------------------------------------
 
-log "==> Building Docker image..."
-cd "$REPO_ROOT"
-
-docker build \
-  --file "$DOCKERFILE" \
-  --tag "${REPO_URL}:${VERSION}" \
-  --tag "${REPO_URL}:latest" \
-  --platform linux/amd64 \
-  .
-
-log "   Build complete."
-
-# ---------------------------------------------------------------------------
-# Image size check
-# ---------------------------------------------------------------------------
-
-MAX_SIZE_MB=500
-IMAGE_SIZE_BYTES=$(docker inspect --format='{{.Size}}' "${REPO_URL}:${VERSION}")
-IMAGE_SIZE_MB=$(( IMAGE_SIZE_BYTES / 1024 / 1024 ))
-
-log "   Image size: ${IMAGE_SIZE_MB}MB (limit: ${MAX_SIZE_MB}MB)"
-
-if [[ $IMAGE_SIZE_MB -gt $MAX_SIZE_MB ]]; then
-  echo "ERROR: Image size ${IMAGE_SIZE_MB}MB exceeds the ${MAX_SIZE_MB}MB limit."
-  echo "       Review the Dockerfile to reduce image size before pushing."
-  exit 1
-fi
-
-# ---------------------------------------------------------------------------
-# Push to ECR
-# ---------------------------------------------------------------------------
+docker tag "${SERVICE}:${VERSION}" "${REPO_URL}:${VERSION}"
+docker tag "${SERVICE}:latest"    "${REPO_URL}:latest"
 
 log "==> Pushing ${REPO_URL}:${VERSION}..."
 docker push "${REPO_URL}:${VERSION}"

@@ -55,6 +55,28 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Allows ECS agent to fetch secrets from Secrets Manager at container start
+# (required when task definitions use the `secrets` field to inject secret values).
+resource "aws_iam_role_policy" "ecs_execution_secrets" {
+  name = "secrets-manager-fetch"
+  role = aws_iam_role.ecs_task_execution.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "FetchRdsSecret"
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
+        ]
+        Resource = var.rds_secret_arn
+      }
+    ]
+  })
+}
+
 # ---------------------------------------------------------------------------
 # Web Service Task Role
 # Purpose: Permissions for the Next.js app container at runtime.

@@ -14,8 +14,13 @@ output "public_subnet_ids" {
 }
 
 output "private_subnet_id" {
-  description = "ID of the private subnet (ECS tasks, RDS)."
+  description = "ID of the primary private subnet (ECS tasks, RDS instance)."
   value       = aws_subnet.private.id
+}
+
+output "private_subnet_id_2" {
+  description = "ID of the secondary private subnet (AZ2 — required by RDS DB subnet group)."
+  value       = aws_subnet.private_2.id
 }
 
 output "nat_gateway_ip" {

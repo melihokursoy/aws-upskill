@@ -2,9 +2,8 @@ const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
 const { join } = require('path');
 const webpack = require('webpack');
 
-// Optional NestJS packages that are not installed in this project.
-// NestJS tries to dynamically require these at runtime — ignore them at
-// build time so webpack doesn't fail when they're missing.
+// Optional packages that are not installed or cannot be bundled.
+// These are loaded lazily via try/catch require() so missing them is safe.
 const NESTJS_OPTIONAL_DEPS = [
   '@nestjs/microservices',
   '@nestjs/microservices/microservices-module',
@@ -12,6 +11,9 @@ const NESTJS_OPTIONAL_DEPS = [
   'class-validator',
   'class-transformer',
   'class-transformer/storage',
+  // pg-native is an optional C binding for the pg driver — pure-JS pg works without it.
+  // Webpack cannot bundle native modules, so we exclude it here.
+  'pg-native',
 ];
 
 module.exports = {

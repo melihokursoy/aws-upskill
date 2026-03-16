@@ -23,7 +23,12 @@ variable "vpc_id" {
 }
 
 variable "private_subnet_id" {
-  description = "Primary private subnet ID for the DB subnet group."
+  description = "Primary private subnet ID (AZ1 — RDS instance runs here)."
+  type        = string
+}
+
+variable "private_subnet_id_2" {
+  description = "Secondary private subnet ID (AZ2 — required by AWS DB subnet group, RDS instance does not run here)."
   type        = string
 }
 

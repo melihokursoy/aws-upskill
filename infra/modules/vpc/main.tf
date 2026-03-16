@@ -64,6 +64,20 @@ resource "aws_subnet" "private" {
   })
 }
 
+# Second private subnet in AZ2 — required by AWS RDS DB subnet groups (must span ≥2 AZs).
+# No ECS tasks are scheduled here (single-AZ deployment for cost optimization).
+# RDS instance itself still runs in the primary AZ only (multi_az = false).
+resource "aws_subnet" "private_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidr_2
+  availability_zone = var.availability_zone_2
+
+  tags = merge(var.tags, {
+    Name = "${var.project_name}-${var.environment_name}-private-subnet-2"
+    Tier = "private"
+  })
+}
+
 # ---------------------------------------------------------------------------
 # Internet Gateway — allows public subnet to reach the internet
 # ---------------------------------------------------------------------------
@@ -146,5 +160,10 @@ resource "aws_route_table" "private" {
 
 resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private_2" {
+  subnet_id      = aws_subnet.private_2.id
   route_table_id = aws_route_table.private.id
 }
