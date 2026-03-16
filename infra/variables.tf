@@ -138,6 +138,12 @@ variable "db_instance_class" {
   default     = "db.t3.micro"
 }
 
+variable "log_level" {
+  description = "Application log level for all services (info, debug, warn, error)."
+  type        = string
+  default     = "info"
+}
+
 # ---------------------------------------------------------------------------
 # Cost / Budgets
 # ---------------------------------------------------------------------------

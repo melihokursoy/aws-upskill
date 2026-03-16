@@ -212,3 +212,37 @@ output "rds_root_password_secret_name" {
   description = "Secrets Manager secret name: {project}/{env}/rds/postgres/root-password"
   value       = module.rds.root_password_secret_name
 }
+
+# ---------------------------------------------------------------------------
+# SSM Parameter Store
+# ---------------------------------------------------------------------------
+
+output "ssm_web_api_endpoint" {
+  description = "SSM parameter name for the web service API endpoint."
+  value       = module.ssm.web_api_endpoint_name
+}
+
+output "ssm_web_log_level" {
+  description = "SSM parameter name for the web service log level."
+  value       = module.ssm.web_log_level_name
+}
+
+output "ssm_api_db_host" {
+  description = "SSM parameter name for the API DB host."
+  value       = module.ssm.api_db_host_name
+}
+
+output "ssm_api_db_port" {
+  description = "SSM parameter name for the API DB port."
+  value       = module.ssm.api_db_port_name
+}
+
+output "ssm_api_db_name" {
+  description = "SSM parameter name for the API DB name."
+  value       = module.ssm.api_db_name_name
+}
+
+output "ssm_api_log_level" {
+  description = "SSM parameter name for the API log level."
+  value       = module.ssm.api_log_level_name
+}

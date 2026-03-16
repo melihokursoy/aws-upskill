@@ -33,3 +33,8 @@ output "root_password_secret_name" {
   description = "Name of the Secrets Manager secret: {project}/{env}/rds/postgres/root-password"
   value       = aws_secretsmanager_secret.rds_root_password.name
 }
+
+output "db_resource_id" {
+  description = "RDS instance resource ID (e.g. db-XXXXXXXX). Used to construct rds-db:connect IAM policy ARN."
+  value       = aws_db_instance.postgres.resource_id
+}

@@ -67,7 +67,13 @@ module "iam" {
 
   environment_name = var.environment_name
   project_name     = var.project_name
+  region           = var.region
   tags             = local.common_tags
+
+  # RDS — used to scope Secrets Manager and rds-db:connect policies to least-privilege
+  rds_secret_arn           = module.rds.root_password_secret_arn
+  rds_instance_resource_id = module.rds.db_resource_id
+  db_username              = "postgres"
 }
 
 # ---------------------------------------------------------------------------
@@ -139,6 +145,25 @@ module "rds" {
   # Database config
   db_name           = var.db_name
   db_instance_class = var.db_instance_class
+}
+
+# ---------------------------------------------------------------------------
+# SSM Parameter Store — Application Configuration
+# ---------------------------------------------------------------------------
+
+module "ssm" {
+  source = "./modules/ssm"
+
+  environment_name = var.environment_name
+  project_name     = var.project_name
+  tags             = local.common_tags
+
+  # Values from other modules — no hardcoding
+  alb_dns_name = module.alb.alb_dns_name
+  rds_db_host  = module.rds.db_endpoint
+  rds_db_port  = module.rds.db_port
+  rds_db_name  = module.rds.db_name
+  log_level    = var.log_level
 }
 
 # ---------------------------------------------------------------------------

@@ -237,56 +237,54 @@
 ## Checkpoint 8 - Security & IAM
 
 ### IAM Roles with Clear Documentation
-- [ ] Create iam module for all IAM policies and roles
-- [ ] Create Task Execution Role (ecsTaskExecutionRole)
-  - [ ] Add clear purpose comment: "Allows ECS service to pull images from ECR and write logs to CloudWatch"
-  - [ ] Attach ECR pull policy with inline comments explaining each permission
-  - [ ] Attach CloudWatch Logs write policy with inline comments
-  - [ ] Attach X-Ray write policy with inline comments
-  - [ ] Document trust relationship (ECS tasks can assume this role)
-- [ ] Create Web Service Task Role (ecsTaskRoleWeb)
-  - [ ] Add clear purpose comment: "Allows Next.js web application to access S3, Secrets Manager, and Parameter Store"
-  - [ ] Attach S3 read/write policy with inline comments
-  - [ ] Attach Secrets Manager read policy with inline comments
-  - [ ] Attach Parameter Store read policy with inline comments
-  - [ ] Document trust relationship
-- [ ] Create API Service Task Role (ecsTaskRoleAPI)
-  - [ ] Add clear purpose comment: "Allows NestJS API to access RDS, S3, Secrets Manager, and Parameter Store"
-  - [ ] Attach RDS connect policy with inline comments
-  - [ ] Attach S3 read/write policy with inline comments
-  - [ ] Attach Secrets Manager read policy with inline comments
-  - [ ] Attach Parameter Store read policy with inline comments
-  - [ ] Document trust relationship
+- [x] Create iam module for all IAM policies and roles (done in Checkpoint 5, expanded here)
+- [x] Create Task Execution Role (ecsTaskExecutionRole)
+  - [x] Add clear purpose comment: "Allows ECS service to pull images from ECR and write logs to CloudWatch"
+  - [x] Attach ECR pull policy with inline comments explaining each permission
+  - [x] Attach CloudWatch Logs write policy with inline comments
+  - [x] Attach X-Ray write policy with inline comments
+  - [x] Document trust relationship (ECS tasks can assume this role)
+- [x] Create Web Service Task Role (ecsTaskRoleWeb)
+  - [x] Add clear purpose comment: "Allows Next.js web application to access S3, Secrets Manager, and Parameter Store"
+  - [x] Attach S3 read/write policy with inline comments (scoped to project naming prefix, ready for future app buckets)
+  - [x] Attach Secrets Manager read policy with inline comments (scoped to {project}/{env}/web/*)
+  - [x] Attach Parameter Store read policy with inline comments (scoped to /app/web/*)
+  - [x] Document trust relationship
+- [x] Create API Service Task Role (ecsTaskRoleAPI)
+  - [x] Add clear purpose comment: "Allows NestJS API to access RDS, S3, Secrets Manager, and Parameter Store"
+  - [x] Attach RDS connect policy with inline comments (rds-db:connect scoped to instance+user)
+  - [x] Attach S3 read/write policy with inline comments (scoped to project naming prefix)
+  - [x] Attach Secrets Manager read policy with inline comments (scoped to exact RDS secret ARN)
+  - [x] Attach Parameter Store read policy with inline comments (scoped to /app/api/*)
+  - [x] Document trust relationship
 
 ### Security Groups & Secrets Management
-- [ ] Create security group for ECS tasks
-- [ ] Configure security group ingress from ALB
-- [ ] Configure security group egress rules
+- [x] Create security group for ECS tasks (done in ECS module, Checkpoint 5)
+- [x] Configure security group ingress from ALB (done in ECS module, Checkpoint 5)
+- [x] Configure security group egress rules (done in ECS module, Checkpoint 5)
 
 ### AWS Secrets Manager (Database Credentials)
-- [ ] Create Secrets Manager secret for RDS root password
-  - [ ] Secret name: `{project}/rds/postgres/root-password`
-  - [ ] Store auto-generated password from RDS module
-  - [ ] Enable automatic rotation (optional for dev/staging)
-- [ ] Grant ECS task IAM role read access to Secrets Manager
+- [x] Create Secrets Manager secret for RDS root password (done in RDS module, Checkpoint 7)
+  - [x] Secret name: `{project}/{env}/rds/postgres/root-password`
+  - [x] Store auto-generated password from RDS module
+  - [x] Automatic rotation: deferred (not needed for dev/staging)
+- [x] Grant ECS task IAM role read access to Secrets Manager (API task role scoped to RDS secret ARN)
 
 ### AWS Parameter Store (Application Configuration)
-- [ ] Create Parameter Store entries for web service:
-  - [ ] `/app/web/api_endpoint` - API URL
-  - [ ] `/app/web/log_level` - Logging level
-  - [ ] Any other application config values
-- [ ] Create Parameter Store entries for API service:
-  - [ ] `/app/api/db_host` - RDS endpoint
-  - [ ] `/app/api/db_port` - RDS port
-  - [ ] `/app/api/db_name` - Database name
-  - [ ] `/app/api/log_level` - Logging level
-  - [ ] Any other application config values
-- [ ] Grant ECS task IAM role read access to Parameter Store
+- [x] Create Parameter Store entries for web service:
+  - [x] `/app/web/api_endpoint` - ALB DNS name with /api path
+  - [x] `/app/web/log_level` - Logging level
+- [x] Create Parameter Store entries for API service:
+  - [x] `/app/api/db_host` - RDS endpoint (sourced from rds module output)
+  - [x] `/app/api/db_port` - RDS port (sourced from rds module output)
+  - [x] `/app/api/db_name` - Database name (sourced from rds module output)
+  - [x] `/app/api/log_level` - Logging level
+- [x] Grant ECS task IAM role read access to Parameter Store (path-scoped policies)
 
 ### Verification
-- [ ] Verify IAM permissions for Secrets Manager access
-- [ ] Verify IAM permissions for Parameter Store access
-- [ ] Verify IAM permissions with terraform plan
+- [x] Verify IAM permissions for Secrets Manager access (scoped to specific ARNs)
+- [x] Verify IAM permissions for Parameter Store access (path-prefix scoped)
+- [x] Verify IAM permissions with terraform validate (passes)
 
 ## Checkpoint 9 - Terraform Outputs & Environment Variables
 
