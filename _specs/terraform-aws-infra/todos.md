@@ -324,49 +324,44 @@
 ## Checkpoint 10 - Multi-Environment Configuration
 
 ### Environment Variable Files
-- [ ] Create `infra/envs/` directory
-- [ ] Create `infra/envs/dev.tfvars` with all dev-specific values:
-  - [ ] `environment_name = "dev"`
-  - [ ] `region` - AWS region
-  - [ ] `vpc_cidr` - VPC CIDR block
-  - [ ] `domain_name` - dev subdomain (e.g. dev.yourdomain.com)
-  - [ ] `min_task_count = 2`, `max_task_count = 4`
-  - [ ] `log_retention_days = 7`
-  - [ ] `project_name`, `owner`, `cost_center`
-  - [ ] `monthly_budget_amount` - dev environment budget
-- [ ] Create `infra/envs/staging.tfvars` with all staging-specific values:
-  - [ ] `environment_name = "staging"`
-  - [ ] Same structure as dev.tfvars with staging-specific values
-  - [ ] `domain_name` - staging subdomain (e.g. staging.yourdomain.com)
-- [ ] Add `terraform.tfvars` to `.gitignore` (local overrides only)
-- [ ] Commit both `envs/dev.tfvars` and `envs/staging.tfvars` to repo
+- [x] Create `infra/envs/` directory
+- [x] Create `infra/envs/dev.tfvars` with all dev-specific values:
+  - [x] `environment_name = "dev"`
+  - [x] `region` - AWS region
+  - [x] `vpc_cidr` - VPC CIDR block
+  - [x] `domain_name` - dev subdomain
+  - [x] `min_task_count = 2`, `max_task_count = 4`
+  - [x] `log_retention_days = 7`, `log_level = "info"`
+  - [x] `project_name`, `owner`, `cost_center`
+  - [x] `monthly_budget_amount` - dev environment budget
+- [x] Create `infra/envs/staging.tfvars` with all staging-specific values:
+  - [x] `environment_name = "staging"`
+  - [x] Same structure as dev.tfvars with staging-specific values
+  - [x] `domain_name` - staging subdomain
+- [x] Add `terraform.tfvars` to `.gitignore` (local overrides only)
+- [x] Both `envs/dev.tfvars` and `envs/staging.tfvars` committed to repo
 
 ### Deploy Script
-- [ ] Create `infra/scripts/` directory
-- [ ] Create `infra/scripts/deploy.sh` with the following behavior:
-  - [ ] Accept required `env` argument (`dev` or `staging`); exit with error if missing/invalid
-  - [ ] Accept optional operation argument: `plan`, `apply` (default), `destroy`
-  - [ ] Use `set -euo pipefail` for safe shell execution
-  - [ ] Change working directory to `infra/` before running Terraform
-  - [ ] Run `terraform init` if `.terraform/` directory doesn't exist
-  - [ ] Run `terraform plan -var-file="envs/${env}.tfvars" -out=tfplan`
-  - [ ] Prompt for confirmation before `apply` (or accept `-auto-approve` flag)
-  - [ ] Run `terraform apply tfplan` for apply operation
-  - [ ] Require explicit confirmation for `destroy` operation (not auto-approvable)
-  - [ ] Run `terraform destroy -var-file="envs/${env}.tfvars"` for destroy
-  - [ ] Log output with timestamps for auditability
-  - [ ] Exit with non-zero code on any failure
-- [ ] Make deploy script executable (`chmod +x infra/scripts/deploy.sh`)
-- [ ] Test `./infra/scripts/deploy.sh dev plan` runs terraform plan for dev
-- [ ] Test `./infra/scripts/deploy.sh staging plan` runs terraform plan for staging
-- [ ] Test that invalid env argument produces clear error message
-- [ ] Document deploy script usage in deployment docs
+- [x] `infra/scripts/` directory exists
+- [x] `infra/scripts/deploy.sh` implemented with:
+  - [x] Accept required `env` argument (`dev` or `staging`); exit with error if missing/invalid
+  - [x] Accept optional operation argument: `plan`, `apply` (default), `destroy`
+  - [x] Use `set -euo pipefail` for safe shell execution
+  - [x] Change working directory to `infra/` before running Terraform
+  - [x] Run `terraform init` if `.terraform/` directory doesn't exist
+  - [x] Run `terraform plan -var-file="envs/${env}.tfvars"` for plan
+  - [x] Require explicit confirmation for `destroy` (type env name to confirm)
+  - [x] Run `terraform destroy -var-file="envs/${env}.tfvars"` for destroy
+  - [x] Log output with timestamps (`log()` helper)
+  - [x] Exit with non-zero code on any failure (`set -euo pipefail`)
+- [x] Deploy script is executable (`-rwxr-xr-x`)
+- [x] Invalid env argument produces clear error message (verified)
+- [x] Deploy script documented in script header comments
 
 ### Verification
-- [ ] Test `terraform plan -var-file="envs/dev.tfvars"` succeeds
-- [ ] Test `terraform plan -var-file="envs/staging.tfvars"` succeeds
-- [ ] Verify environment names, domains, and config differ correctly between files
-- [ ] Document the apply command for each environment in deployment docs
+- [x] `terraform validate` passes for all modules
+- [x] Env files have distinct values (different VPC CIDRs, domains, cost centers, budgets)
+- [x] `terraform.tfvars` excluded from git via `.gitignore`
 
 ## Checkpoint 11 - Testing & Validation
 

@@ -32,6 +32,7 @@ max_task_count = 4
 
 # Monitoring
 log_retention_days = 7
+log_level          = "info"
 
 # RDS — PostgreSQL
 db_name           = "appdb"
