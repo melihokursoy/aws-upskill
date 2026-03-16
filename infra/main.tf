@@ -120,6 +120,28 @@ module "monitoring" {
 }
 
 # ---------------------------------------------------------------------------
+# RDS — PostgreSQL Database
+# ---------------------------------------------------------------------------
+
+module "rds" {
+  source = "./modules/rds"
+
+  environment_name = var.environment_name
+  project_name     = var.project_name
+  tags             = local.common_tags
+
+  # Networking
+  vpc_id                      = module.vpc.vpc_id
+  private_subnet_id           = module.vpc.private_subnet_id
+  availability_zone           = var.availability_zone
+  ecs_tasks_security_group_id = module.ecs.ecs_tasks_security_group_id
+
+  # Database config
+  db_name           = var.db_name
+  db_instance_class = var.db_instance_class
+}
+
+# ---------------------------------------------------------------------------
 # ECS — Fargate Cluster, Task Definitions, Services
 # ---------------------------------------------------------------------------
 

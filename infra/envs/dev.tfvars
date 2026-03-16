@@ -33,6 +33,10 @@ max_task_count = 4
 # Monitoring
 log_retention_days = 7
 
+# RDS — PostgreSQL
+db_name           = "appdb"
+db_instance_class = "db.t3.micro"
+
 # Cost / Budgets
 monthly_budget_amount = 50
 budget_alert_email    = "team@example.com"

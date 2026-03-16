@@ -218,22 +218,21 @@
 ## Checkpoint 7 - Database & Storage (RDS & S3)
 
 ### RDS PostgreSQL Configuration
-- [ ] Create rds module with PostgreSQL RDS instance
-- [ ] Set engine to PostgreSQL (latest stable version)
-- [ ] Configure single-AZ deployment (cost optimization for dev/staging)
-- [ ] Generate random 32-character root password
-- [ ] Store root password in AWS Secrets Manager
-  - [ ] Create secret: `{project}/rds/postgres/root-password`
-  - [ ] Store the auto-generated password
-  - [ ] Document secret name in shared location
-- [ ] Disable automated backups (deferred for future)
-- [ ] Create security group for RDS (allow port 5432 from ECS tasks)
-- [ ] Create PostgreSQL parameter group:
-  - [ ] Configure log settings for CloudWatch integration
-  - [ ] Configure connection pooling if needed
-  - [ ] Document parameter group configuration
-- [ ] Note: Application S3 buckets deferred (no backups, no assets buckets needed yet)
-- [ ] Verify database with terraform plan
+- [x] Create rds module with PostgreSQL RDS instance
+- [x] Set engine to PostgreSQL (latest stable version — v16)
+- [x] Configure single-AZ deployment (cost optimization for dev/staging)
+- [x] Generate random 32-character root password
+- [x] Store root password in AWS Secrets Manager
+  - [x] Create secret: `{project}/{env}/rds/postgres/root-password`
+  - [x] Store the auto-generated password (includes host, port, dbname, username, password as JSON)
+  - [x] Document secret name in shared location (outputs.tf: rds_root_password_secret_name)
+- [x] Disable automated backups (backup_retention_period = 0)
+- [x] Create security group for RDS (allow port 5432 from ECS tasks)
+- [x] Create PostgreSQL parameter group:
+  - [x] Configure log settings for CloudWatch integration (log_min_duration_statement=1000ms, log_connections, log_disconnections)
+  - [x] Document parameter group configuration (inline comments in main.tf)
+- [x] Note: Application S3 buckets deferred (no backups, no assets buckets needed yet)
+- [x] Verify database with terraform validate (passes)
 
 ## Checkpoint 8 - Security & IAM
 

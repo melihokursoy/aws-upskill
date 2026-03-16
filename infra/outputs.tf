@@ -172,3 +172,43 @@ output "alb_security_group_id" {
   description = "ALB security group ID (ECS task SGs must allow inbound from this)."
   value       = module.alb.alb_security_group_id
 }
+
+# ---------------------------------------------------------------------------
+# RDS
+# ---------------------------------------------------------------------------
+
+output "rds_db_endpoint" {
+  description = "RDS PostgreSQL endpoint address. Pass to API service as DB_HOST."
+  value       = module.rds.db_endpoint
+}
+
+output "rds_db_port" {
+  description = "RDS PostgreSQL port (5432)."
+  value       = module.rds.db_port
+}
+
+output "rds_db_name" {
+  description = "Initial database name created in the RDS instance."
+  value       = module.rds.db_name
+}
+
+output "rds_db_username" {
+  description = "RDS master username."
+  value       = module.rds.db_username
+}
+
+output "rds_security_group_id" {
+  description = "RDS security group ID."
+  value       = module.rds.rds_security_group_id
+}
+
+output "rds_root_password_secret_arn" {
+  description = "Secrets Manager ARN for the RDS root password. API task IAM role needs read access."
+  value       = module.rds.root_password_secret_arn
+  sensitive   = true
+}
+
+output "rds_root_password_secret_name" {
+  description = "Secrets Manager secret name: {project}/{env}/rds/postgres/root-password"
+  value       = module.rds.root_password_secret_name
+}

@@ -123,6 +123,22 @@ variable "log_retention_days" {
 }
 
 # ---------------------------------------------------------------------------
+# RDS Database
+# ---------------------------------------------------------------------------
+
+variable "db_name" {
+  description = "Name of the initial PostgreSQL database to create."
+  type        = string
+  default     = "appdb"
+}
+
+variable "db_instance_class" {
+  description = "RDS instance class. db.t3.micro for dev/staging cost optimization."
+  type        = string
+  default     = "db.t3.micro"
+}
+
+# ---------------------------------------------------------------------------
 # Cost / Budgets
 # ---------------------------------------------------------------------------
 
