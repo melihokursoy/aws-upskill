@@ -138,15 +138,57 @@ module "rds" {
   tags             = local.common_tags
 
   # Networking
-  vpc_id                      = module.vpc.vpc_id
-  private_subnet_id           = module.vpc.private_subnet_id
-  private_subnet_id_2         = module.vpc.private_subnet_id_2
-  availability_zone           = var.availability_zone
-  ecs_tasks_security_group_id = module.ecs.ecs_tasks_security_group_id
+  vpc_id              = module.vpc.vpc_id
+  private_subnet_id   = module.vpc.private_subnet_id
+  private_subnet_id_2 = module.vpc.private_subnet_id_2
+  availability_zone   = var.availability_zone
 
   # Database config
   db_name           = var.db_name
   db_instance_class = var.db_instance_class
+}
+
+# ---------------------------------------------------------------------------
+# Security Group Rule — ECS Tasks → RDS (cross-module)
+#
+# Defined here (root module) so Terraform's dependency graph sees the edge
+# between module.ecs.ecs_tasks_security_group_id and module.rds.rds_security_group_id.
+# This lets Terraform delete this rule before either SG during destroy, preventing
+# DependencyViolation errors that occur when the rule is an inline ingress block
+# inside the RDS module (where the ECS SG ID is just an opaque string).
+# ---------------------------------------------------------------------------
+
+# ALB → ECS tasks (web, port 3300)
+resource "aws_security_group_rule" "alb_to_ecs_web" {
+  description              = "Allow ALB to reach Next.js on port 3300"
+  type                     = "ingress"
+  from_port                = 3300
+  to_port                  = 3300
+  protocol                 = "tcp"
+  source_security_group_id = module.alb.alb_security_group_id
+  security_group_id        = module.ecs.ecs_tasks_security_group_id
+}
+
+# ALB → ECS tasks (api, port 3301)
+resource "aws_security_group_rule" "alb_to_ecs_api" {
+  description              = "Allow ALB to reach NestJS API on port 3301"
+  type                     = "ingress"
+  from_port                = 3301
+  to_port                  = 3301
+  protocol                 = "tcp"
+  source_security_group_id = module.alb.alb_security_group_id
+  security_group_id        = module.ecs.ecs_tasks_security_group_id
+}
+
+# ECS tasks → RDS (port 5432)
+resource "aws_security_group_rule" "ecs_to_rds" {
+  description              = "Allow ECS tasks to connect to PostgreSQL on port 5432"
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = module.ecs.ecs_tasks_security_group_id
+  security_group_id        = module.rds.rds_security_group_id
 }
 
 # ---------------------------------------------------------------------------
@@ -182,9 +224,8 @@ module "ecs" {
   tags               = local.common_tags
 
   # Networking
-  vpc_id                = module.vpc.vpc_id
-  private_subnet_id     = module.vpc.private_subnet_id
-  alb_security_group_id = module.alb.alb_security_group_id
+  vpc_id            = module.vpc.vpc_id
+  private_subnet_id = module.vpc.private_subnet_id
 
   # Load balancer target groups
   web_target_group_arn = module.alb.web_target_group_arn
@@ -212,4 +253,18 @@ module "ecs" {
   db_port                = module.rds.db_port
   db_name                = module.rds.db_name
   db_password_secret_arn = module.rds.root_password_secret_arn
+}
+
+# ---------------------------------------------------------------------------
+# Budgets — Monthly cost alerts per environment
+# ---------------------------------------------------------------------------
+
+module "budgets" {
+  source = "./modules/budgets"
+
+  environment_name      = var.environment_name
+  project_name          = var.project_name
+  cost_center           = var.cost_center
+  monthly_budget_amount = var.monthly_budget_amount
+  budget_alert_email    = var.budget_alert_email
 }

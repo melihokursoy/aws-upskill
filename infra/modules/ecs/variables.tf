@@ -38,11 +38,6 @@ variable "private_subnet_id" {
   type        = string
 }
 
-variable "alb_security_group_id" {
-  description = "ALB security group ID — ECS tasks allow inbound only from this SG."
-  type        = string
-}
-
 # ---------------------------------------------------------------------------
 # Load Balancer
 # ---------------------------------------------------------------------------

@@ -37,11 +37,6 @@ variable "availability_zone" {
   type        = string
 }
 
-variable "ecs_tasks_security_group_id" {
-  description = "ECS tasks security group ID — RDS allows inbound port 5432 only from this SG."
-  type        = string
-}
-
 # ---------------------------------------------------------------------------
 # Database Configuration
 # ---------------------------------------------------------------------------

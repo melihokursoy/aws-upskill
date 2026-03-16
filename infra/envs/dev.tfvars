@@ -41,4 +41,4 @@ db_instance_class = "db.t3.micro"
 
 # Cost / Budgets
 monthly_budget_amount = 50
-budget_alert_email    = "team@example.com"
+budget_alert_email    = "melih@codecrib.co.uk"

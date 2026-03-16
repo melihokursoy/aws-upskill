@@ -261,3 +261,12 @@ output "ssm_api_log_level" {
   description = "SSM parameter name for the API log level."
   value       = module.ssm.api_log_level_name
 }
+
+# ---------------------------------------------------------------------------
+# Budgets
+# ---------------------------------------------------------------------------
+
+output "budget_name" {
+  description = "Name of the AWS Budget for this environment."
+  value       = module.budgets.budget_name
+}

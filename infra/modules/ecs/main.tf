@@ -97,23 +97,10 @@ resource "aws_security_group" "ecs_tasks" {
   description = "ECS tasks - inbound from ALB only, all outbound"
   vpc_id      = var.vpc_id
 
-  # Web container — traffic from ALB to Next.js
-  ingress {
-    description     = "Next.js from ALB"
-    from_port       = 3300
-    to_port         = 3300
-    protocol        = "tcp"
-    security_groups = [var.alb_security_group_id]
-  }
-
-  # API container — traffic from ALB to NestJS
-  ingress {
-    description     = "NestJS API from ALB"
-    from_port       = 3301
-    to_port         = 3301
-    protocol        = "tcp"
-    security_groups = [var.alb_security_group_id]
-  }
+  # No inline ingress rules — cross-module rules (ALB → ECS tasks) are defined
+  # as aws_security_group_rule resources in the root module (infra/main.tf).
+  # This gives Terraform visibility into the dependency so it can delete the
+  # rules before either security group during terraform destroy.
 
   # Outbound — ECR image pulls, CloudWatch Logs, Secrets Manager, internet
   egress {

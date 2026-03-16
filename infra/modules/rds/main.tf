@@ -89,13 +89,10 @@ resource "aws_security_group" "rds" {
   description = "Allow PostgreSQL (port 5432) inbound from ECS tasks only"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description     = "PostgreSQL from ECS tasks"
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [var.ecs_tasks_security_group_id]
-  }
+  # No inline ingress rule — the cross-module rule (ECS tasks → RDS) is defined
+  # as aws_security_group_rule.ecs_to_rds in the root module (infra/main.tf).
+  # This gives Terraform visibility into the dependency so it can delete the
+  # rule before either security group during terraform destroy.
 
   egress {
     description = "Allow all outbound (RDS needs to reach AWS endpoints for monitoring)"
@@ -190,10 +187,11 @@ resource "aws_db_instance" "postgres" {
   parameter_group_name = aws_db_parameter_group.postgres.name
 
   # Cost optimization: single-AZ, no backups, no snapshots
-  multi_az                = false
-  backup_retention_period = 0 # disabled — deferred for future
-  skip_final_snapshot     = true
-  deletion_protection     = false # allow terraform destroy in dev/staging
+  multi_az                  = false
+  backup_retention_period   = 0     # disabled — deferred for future
+  skip_final_snapshot       = true  # no snapshot on delete
+  delete_automated_backups  = true  # purge any system snapshots immediately on delete
+  deletion_protection       = false # allow terraform destroy in dev/staging
 
   # Performance Insights disabled for cost optimization
   performance_insights_enabled = false
