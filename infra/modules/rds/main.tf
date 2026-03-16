@@ -171,9 +171,9 @@ resource "aws_db_instance" "postgres" {
   instance_class = var.db_instance_class
 
   # Storage
-  allocated_storage     = var.db_allocated_storage
-  storage_type          = "gp2"
-  storage_encrypted     = true
+  allocated_storage = var.db_allocated_storage
+  storage_type      = "gp2"
+  storage_encrypted = true
 
   # Credentials
   db_name  = var.db_name

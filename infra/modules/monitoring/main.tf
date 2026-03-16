@@ -196,10 +196,10 @@ resource "aws_cloudwatch_dashboard" "main" {
           annotations = {
             horizontal = [{ value = 80, label = "Alert threshold", color = "#FF5722" }]
           }
-          view    = "timeSeries"
-          stat    = "Average"
-          period  = 60
-          yAxis   = { left = { min = 0, max = 100 } }
+          view   = "timeSeries"
+          stat   = "Average"
+          period = 60
+          yAxis  = { left = { min = 0, max = 100 } }
         }
       },
       # Row 1: ECS Memory utilization

@@ -19,6 +19,11 @@ output "environment_name" {
   value       = var.environment_name
 }
 
+output "domain_name" {
+  description = "Custom domain name for this environment."
+  value       = var.domain_name
+}
+
 # ---------------------------------------------------------------------------
 # VPC & Networking
 # ---------------------------------------------------------------------------
