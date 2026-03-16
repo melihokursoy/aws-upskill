@@ -289,37 +289,37 @@
 ## Checkpoint 9 - Terraform Outputs & Environment Variables
 
 ### Module Outputs Configuration
-- [ ] Define VPC module outputs (VPC ID, subnet IDs, security group IDs)
-- [ ] Define ALB module outputs (ALB DNS, target group ARNs, listener ARNs)
-- [ ] Define ECR module outputs (repository URLs for web and API)
-- [ ] Define ECS module outputs (cluster name, task definition ARNs, service names)
-- [ ] Define RDS module outputs (database endpoint, port, name)
-- [ ] Define S3 module outputs (bucket names)
-- [ ] Define CloudWatch module outputs (log group names)
-- [ ] Define IAM module outputs (task execution role ARN, task role ARNs)
-- [ ] Aggregate all module outputs in root outputs.tf
+- [x] Define VPC module outputs (VPC ID, subnet IDs, security group IDs)
+- [x] Define ALB module outputs (ALB DNS, target group ARNs, listener ARNs)
+- [x] Define ECR module outputs (repository URLs for web and API)
+- [x] Define ECS module outputs (cluster name, task definition ARNs, service names)
+- [x] Define RDS module outputs (database endpoint, port, name)
+- [x] Define S3 module outputs (N/A — application S3 buckets deferred)
+- [x] Define CloudWatch module outputs (log group names)
+- [x] Define IAM module outputs (task execution role ARN, task role ARNs)
+- [x] Aggregate all module outputs in root outputs.tf
 
 ### Environment Variables Configuration
-- [ ] Create ECS task environment variable mapping from Terraform outputs
-- [ ] Define environment variables for web service:
-  - [ ] `API_ENDPOINT` from ALB DNS
-  - [ ] `LOG_GROUP` from CloudWatch output
-  - [ ] `REGION` from variable
-  - [ ] `ENVIRONMENT` from variable (not hardcoded)
-- [ ] Define environment variables for API service:
-  - [ ] `DB_HOST` from RDS endpoint output
-  - [ ] `DB_PORT` from RDS output (5432)
-  - [ ] `DB_NAME` from Parameter Store (or RDS output)
-  - [ ] `DB_USER` = "postgres" (RDS root user)
-  - [ ] `DB_PASSWORD_SECRET_ARN` from Secrets Manager output (app retrieves at runtime)
-  - [ ] `LOG_GROUP` from CloudWatch output
-  - [ ] `REGION` from variable
-  - [ ] `ENVIRONMENT` from variable (not hardcoded)
-  - [ ] `PARAMETER_STORE_PREFIX` = `/app/api` (for config retrieval)
-- [ ] Ensure no magic strings or hardcoded values in Terraform
-- [ ] Document that:
-  - [ ] API application retrieves RDS password from Secrets Manager at runtime
-  - [ ] API application retrieves config values from Parameter Store (db_host, db_name, log_level, etc.)
+- [x] Create ECS task environment variable mapping from Terraform outputs
+- [x] Define environment variables for web service:
+  - [x] `API_ENDPOINT` from ALB DNS (https://{alb_dns}/api)
+  - [x] `LOG_GROUP` from CloudWatch log group name (internal to ECS module)
+  - [x] `REGION` from variable
+  - [x] `ENVIRONMENT` from variable (not hardcoded)
+- [x] Define environment variables for API service:
+  - [x] `DB_HOST` from RDS endpoint output
+  - [x] `DB_PORT` from RDS output (5432)
+  - [x] `DB_NAME` from RDS output
+  - [x] `DB_USER` = "postgres" (variable with default, not hardcoded)
+  - [x] `DB_PASSWORD_SECRET_ARN` from Secrets Manager output (app retrieves at runtime)
+  - [x] `LOG_GROUP` from CloudWatch log group name (internal to ECS module)
+  - [x] `REGION` from variable
+  - [x] `ENVIRONMENT` from variable (not hardcoded)
+  - [x] `PARAMETER_STORE_PREFIX` = `/app/api` (for config retrieval)
+- [x] Ensure no magic strings or hardcoded values in Terraform
+- [x] Document that:
+  - [x] API application retrieves RDS password from Secrets Manager at runtime via DB_PASSWORD_SECRET_ARN
+  - [x] API application retrieves config values from Parameter Store at startup via PARAMETER_STORE_PREFIX
 
 ## Checkpoint 10 - Multi-Environment Configuration
 

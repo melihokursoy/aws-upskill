@@ -110,6 +110,16 @@ output "ecs_tasks_security_group_id" {
   value       = module.ecs.ecs_tasks_security_group_id
 }
 
+output "ecs_web_task_definition_arn" {
+  description = "ARN of the latest web task definition revision."
+  value       = module.ecs.web_task_definition_arn
+}
+
+output "ecs_api_task_definition_arn" {
+  description = "ARN of the latest API task definition revision."
+  value       = module.ecs.api_task_definition_arn
+}
+
 output "cloudwatch_dashboard_name" {
   description = "CloudWatch dashboard name for infrastructure overview."
   value       = module.monitoring.dashboard_name

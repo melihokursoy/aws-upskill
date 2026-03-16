@@ -201,4 +201,13 @@ module "ecs" {
   task_cpu       = var.task_cpu
   task_memory    = var.task_memory
   min_task_count = var.min_task_count
+
+  # Web service environment variables — sourced from module outputs, no hardcoding
+  api_endpoint = "https://${module.alb.alb_dns_name}/api"
+
+  # API service environment variables — sourced from module outputs, no hardcoding
+  db_host                = module.rds.db_endpoint
+  db_port                = module.rds.db_port
+  db_name                = module.rds.db_name
+  db_password_secret_arn = module.rds.root_password_secret_arn
 }

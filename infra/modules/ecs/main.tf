@@ -156,9 +156,17 @@ resource "aws_ecs_task_definition" "web" {
       ]
 
       environment = [
+        # Runtime identity — never hardcoded, always from Terraform variables
         { name = "NODE_ENV", value = "production" },
+        { name = "ENVIRONMENT", value = var.environment_name },
+        { name = "REGION", value = var.region },
+        # Network
         { name = "PORT", value = "3300" },
-        { name = "HOSTNAME", value = "0.0.0.0" }
+        { name = "HOSTNAME", value = "0.0.0.0" },
+        # Observability
+        { name = "LOG_GROUP", value = aws_cloudwatch_log_group.web.name },
+        # API integration — web service calls the API through the ALB
+        { name = "API_ENDPOINT", value = var.api_endpoint },
       ]
 
       logConfiguration = {
@@ -214,8 +222,23 @@ resource "aws_ecs_task_definition" "api" {
       ]
 
       environment = [
+        # Runtime identity
         { name = "NODE_ENV", value = "production" },
-        { name = "PORT", value = "3301" }
+        { name = "ENVIRONMENT", value = var.environment_name },
+        { name = "REGION", value = var.region },
+        # Network
+        { name = "PORT", value = "3301" },
+        # Observability
+        { name = "LOG_GROUP", value = aws_cloudwatch_log_group.api.name },
+        # Database — host/port/name as plain env vars; password retrieved from Secrets Manager at runtime
+        { name = "DB_HOST", value = var.db_host },
+        { name = "DB_PORT", value = tostring(var.db_port) },
+        { name = "DB_NAME", value = var.db_name },
+        { name = "DB_USER", value = var.db_user },
+        # DB password: app calls Secrets Manager SDK using this ARN — never a plaintext password in env
+        { name = "DB_PASSWORD_SECRET_ARN", value = var.db_password_secret_arn },
+        # Parameter Store prefix — app fetches config values under /app/api/* at startup
+        { name = "PARAMETER_STORE_PREFIX", value = "/app/api" },
       ]
 
       logConfiguration = {

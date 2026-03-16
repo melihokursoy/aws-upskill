@@ -115,3 +115,48 @@ variable "min_task_count" {
   type        = number
   default     = 2
 }
+
+# ---------------------------------------------------------------------------
+# Environment Variables — Web Service
+# Injected into the web task definition container at runtime.
+# All values sourced from Terraform outputs — no hardcoded strings.
+# ---------------------------------------------------------------------------
+
+variable "api_endpoint" {
+  description = "Base URL for the API service. Web container uses this for server-side API calls. Sourced from ALB DNS output."
+  type        = string
+}
+
+# ---------------------------------------------------------------------------
+# Environment Variables — API Service
+# Injected into the API task definition container at runtime.
+# The DB password is NOT passed as an env var — the app retrieves it from
+# Secrets Manager at startup using DB_PASSWORD_SECRET_ARN.
+# ---------------------------------------------------------------------------
+
+variable "db_host" {
+  description = "RDS PostgreSQL endpoint address. Sourced from rds module output."
+  type        = string
+}
+
+variable "db_port" {
+  description = "RDS PostgreSQL port (5432). Sourced from rds module output."
+  type        = number
+  default     = 5432
+}
+
+variable "db_name" {
+  description = "PostgreSQL database name. Sourced from rds module output."
+  type        = string
+}
+
+variable "db_user" {
+  description = "RDS master username. Default matches the rds module default."
+  type        = string
+  default     = "postgres"
+}
+
+variable "db_password_secret_arn" {
+  description = "Secrets Manager secret ARN for the RDS root password. App retrieves the password at runtime — never passed as a plaintext env var."
+  type        = string
+}
