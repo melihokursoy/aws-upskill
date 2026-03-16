@@ -107,6 +107,15 @@ if [[ "$OP" == "destroy" ]]; then
     echo "Aborted."
     exit 1
   fi
+
+  # Apply ECR config first so force_delete=true is in state before destroy runs.
+  # Terraform reads force_delete from state during destroy, not from config.
+  log "==> Syncing ECR config to state (force_delete=true)..."
+  terraform apply \
+    -var-file="$TFVARS" \
+    -target=module.ecr \
+    -auto-approve
+
   log "==> Running terraform destroy for: $ENV"
   terraform destroy -var-file="$TFVARS"
   exit 0

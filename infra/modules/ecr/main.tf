@@ -15,6 +15,7 @@
 resource "aws_ecr_repository" "web" {
   name                 = "${var.project_name}-${var.environment_name}-web"
   image_tag_mutability = "MUTABLE" # Allows re-pushing the same tag (e.g. latest)
+  force_delete         = true      # Allow destroy even when images exist
 
   image_scanning_configuration {
     scan_on_push = true # Scan for vulnerabilities on every push
@@ -66,6 +67,7 @@ resource "aws_ecr_lifecycle_policy" "web" {
 resource "aws_ecr_repository" "api_order" {
   name                 = "${var.project_name}-${var.environment_name}-api-order"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true # Allow destroy even when images exist
 
   image_scanning_configuration {
     scan_on_push = true
