@@ -1,4 +1,8 @@
-import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { AuthUser } from './alb-auth.middleware';
@@ -58,7 +62,9 @@ describe('RolesGuard', () => {
   });
 
   it('allows when user has one of multiple required roles', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin', 'moderator']);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue(['admin', 'moderator']);
     const user = { roles: ['moderator'] } as AuthUser;
     const ctx = makeCtx(user);
     const g = new RolesGuard(reflector);
@@ -82,7 +88,9 @@ describe('RolesGuard', () => {
   });
 
   it('uses ROLES_KEY when looking up metadata', () => {
-    const spy = jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const spy = jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue(['admin']);
     const user = { roles: ['admin'] } as AuthUser;
     const ctx = makeCtx(user);
     const g = new RolesGuard(reflector);

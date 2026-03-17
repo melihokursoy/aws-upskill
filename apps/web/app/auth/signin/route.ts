@@ -20,13 +20,16 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const returnTo = request.nextUrl.searchParams.get('returnTo') ?? '/';
   // Only allow relative paths — reject anything with a host (e.g. //evil.com or https://...)
-  const safePath = returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/';
+  const safePath =
+    returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/';
 
   // Use NEXT_PUBLIC_APP_URL as the base — request.url reflects the internal container
   // binding address (HOSTNAME=0.0.0.0, PORT=3300) not the external ALB/domain URL.
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ??
-    `${request.nextUrl.protocol}//${request.headers.get('x-forwarded-host') ?? request.nextUrl.host}`;
+    `${request.nextUrl.protocol}//${
+      request.headers.get('x-forwarded-host') ?? request.nextUrl.host
+    }`;
 
   return NextResponse.redirect(new URL(safePath, baseUrl));
 }

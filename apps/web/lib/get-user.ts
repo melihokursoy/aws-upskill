@@ -75,7 +75,9 @@ export async function getUser(): Promise<WebUser | null> {
     // Roles come from the access token — cognito:groups is not in the userinfo-derived
     // x-amzn-oidc-data header. The ALB also forwards x-amzn-oidc-accesstoken which
     // is the raw Cognito access token JWT and always contains cognito:groups.
-    const roles = decodeAccessTokenRoles(headerStore.get('x-amzn-oidc-accesstoken'));
+    const roles = decodeAccessTokenRoles(
+      headerStore.get('x-amzn-oidc-accesstoken')
+    );
 
     return {
       sub: claims['sub'] ?? '',
@@ -114,7 +116,9 @@ function decodeAccessTokenRoles(accessToken: string | null): string[] {
     const claims: Record<string, any> = JSON.parse(
       Buffer.from(padded, 'base64').toString('utf8')
     );
-    return Array.isArray(claims['cognito:groups']) ? claims['cognito:groups'] : [];
+    return Array.isArray(claims['cognito:groups'])
+      ? claims['cognito:groups']
+      : [];
   } catch {
     return [];
   }

@@ -11,7 +11,9 @@ import { headers } from 'next/headers';
 import { getUser } from './get-user';
 
 function makeJwt(payload: Record<string, unknown>): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'ES256' })).toString('base64url');
+  const header = Buffer.from(JSON.stringify({ alg: 'ES256' })).toString(
+    'base64url'
+  );
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${header}.${body}.fakesig`;
 }

@@ -21,7 +21,11 @@ interface AvatarDropdownProps {
   };
 }
 
-function getInitials(givenName: string | null, familyName: string | null, name: string): string {
+function getInitials(
+  givenName: string | null,
+  familyName: string | null,
+  name: string
+): string {
   const first = (givenName ?? name).charAt(0).toUpperCase();
   const last = familyName ? familyName.charAt(0).toUpperCase() : '';
   return `${first}${last}`;

@@ -22,10 +22,10 @@ export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(ctx: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-      ctx.getHandler(),
-      ctx.getClass(),
-    ]);
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+      ROLES_KEY,
+      [ctx.getHandler(), ctx.getClass()]
+    );
 
     // No @Roles() on this handler — route is open
     if (!requiredRoles || requiredRoles.length === 0) {
@@ -38,7 +38,9 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException('Authentication required');
     }
 
-    const hasRole = requiredRoles.some((role) => request.user!.roles.includes(role));
+    const hasRole = requiredRoles.some((role) =>
+      request.user!.roles.includes(role)
+    );
     if (!hasRole) {
       throw new ForbiddenException('Insufficient role');
     }

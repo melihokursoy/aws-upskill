@@ -12,7 +12,9 @@ export default async function HomePage() {
       {user ? (
         <JwtPayload claims={user.rawClaims} />
       ) : (
-        <p className="mt-4 text-muted-foreground">Sign in to access protected features.</p>
+        <p className="mt-4 text-muted-foreground">
+          Sign in to access protected features.
+        </p>
       )}
     </main>
   );

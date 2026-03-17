@@ -73,6 +73,7 @@ ALB (HTTPS listener)
 - `aws_cognito_user_group` × 3 — groups: `admin`, `moderator`, `user`
 
 **Module outputs:**
+
 - `user_pool_id`
 - `user_pool_arn`
 - `client_id`
@@ -84,18 +85,20 @@ ALB (HTTPS listener)
 A standalone bash script that creates one test user per role and assigns them to their Cognito group. Runs **after** `terraform apply` — the User Pool must already exist.
 
 **Script behaviour:**
+
 - Takes `<env>` argument (same convention as all other infra scripts)
 - Reads `user_pool_id` from `terraform output -raw cognito_user_pool_id`
 - Idempotent — checks if user already exists before creating
 - Creates 3 users:
 
-| Username | Email | Group |
-|----------|-------|-------|
-| `seed-admin` | `seed-admin@example.com` | `admin` |
+| Username         | Email                        | Group       |
+| ---------------- | ---------------------------- | ----------- |
+| `seed-admin`     | `seed-admin@example.com`     | `admin`     |
 | `seed-moderator` | `seed-moderator@example.com` | `moderator` |
-| `seed-user` | `seed-user@example.com` | `user` |
+| `seed-user`      | `seed-user@example.com`      | `user`      |
 
 Each seed user is created with these attributes for testing the full claim pipeline:
+
 - `picture` — DiceBear `avataaars` avatar URL: `https://api.dicebear.com/9.x/avataaars/svg?seed=<username>` (unique per user, free, no API key)
 - `given_name`, `family_name` — test values for avatar initials display
 - `birthdate`, `gender`, `locale`, `zoneinfo` — sample values so all OIDC claims flow through the JWT end-to-end
@@ -106,12 +109,14 @@ Each seed user is created with these attributes for testing the full claim pipel
 - Password must meet Cognito complexity: min 8 chars, uppercase, lowercase, number, special char
 
 **Usage:**
+
 ```bash
 # After terraform apply dev
 COGNITO_SEED_PASSWORD=MyTestPass1! ./infra/scripts/seed-cognito.sh dev
 ```
 
 **Script follows existing patterns from `infra/scripts/`:**
+
 - `set -euo pipefail`
 - `log()`, `ok()`, `skip()` helpers
 - Reads `.env` from `infra/` if present
@@ -127,11 +132,13 @@ COGNITO_SEED_PASSWORD=MyTestPass1! ./infra/scripts/seed-cognito.sh dev
 - Other public paths (`/403`, `/nextapi/health`, `/api/health`, `/api/db-health`) use separate listener rules with `allow` action at higher priority — no auth processing
 
 **New ALB module variables:**
+
 - `cognito_user_pool_arn`
 - `cognito_user_pool_client_id`
 - `cognito_user_pool_domain`
 
 **New Cognito module variables (in addition to `project_name`, `environment_name`, `region`, `tags`):**
+
 - `app_domain` — domain name used for `callback_urls` and `logout_urls` (e.g., `dev.aws-upskill.codecrib.co.uk`), passed from `var.domain_name` in root module
 
 ### SSM Parameter Store (`infra/modules/ssm/`)
@@ -162,13 +169,13 @@ All auth primitives live in a shared Nx library so every NestJS API service can 
 
 **Exports:**
 
-| Export | Description |
-|--------|-------------|
-| `AlbAuthMiddleware` | NestJS middleware — reads `x-amzn-oidc-data`, decodes JWT payload, sets `request.user` |
-| `CurrentUser` | Parameter decorator returning `request.user` from execution context |
-| `Roles` | Metadata decorator: `@Roles('admin', 'moderator')` |
-| `RolesGuard` | Guard that checks `request.user.roles` against required roles — 401 if unauthenticated, 403 if insufficient role |
-| `AuthModule` | NestJS module that exports middleware, guard, and decorators |
+| Export              | Description                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `AlbAuthMiddleware` | NestJS middleware — reads `x-amzn-oidc-data`, decodes JWT payload, sets `request.user`                           |
+| `CurrentUser`       | Parameter decorator returning `request.user` from execution context                                              |
+| `Roles`             | Metadata decorator: `@Roles('admin', 'moderator')`                                                               |
+| `RolesGuard`        | Guard that checks `request.user.roles` against required roles — 401 if unauthenticated, 403 if insufficient role |
+| `AuthModule`        | NestJS module that exports middleware, guard, and decorators                                                     |
 
 **`request.user` shape (set by `AlbAuthMiddleware`):**
 
@@ -192,6 +199,7 @@ All auth primitives live in a shared Nx library so every NestJS API service can 
 If `x-amzn-oidc-data` header is absent or malformed, `request.user` is set to `null`.
 
 **Middleware behaviour:**
+
 - Reads `x-amzn-oidc-data` header
 - Base64-decodes the middle JWT segment (payload only — no signature verification; ALB already validated the token)
 - Maps JWT claims to camelCase properties: `family_name` → `familyName`, `phone_number` → `phoneNumber`, `cognito:groups` → `roles`
@@ -219,14 +227,15 @@ Example endpoints in `api-order` that demonstrate RBAC in action and serve as in
 
 **Base path:** `/roles`
 
-| Endpoint | Auth required | Role required | Returns |
-|----------|--------------|---------------|---------|
-| `GET /roles/none` | No | None | `{ message: "public endpoint" }` |
-| `GET /roles/user` | Yes | Any authenticated | `{ user: <decoded payload> }` |
-| `GET /roles/moderator` | Yes | `moderator` or `admin` | `{ user: <decoded payload> }` |
-| `GET /roles/admin` | Yes | `admin` only | `{ user: <decoded payload> }` |
+| Endpoint               | Auth required | Role required          | Returns                          |
+| ---------------------- | ------------- | ---------------------- | -------------------------------- |
+| `GET /roles/none`      | No            | None                   | `{ message: "public endpoint" }` |
+| `GET /roles/user`      | Yes           | Any authenticated      | `{ user: <decoded payload> }`    |
+| `GET /roles/moderator` | Yes           | `moderator` or `admin` | `{ user: <decoded payload> }`    |
+| `GET /roles/admin`     | Yes           | `admin` only           | `{ user: <decoded payload> }`    |
 
 **Implementation details:**
+
 - `GET /roles/none` — no `@Roles()` and no guard; `request.user` may be null; intentionally public
 - `GET /roles/user` — `@Roles('admin', 'moderator', 'user')` + `RolesGuard`; returns 401 if unauthenticated, allows any authenticated role
 - `GET /roles/moderator` — `@Roles('moderator', 'admin')` + `RolesGuard`
@@ -239,14 +248,14 @@ Example endpoints in `api-order` that demonstrate RBAC in action and serve as in
 
 ### Stack
 
-| Concern | Choice | Reason |
-|---------|--------|--------|
-| Styling | Tailwind v4 | CSS-first config, no `tailwind.config.js`, native CSS cascade layers |
-| Component base | shadcn/ui | Radix UI primitives + Tailwind, copy-paste ownership, no runtime dependency |
-| Component pattern | Atomic design | Clear hierarchy, prevents coupling, promotes reuse |
-| Design tokens | `@theme {}` in CSS | Tailwind v4 native, single source of truth |
-| Class merging | `cn()` (clsx + tailwind-merge) | Safe conditional classes, resolves Tailwind conflicts |
-| Component variants | CVA (class-variance-authority) | Type-safe variant props, scales cleanly |
+| Concern            | Choice                         | Reason                                                                      |
+| ------------------ | ------------------------------ | --------------------------------------------------------------------------- |
+| Styling            | Tailwind v4                    | CSS-first config, no `tailwind.config.js`, native CSS cascade layers        |
+| Component base     | shadcn/ui                      | Radix UI primitives + Tailwind, copy-paste ownership, no runtime dependency |
+| Component pattern  | Atomic design                  | Clear hierarchy, prevents coupling, promotes reuse                          |
+| Design tokens      | `@theme {}` in CSS             | Tailwind v4 native, single source of truth                                  |
+| Class merging      | `cn()` (clsx + tailwind-merge) | Safe conditional classes, resolves Tailwind conflicts                       |
+| Component variants | CVA (class-variance-authority) | Type-safe variant props, scales cleanly                                     |
 
 ---
 
@@ -255,7 +264,7 @@ Example endpoints in `api-order` that demonstrate RBAC in action and serve as in
 Tailwind v4 replaces `tailwind.config.js` with CSS-based configuration. All theme customisation lives in `apps/web/app/globals.css`:
 
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-primary: oklch(55% 0.2 250);
@@ -269,7 +278,7 @@ Tailwind v4 replaces `tailwind.config.js` with CSS-based configuration. All them
   --color-background: oklch(100% 0 0);
   --color-foreground: oklch(10% 0 0);
 
-  --font-sans: "Inter", sans-serif;
+  --font-sans: 'Inter', sans-serif;
   --radius: 0.5rem;
 }
 ```
@@ -299,11 +308,11 @@ apps/web/app/components/
 
 **Rules for each layer:**
 
-| Layer | Source | State | Business logic | Import from |
-|-------|--------|-------|---------------|-------------|
-| `ui/` | shadcn/ui generated | None | None — pure UI | `@/components/ui/*` |
-| `molecules/` | Handwritten | Local only | None | `@/components/ui/*` |
-| `organisms/` | Handwritten | Server context | Yes (reads user, roles) | Both layers above |
+| Layer        | Source              | State          | Business logic          | Import from         |
+| ------------ | ------------------- | -------------- | ----------------------- | ------------------- |
+| `ui/`        | shadcn/ui generated | None           | None — pure UI          | `@/components/ui/*` |
+| `molecules/` | Handwritten         | Local only     | None                    | `@/components/ui/*` |
+| `organisms/` | Handwritten         | Server context | Yes (reads user, roles) | Both layers above   |
 
 ---
 
@@ -312,6 +321,7 @@ apps/web/app/components/
 #### Server vs Client Components
 
 Default to **Server Components**. Add `"use client"` only when the component:
+
 - Uses React hooks (`useState`, `useEffect`, etc.)
 - Attaches browser event listeners
 - Uses browser-only APIs
@@ -355,19 +365,20 @@ Use `cva()` for components with multiple visual variants (size, intent, style):
 
 ```tsx
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded font-medium transition",
+  'inline-flex items-center justify-center rounded font-medium transition',
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-muted hover:text-foreground",
+        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-muted hover:text-foreground',
       },
-      size: { sm: "h-8 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6" },
+      size: { sm: 'h-8 px-3 text-sm', md: 'h-10 px-4', lg: 'h-12 px-6' },
     },
-    defaultVariants: { variant: "primary", size: "md" },
+    defaultVariants: { variant: 'primary', size: 'md' },
   }
-)
+);
 ```
 
 #### Tailwind Class Ordering
@@ -375,6 +386,7 @@ const buttonVariants = cva(
 Classes are sorted automatically by `prettier-plugin-tailwindcss`. Never manually sort — just run Prettier.
 
 Logical grouping when writing (Prettier enforces final order):
+
 1. Layout (display, position, flex/grid)
 2. Sizing (w, h, min/max)
 3. Spacing (p, m, gap)
@@ -402,12 +414,12 @@ Standards are documented in `docs/ui-standards.md` for the full reference guide.
 
 ### Page Structure
 
-| Route | Title | Public? | Accessible by |
-|-------|-------|---------|---------------|
-| `/` | Home | Yes — ALB `allow` | Anyone (unauthenticated sees Sign In; authenticated sees content) |
-| `/manage` | Manage | No | `moderator` and `admin` only |
-| `/admin` | Admin | No | `admin` only |
-| `/403` | Forbidden | Yes | Anyone (error page) |
+| Route     | Title     | Public?           | Accessible by                                                     |
+| --------- | --------- | ----------------- | ----------------------------------------------------------------- |
+| `/`       | Home      | Yes — ALB `allow` | Anyone (unauthenticated sees Sign In; authenticated sees content) |
+| `/manage` | Manage    | No                | `moderator` and `admin` only                                      |
+| `/admin`  | Admin     | No                | `admin` only                                                      |
+| `/403`    | Forbidden | Yes               | Anyone (error page)                                               |
 
 Role access for protected routes is enforced in Next.js middleware — after ALB has authenticated the user. If a role check fails, the user is redirected to `/403`.
 
@@ -468,6 +480,7 @@ Public paths exempt from **both** checks (pass through unconditionally):
 `/`, `/403`, `/nextapi/health`, `/nextapi/sign-out`, `/_next/`, `/favicon.ico`
 
 Protected path role requirements:
+
 - `/manage` → `['admin', 'moderator']`
 - `/admin` → `['admin']`
 
@@ -481,6 +494,7 @@ The shared header is present on every page (via root layout). Layout:
 ```
 
 **Right side — auth buttons (unauthenticated):**
+
 - Shown only when `getUser()` returns null
 - Two buttons rendered side by side:
   - **Sign Up** (secondary/outline style) — left — links to Cognito Hosted UI `/signup` endpoint
@@ -490,17 +504,18 @@ The shared header is present on every page (via root layout). Layout:
   - Sign In: `https://${COGNITO_DOMAIN}/login?client_id=${COGNITO_CLIENT_ID}&response_type=code&redirect_uri=${NEXT_PUBLIC_APP_URL}`
 
 **Right side — Avatar dropdown (authenticated):**
+
 - Trigger: circular avatar + "FirstName LastName" text + chevron
   - Avatar shows `picture` URL as `<img>` if the claim is present and non-empty
   - Falls back to initials (first letter of `name` + first letter of `familyName`) if `picture` is null/absent
 - Clicking opens a dropdown menu containing:
 
-| Item | Shown to | Action |
-|------|----------|--------|
-| **Manage** | `moderator`, `admin` | Navigate to `/manage` |
-| **Admin** | `admin` only | Navigate to `/admin` |
-| *(separator)* | — | — |
-| **Logout** | All authenticated | Redirect to `/nextapi/sign-out` |
+| Item          | Shown to             | Action                          |
+| ------------- | -------------------- | ------------------------------- |
+| **Manage**    | `moderator`, `admin` | Navigate to `/manage`           |
+| **Admin**     | `admin` only         | Navigate to `/admin`            |
+| _(separator)_ | —                    | —                               |
+| **Logout**    | All authenticated    | Redirect to `/nextapi/sign-out` |
 
 - Items the user cannot access are **not rendered** (no disabled state)
 - Dropdown closes on outside click or Escape key
@@ -519,11 +534,13 @@ The role check in middleware is the authoritative security gate. The dropdown is
 Variables added to ECS task definitions (sourced from SSM at deploy time):
 
 **API service:**
+
 - `COGNITO_USER_POOL_ID`
 - `COGNITO_CLIENT_ID`
 - `COGNITO_ISSUER_URL`
 
 **Web service:**
+
 - `COGNITO_DOMAIN`
 - `COGNITO_CLIENT_ID`
 - `NEXT_PUBLIC_APP_URL` (for logout redirect URI)
@@ -535,23 +552,27 @@ Variables added to ECS task definitions (sourced from SSM at deploy time):
 ### Unit Tests (many)
 
 **API — `AlbAuthMiddleware`:**
+
 - Valid `x-amzn-oidc-data` header → `request.user` populated correctly
 - Missing header → `request.user` is null
 - Malformed JWT payload → `request.user` is null, no crash
 - `cognito:groups` absent → `roles` defaults to empty array
 
 **API — `RolesGuard`:**
+
 - User with matching role → passes (returns true)
 - User without matching role → throws `ForbiddenException`
 - Null `request.user` on protected route → throws `UnauthorizedException`
 
 **Web — `getUser()` utility:**
+
 - Valid header → decoded user object returned
 - Missing header → returns null
 
 ### Integration Tests (moderate)
 
 **API routes:**
+
 - `GET /api/health` with no auth header → 200 (exempt)
 - `GET /api/db-health` with no auth header → 200 (exempt)
 - Request with valid `x-amzn-oidc-data` → `request.user` available in controller

@@ -6,7 +6,9 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-16">
-      <h1 className="text-3xl font-semibold tracking-tight text-foreground">Admin</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+        Admin
+      </h1>
       {user && <JwtPayload claims={user.rawClaims} />}
       <p className="mt-8 text-sm text-muted-foreground">
         Admin features will be added in future updates.

@@ -1,14 +1,16 @@
 import { AlbAuthMiddleware, AuthUser } from './alb-auth.middleware';
 
 function makeJwt(payload: Record<string, unknown>): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'ES256' })).toString('base64url');
+  const header = Buffer.from(JSON.stringify({ alg: 'ES256' })).toString(
+    'base64url'
+  );
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${header}.${body}.fakesignature`;
 }
 
 function makeReq(
   oidcData?: string,
-  accessToken?: string,
+  accessToken?: string
 ): { headers: Record<string, string>; user: AuthUser | null } {
   const headers: Record<string, string> = {};
   if (oidcData) headers['x-amzn-oidc-data'] = oidcData;
@@ -47,7 +49,10 @@ describe('AlbAuthMiddleware', () => {
       locale: 'en-GB',
       zoneinfo: 'Europe/London',
     };
-    const req = makeReq(makeJwt(oidcPayload), makeJwt({ 'cognito:groups': ['admin'] }));
+    const req = makeReq(
+      makeJwt(oidcPayload),
+      makeJwt({ 'cognito:groups': ['admin'] })
+    );
     middleware.use(req as never, {} as never, next);
 
     expect(req.user).toEqual({

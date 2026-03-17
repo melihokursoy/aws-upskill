@@ -22,12 +22,18 @@ beforeEach(() => {
 });
 
 function makeJwt(payload: Record<string, unknown>): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'ES256' })).toString('base64url');
+  const header = Buffer.from(JSON.stringify({ alg: 'ES256' })).toString(
+    'base64url'
+  );
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${header}.${body}.fakesig`;
 }
 
-function makeRequest(pathname: string, oidcData?: string, accessToken?: string): NextRequest {
+function makeRequest(
+  pathname: string,
+  oidcData?: string,
+  accessToken?: string
+): NextRequest {
   const url = `${APP_URL}${pathname}`;
   const headers: Record<string, string> = {};
   if (oidcData) headers['x-amzn-oidc-data'] = oidcData;
@@ -36,13 +42,18 @@ function makeRequest(pathname: string, oidcData?: string, accessToken?: string):
 }
 
 describe('middleware — public paths', () => {
-  it.each(['/', '/403', '/nextapi/health', '/auth/signin', '/auth/signout', '/_next/static/chunk.js', '/favicon.ico'])(
-    'passes %s through without auth check',
-    (path) => {
-      const res = middleware(makeRequest(path));
-      expect(res.status).toBe(200); // NextResponse.next() returns 200
-    }
-  );
+  it.each([
+    '/',
+    '/403',
+    '/nextapi/health',
+    '/auth/signin',
+    '/auth/signout',
+    '/_next/static/chunk.js',
+    '/favicon.ico',
+  ])('passes %s through without auth check', (path) => {
+    const res = middleware(makeRequest(path));
+    expect(res.status).toBe(200); // NextResponse.next() returns 200
+  });
 });
 
 describe('middleware — unauthenticated on protected path', () => {
@@ -53,7 +64,6 @@ describe('middleware — unauthenticated on protected path', () => {
     expect(location).toContain(COGNITO_DOMAIN);
     expect(location).toContain('login');
   });
-
 
   it('redirects to Cognito sign-in when no OIDC header on /admin', () => {
     const res = middleware(makeRequest('/admin'));
@@ -95,7 +105,9 @@ describe('middleware — role checks', () => {
 
   it('allows any authenticated user with no role requirement', () => {
     const accessToken = makeJwt({ 'cognito:groups': ['user'] });
-    const res = middleware(makeRequest('/some-other-page', oidcData, accessToken));
+    const res = middleware(
+      makeRequest('/some-other-page', oidcData, accessToken)
+    );
     expect(res.status).toBe(200);
   });
 });

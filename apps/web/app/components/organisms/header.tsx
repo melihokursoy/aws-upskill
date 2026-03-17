@@ -15,13 +15,22 @@ export async function Header() {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         {/* Left — app name + nav */}
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-sm font-semibold text-foreground hover:text-primary">
+          <Link
+            href="/"
+            className="text-sm font-semibold text-foreground hover:text-primary"
+          >
             aws-upskill
           </Link>
           <nav className="flex items-center gap-4 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-foreground">Home</Link>
-            <Link href="/manage" className="hover:text-foreground">Manage</Link>
-            <Link href="/admin" className="hover:text-foreground">Admin</Link>
+            <Link href="/" className="hover:text-foreground">
+              Home
+            </Link>
+            <Link href="/manage" className="hover:text-foreground">
+              Manage
+            </Link>
+            <Link href="/admin" className="hover:text-foreground">
+              Admin
+            </Link>
           </nav>
         </div>
 

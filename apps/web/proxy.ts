@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = new Set(['/', '/403', '/nextapi/health', '/auth/signin', '/auth/signout']);
+const PUBLIC_PATHS = new Set([
+  '/',
+  '/403',
+  '/nextapi/health',
+  '/auth/signin',
+  '/auth/signout',
+]);
 const PUBLIC_PREFIXES = ['/_next/', '/favicon.ico'];
 
 // Routes and the minimum roles needed to access them
@@ -28,7 +34,9 @@ function decodeRoles(accessToken: string | null): string[] {
     const claims: Record<string, any> = JSON.parse(
       Buffer.from(padded, 'base64').toString('utf8')
     );
-    return Array.isArray(claims['cognito:groups']) ? claims['cognito:groups'] : [];
+    return Array.isArray(claims['cognito:groups'])
+      ? claims['cognito:groups']
+      : [];
   } catch {
     return [];
   }
@@ -69,7 +77,11 @@ export function proxy(request: NextRequest): NextResponse {
   // Local dev bypass — skip Cognito redirect but still enforce role checks
   // using LOCAL_AUTH_ROLE so role-based access behaves as in production.
   if (process.env.LOCAL_AUTH_BYPASS === 'true') {
-    const requiredRoles = ROLE_REQUIREMENTS[pathname] ?? ROLE_REQUIREMENTS[Object.keys(ROLE_REQUIREMENTS).find((r) => pathname.startsWith(r)) ?? ''];
+    const requiredRoles =
+      ROLE_REQUIREMENTS[pathname] ??
+      ROLE_REQUIREMENTS[
+        Object.keys(ROLE_REQUIREMENTS).find((r) => pathname.startsWith(r)) ?? ''
+      ];
     if (requiredRoles && requiredRoles.length > 0) {
       const userRole = process.env.LOCAL_AUTH_ROLE ?? 'admin';
       if (!requiredRoles.includes(userRole)) {
@@ -89,10 +101,16 @@ export function proxy(request: NextRequest): NextResponse {
   // Tier 2 — role check for protected routes
   // Roles come from the access token (x-amzn-oidc-accesstoken) which contains
   // cognito:groups. The userinfo-derived x-amzn-oidc-data header does not include groups.
-  const requiredRoles = ROLE_REQUIREMENTS[pathname] ?? ROLE_REQUIREMENTS[Object.keys(ROLE_REQUIREMENTS).find((r) => pathname.startsWith(r)) ?? ''];
+  const requiredRoles =
+    ROLE_REQUIREMENTS[pathname] ??
+    ROLE_REQUIREMENTS[
+      Object.keys(ROLE_REQUIREMENTS).find((r) => pathname.startsWith(r)) ?? ''
+    ];
 
   if (requiredRoles && requiredRoles.length > 0) {
-    const userRoles = decodeRoles(request.headers.get('x-amzn-oidc-accesstoken'));
+    const userRoles = decodeRoles(
+      request.headers.get('x-amzn-oidc-accesstoken')
+    );
     const hasRole = requiredRoles.some((r) => userRoles.includes(r));
     if (!hasRole) {
       return NextResponse.redirect(new URL('/403', request.url));

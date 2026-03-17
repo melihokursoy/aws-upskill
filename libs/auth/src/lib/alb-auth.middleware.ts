@@ -28,7 +28,11 @@ export interface AuthUser {
  */
 @Injectable()
 export class AlbAuthMiddleware implements NestMiddleware {
-  use(req: Request & { user: AuthUser | null }, _res: Response, next: NextFunction): void {
+  use(
+    req: Request & { user: AuthUser | null },
+    _res: Response,
+    next: NextFunction
+  ): void {
     if (process.env['LOCAL_AUTH_BYPASS'] === 'true') {
       req.user = {
         sub: process.env['LOCAL_AUTH_SUB'] ?? 'local-dev-sub',
@@ -75,7 +79,9 @@ export class AlbAuthMiddleware implements NestMiddleware {
       // Roles come from the access token — cognito:groups is not in the userinfo-derived
       // x-amzn-oidc-data header. The ALB also forwards x-amzn-oidc-accesstoken which
       // is the raw Cognito access token JWT and always contains cognito:groups.
-      const roles = decodeAccessTokenRoles(req.headers['x-amzn-oidc-accesstoken'] as string | undefined);
+      const roles = decodeAccessTokenRoles(
+        req.headers['x-amzn-oidc-accesstoken'] as string | undefined
+      );
 
       req.user = {
         sub: claims['sub'] ?? '',
@@ -114,7 +120,9 @@ function decodeAccessTokenRoles(accessToken: string | undefined): string[] {
     const claims: Record<string, any> = JSON.parse(
       Buffer.from(padded, 'base64').toString('utf8')
     );
-    return Array.isArray(claims['cognito:groups']) ? claims['cognito:groups'] : [];
+    return Array.isArray(claims['cognito:groups'])
+      ? claims['cognito:groups']
+      : [];
   } catch {
     return [];
   }

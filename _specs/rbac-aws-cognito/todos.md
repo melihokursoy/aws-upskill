@@ -169,13 +169,13 @@
 
 ## Checkpoint 8 — Local Dev Support
 
-- [ ] Add `LOCAL_AUTH_BYPASS` env var support to `AlbAuthMiddleware` in `libs/auth` — if set, inject a configurable mock user (e.g. `LOCAL_AUTH_ROLE=admin`)
-- [ ] Add `LOCAL_AUTH_BYPASS` support to web middleware — if set, skip redirect check
-- [ ] Document local dev setup in `docs/rbac-cognito.md`:
-  - [ ] How to set `LOCAL_AUTH_BYPASS` and mock role
-  - [ ] How to manually set `x-amzn-oidc-data` header for testing specific roles
-  - [ ] How to create test users in Cognito and assign them to groups
-  - [ ] Note: middleware is defense-in-depth — ALB is the primary auth gate in production; middleware is primary in local dev
+- [x] Add `LOCAL_AUTH_BYPASS` env var support to `AlbAuthMiddleware` in `libs/auth` — if set, inject a configurable mock user (e.g. `LOCAL_AUTH_ROLE=admin`)
+- [x] Add `LOCAL_AUTH_BYPASS` support to web middleware — if set, skip redirect check
+- [x] Document local dev setup in `docs/rbac-cognito.md`:
+  - [x] How to set `LOCAL_AUTH_BYPASS` and mock role
+  - [x] How to manually set `x-amzn-oidc-data` header for testing specific roles
+  - [x] How to create test users in Cognito and assign them to groups
+  - [x] Note: middleware is defense-in-depth — ALB is the primary auth gate in production; middleware is primary in local dev
 
 ## Checkpoint 9 — Integration & E2E Tests
 

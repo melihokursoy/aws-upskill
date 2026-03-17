@@ -17,43 +17,43 @@ Browser → ALB (authenticate-cognito action)
 
 ### Public paths (bypassed by ALB — no auth required)
 
-| Path | Service |
-|---|---|
-| `/_next/*` | Web static assets |
-| `/favicon.ico` | Web |
-| `/403` | Web error page |
-| `/nextapi/health` | Web health check |
-| `/auth/signout` | Web logout handler |
-| `/api/health`, `/api/db-health` | API health checks |
+| Path                            | Service            |
+| ------------------------------- | ------------------ |
+| `/_next/*`                      | Web static assets  |
+| `/favicon.ico`                  | Web                |
+| `/403`                          | Web error page     |
+| `/nextapi/health`               | Web health check   |
+| `/auth/signout`                 | Web logout handler |
+| `/api/health`, `/api/db-health` | API health checks  |
 
 ### The `x-amzn-oidc-data` header
 
 A signed JWT injected by the ALB. The payload (middle base64url segment) contains standard OIDC claims:
 
-| JWT claim | Mapped field |
-|---|---|
-| `sub` | `sub` |
-| `email` | `email` |
-| `name` | `name` |
-| `family_name` | `familyName` |
-| `birthdate` | `birthdate` |
-| `phone_number` | `phoneNumber` |
-| `address` | `address` |
-| `picture` | `picture` |
-| `gender` | `gender` |
-| `locale` | `locale` |
-| `zoneinfo` | `zoneinfo` |
-| `cognito:groups` | `roles` |
+| JWT claim        | Mapped field  |
+| ---------------- | ------------- |
+| `sub`            | `sub`         |
+| `email`          | `email`       |
+| `name`           | `name`        |
+| `family_name`    | `familyName`  |
+| `birthdate`      | `birthdate`   |
+| `phone_number`   | `phoneNumber` |
+| `address`        | `address`     |
+| `picture`        | `picture`     |
+| `gender`         | `gender`      |
+| `locale`         | `locale`      |
+| `zoneinfo`       | `zoneinfo`    |
+| `cognito:groups` | `roles`       |
 
 ## Roles
 
 Three Cognito user groups are provisioned:
 
-| Group | Access |
-|---|---|
-| `admin` | `/admin`, `/manage`, and all authenticated routes |
-| `moderator` | `/manage` and all authenticated routes |
-| `user` | All authenticated routes only |
+| Group       | Access                                            |
+| ----------- | ------------------------------------------------- |
+| `admin`     | `/admin`, `/manage`, and all authenticated routes |
+| `moderator` | `/manage` and all authenticated routes            |
+| `user`      | All authenticated routes only                     |
 
 ## NestJS API — decorators
 
@@ -97,6 +97,7 @@ The Sign In button navigates to `/manage` — a path protected by the ALB's `/*`
 **Why not link directly to Cognito?** The ALB's `/oauth2/idpresponse` callback is **stateful**. It only completes token exchanges for auth flows the ALB itself initiated (it generates and validates its own `state` parameter). If the app builds a Cognito URL directly, the callback returns `401 Authorization Required` and sets no session cookie, because the ALB has no matching state for the code.
 
 The correct flow:
+
 1. User clicks **Sign In** → browser navigates to `/manage`
 2. ALB: no session cookie → redirects to Cognito (ALB builds the URL with its own state)
 3. User authenticates in Cognito Hosted UI
@@ -121,11 +122,11 @@ Cognito clears its own session and redirects the browser to `<APP_URL>` (the hom
 
 The `infra/scripts/seed-cognito.sh` script creates three test users:
 
-| Username | Group | Password |
-|---|---|---|
-| `seed-admin` | `admin` | `$COGNITO_SEED_PASSWORD` |
+| Username         | Group       | Password                 |
+| ---------------- | ----------- | ------------------------ |
+| `seed-admin`     | `admin`     | `$COGNITO_SEED_PASSWORD` |
 | `seed-moderator` | `moderator` | `$COGNITO_SEED_PASSWORD` |
-| `seed-user` | `user` | `$COGNITO_SEED_PASSWORD` |
+| `seed-user`      | `user`      | `$COGNITO_SEED_PASSWORD` |
 
 ```bash
 cd infra
@@ -168,6 +169,7 @@ The Next.js middleware skips the Cognito redirect check entirely. `getUser()` in
 3. Set value to a fake JWT: `<base64-header>.<base64-payload>.<sig>`
 
 Example payload for an admin user (base64url-encode this JSON):
+
 ```json
 {
   "sub": "local-sub-1",

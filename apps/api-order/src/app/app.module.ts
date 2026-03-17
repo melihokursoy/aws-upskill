@@ -8,7 +8,12 @@ import { RolesController } from './roles/roles.controller';
 
 @Module({
   imports: [AuthModule],
-  controllers: [AppController, HealthController, DbHealthController, RolesController],
+  controllers: [
+    AppController,
+    HealthController,
+    DbHealthController,
+    RolesController,
+  ],
   providers: [AppService],
 })
 export class AppModule implements NestModule {

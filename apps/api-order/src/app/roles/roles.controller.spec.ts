@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RolesController } from './roles.controller';
 import { RolesGuard, AuthUser } from '@org/auth';
@@ -84,7 +88,10 @@ describe('RolesGuard integration with RolesController', () => {
     reflector = module.get<Reflector>(Reflector);
   });
 
-  function makeCtx(user: AuthUser | null, handler: (...args: unknown[]) => unknown): ExecutionContext {
+  function makeCtx(
+    user: AuthUser | null,
+    handler: (...args: unknown[]) => unknown
+  ): ExecutionContext {
     return {
       getHandler: () => handler,
       getClass: () => RolesController,
@@ -105,7 +112,9 @@ describe('RolesGuard integration with RolesController', () => {
   it('/roles/user — guard throws 401 when user is null', () => {
     const controller = new RolesController();
     const ctx = makeCtx(null, controller.getUser);
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin', 'moderator', 'user']);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue(['admin', 'moderator', 'user']);
     expect(() => guard.canActivate(ctx)).toThrow(UnauthorizedException);
   });
 
@@ -119,7 +128,9 @@ describe('RolesGuard integration with RolesController', () => {
   it('/roles/moderator — guard throws 403 for user role', () => {
     const controller = new RolesController();
     const ctx = makeCtx(makeUser(['user']), controller.getModerator);
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['moderator', 'admin']);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue(['moderator', 'admin']);
     expect(() => guard.canActivate(ctx)).toThrow(ForbiddenException);
   });
 
