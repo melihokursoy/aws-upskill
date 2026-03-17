@@ -18,7 +18,7 @@
         },
         "dependsOn": [
           "@org/api-order:build",
-          "@org/api-order:serve"
+          "@org/api-order:serve-e2e"
         ]
       }
     }

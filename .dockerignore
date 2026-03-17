@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+dist
+out
+
+# Version control
+.git
+.gitignore
+
+# Local dev env files — must never be baked into Docker images
+.env.local
+.env*.local
+apps/**/.env.local
+apps/**/.env*.local
+
+# Test files
+**/*.spec.ts
+**/*.spec.tsx
+**/*.test.ts
+**/*.test.tsx
+coverage
+jest.config.*
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

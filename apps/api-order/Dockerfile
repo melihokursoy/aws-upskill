@@ -16,8 +16,9 @@ WORKDIR /monorepo
 
 COPY package.json package-lock.json ./
 # Copy workspace package.json files so npm installs all workspace dependencies
-# (e.g. pg declared in apps/api-order/package.json) into the root node_modules
+# and creates symlinks for all workspace packages (libs included)
 COPY apps/api-order/package.json ./apps/api-order/
+COPY libs/auth/package.json ./libs/auth/
 RUN npm install
 
 # ---------------------------------------------------------------------------
@@ -32,8 +33,9 @@ COPY --from=deps /monorepo/node_modules ./node_modules
 # Copy all workspace config files required by NX and ESLint
 COPY package.json package-lock.json nx.json tsconfig.base.json tsconfig.json eslint.config.mjs ./
 
-# Copy the API app source
+# Copy the API app source and shared workspace libraries
 COPY apps/api-order ./apps/api-order
+COPY libs ./libs
 
 # Sync NX workspace (fixes tsconfig project references — required in non-interactive environments)
 ENV NX_DAEMON=false

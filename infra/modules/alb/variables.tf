@@ -27,3 +27,22 @@ variable "tags" {
   description = "Common tags to apply to all resources."
   type        = map(string)
 }
+
+# ---------------------------------------------------------------------------
+# Cognito — ALB authenticate-cognito action
+# ---------------------------------------------------------------------------
+
+variable "cognito_user_pool_arn" {
+  description = "Cognito User Pool ARN. Used in authenticate-cognito action on protected listener rules."
+  type        = string
+}
+
+variable "cognito_user_pool_client_id" {
+  description = "Cognito App Client ID. Used in authenticate-cognito action."
+  type        = string
+}
+
+variable "cognito_user_pool_domain" {
+  description = "Cognito Hosted UI domain prefix (e.g. upskill-dev). Used in authenticate-cognito action. Note: aws- prefix is stripped by Cognito as it is reserved."
+  type        = string
+}

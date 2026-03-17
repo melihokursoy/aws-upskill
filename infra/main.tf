@@ -78,6 +78,21 @@ module "iam" {
 }
 
 # ---------------------------------------------------------------------------
+# Cognito — User Pool, Hosted UI, App Client, Groups
+# ---------------------------------------------------------------------------
+
+module "cognito" {
+  source = "./modules/cognito"
+
+  environment_name        = var.environment_name
+  project_name            = var.project_name
+  region                  = var.region
+  tags                    = local.common_tags
+  allow_self_registration = true
+  app_domain              = var.domain_name
+}
+
+# ---------------------------------------------------------------------------
 # Application Load Balancer
 # ---------------------------------------------------------------------------
 
@@ -90,6 +105,11 @@ module "alb" {
   public_subnet_ids = module.vpc.public_subnet_ids
   certificate_arn   = module.acm.certificate_arn
   tags              = local.common_tags
+
+  # Cognito — authenticate-cognito action on protected listener rules
+  cognito_user_pool_arn       = module.cognito.user_pool_arn
+  cognito_user_pool_client_id = module.cognito.client_id
+  cognito_user_pool_domain    = module.cognito.cognito_domain
 }
 
 # ---------------------------------------------------------------------------
@@ -208,6 +228,12 @@ module "ssm" {
   rds_db_port  = module.rds.db_port
   rds_db_name  = module.rds.db_name
   log_level    = var.log_level
+
+  # Cognito — stored so containers can read config via GetParametersByPath
+  cognito_user_pool_id = module.cognito.user_pool_id
+  cognito_client_id    = module.cognito.client_id
+  cognito_issuer_url   = module.cognito.issuer_url
+  cognito_domain_url   = module.cognito.cognito_domain_url
 }
 
 # ---------------------------------------------------------------------------
@@ -253,6 +279,13 @@ module "ecs" {
   db_port                = module.rds.db_port
   db_name                = module.rds.db_name
   db_password_secret_arn = module.rds.root_password_secret_arn
+
+  # Cognito — injected into both task definitions as env vars
+  cognito_user_pool_id = module.cognito.user_pool_id
+  cognito_client_id    = module.cognito.client_id
+  cognito_issuer_url   = module.cognito.issuer_url
+  cognito_domain_url   = module.cognito.cognito_domain_url
+  app_url              = "https://${var.domain_name}"
 }
 
 # ---------------------------------------------------------------------------

@@ -24,8 +24,9 @@ infra/
 │   └── test-connectivity.sh    # Post-deploy health check script
 └── modules/
     ├── vpc/             # VPC, subnets, IGW, NAT Gateway, route tables
-    ├── alb/             # Application Load Balancer + HTTPS listeners
+    ├── alb/             # Application Load Balancer + HTTPS listeners + Cognito auth rules
     ├── acm/             # ACM certificate for HTTPS
+    ├── cognito/         # User Pool, Hosted UI, app client, user groups (admin/moderator/user)
     ├── ecr/             # Elastic Container Registry repositories
     ├── ecs/             # ECS Fargate cluster and services
     ├── autoscaling/     # Target tracking auto-scaling policies
@@ -189,6 +190,32 @@ Full list: `infra/outputs.tf`
 ```
 
 The `verify` command builds, starts both containers in the background, hits `/api/health` on each, prints image sizes, then stops everything.
+
+## Seeding Cognito Test Users
+
+After `terraform apply`, create one test user per role using `seed-cognito.sh`:
+
+```bash
+# Add COGNITO_SEED_PASSWORD to infra/.env first, then:
+./infra/scripts/seed-cognito.sh dev
+./infra/scripts/seed-cognito.sh staging
+```
+
+The script is idempotent — safe to run multiple times. It creates:
+
+| Username                | Group     | Avatar             |
+| ----------------------- | --------- | ------------------ |
+| `admin@example.com`     | admin     | DiceBear avataaars |
+| `moderator@example.com` | moderator | DiceBear avataaars |
+| `user@example.com`      | user      | DiceBear avataaars |
+
+**Requirements:**
+
+- `terraform apply` must have been run first (User Pool must exist)
+- `COGNITO_SEED_PASSWORD` set in `infra/.env` — min 8 chars, uppercase, lowercase, number, special char (e.g. `MyTestPass1!`)
+- AWS credentials with Cognito admin permissions
+
+---
 
 ## Pushing Docker Images to ECR
 

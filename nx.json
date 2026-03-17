@@ -71,7 +71,6 @@
       }
     }
   ],
-  "nxCloudId": "69b5ba517e91653728022c90",
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
