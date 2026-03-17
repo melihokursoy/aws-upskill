@@ -173,7 +173,7 @@ resource "aws_lb_listener" "https" {
 #   2   /favicon.ico         → allow → web   (browser default icon)
 #   3   /403                 → allow → web   (access denied page — public)
 #   4   /nextapi/health      → allow → web   (web health check — no auth)
-#   5   /nextapi/sign-out    → allow → web   (logout redirect — no session needed)
+#   5   /auth/signout       → allow → web   (logout redirect — no session needed)
 #   6   /api/health          → allow → api   (API health check — no auth)
 #      /api/db-health        → allow → api
 #   7   /                    → authenticate-cognito (allow) → web
@@ -268,7 +268,7 @@ resource "aws_lb_listener_rule" "public_sign_out" {
 
   condition {
     path_pattern {
-      values = ["/nextapi/sign-out"]
+      values = ["/auth/signout"]
     }
   }
 

@@ -14,8 +14,16 @@
 FROM node:20-alpine AS deps
 WORKDIR /monorepo
 
-# Copy root package files needed for npm install
+# Copy root manifest and the web app's package.json (which declares tailwind v4,
+# radix-ui and other web-specific deps). Stub out other workspace packages so
+# npm workspaces does not error on missing members — they are not needed here.
 COPY package.json package-lock.json ./
+COPY apps/web/package.json ./apps/web/package.json
+RUN mkdir -p apps/api-order apps/api-order-e2e apps/web-e2e libs/auth && \
+    echo '{"name":"@org/api-order","version":"0.0.0"}' > apps/api-order/package.json && \
+    echo '{"name":"api-order-e2e","version":"0.0.0"}' > apps/api-order-e2e/package.json && \
+    echo '{"name":"web-e2e","version":"0.0.0"}' > apps/web-e2e/package.json && \
+    echo '{"name":"@org/auth","version":"0.0.0"}' > libs/auth/package.json
 
 # Install all dependencies (dev included — needed for nx build)
 RUN npm install

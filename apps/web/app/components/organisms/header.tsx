@@ -5,7 +5,7 @@ import { AvatarDropdown } from '../molecules/avatar-dropdown';
 
 /**
  * Server component — reads the ALB OIDC header to determine auth state.
- * Renders Sign Up + Sign In for unauthenticated users, avatar dropdown for authenticated.
+ * Renders Sign In for unauthenticated users, avatar dropdown for authenticated.
  */
 export async function Header() {
   const user = await getUser();
@@ -19,9 +19,9 @@ export async function Header() {
             aws-upskill
           </Link>
           <nav className="flex items-center gap-4 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-foreground">
-              Home
-            </Link>
+            <Link href="/" className="hover:text-foreground">Home</Link>
+            <Link href="/manage" className="hover:text-foreground">Manage</Link>
+            <Link href="/admin" className="hover:text-foreground">Admin</Link>
           </nav>
         </div>
 

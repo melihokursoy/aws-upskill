@@ -1,4 +1,5 @@
 import { getUser } from '../../lib/get-user';
+import { JwtPayload } from '../components/molecules/jwt-payload';
 
 export default async function AdminPage() {
   const user = await getUser();
@@ -6,12 +7,7 @@ export default async function AdminPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-16">
       <h1 className="text-3xl font-semibold tracking-tight text-foreground">Admin</h1>
-      {user && (
-        <p className="mt-4 text-muted-foreground">
-          Signed in as <strong>{user.name}</strong> &mdash; roles:{' '}
-          <strong>{user.roles.join(', ')}</strong>
-        </p>
-      )}
+      {user && <JwtPayload claims={user.rawClaims} />}
       <p className="mt-8 text-sm text-muted-foreground">
         Admin features will be added in future updates.
       </p>

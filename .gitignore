@@ -47,3 +47,7 @@ Thumbs.db
 .next
 out
 test-output
+
+# Local environment overrides — never commit these
+.env.local
+.env.*.local

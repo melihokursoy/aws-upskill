@@ -31,7 +31,7 @@
     "app/**/*.js",
     "app/**/*.jsx",
     "lib/**/*.ts",
-    "middleware.ts",
+    "proxy.ts",
     "../../apps/web/.next/types/**/*.ts",
     "../../dist/apps/web/.next/types/**/*.ts",
     "next-env.d.ts"

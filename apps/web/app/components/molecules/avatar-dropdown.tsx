@@ -14,21 +14,25 @@ import { cn } from '../../../lib/utils';
 interface AvatarDropdownProps {
   user: {
     name: string;
+    givenName: string | null;
     familyName: string | null;
     picture: string | null;
     roles: string[];
   };
 }
 
-function getInitials(name: string, familyName: string | null): string {
-  const first = name.charAt(0).toUpperCase();
+function getInitials(givenName: string | null, familyName: string | null, name: string): string {
+  const first = (givenName ?? name).charAt(0).toUpperCase();
   const last = familyName ? familyName.charAt(0).toUpperCase() : '';
   return `${first}${last}`;
 }
 
 export function AvatarDropdown({ user }: AvatarDropdownProps) {
-  const initials = getInitials(user.name, user.familyName);
-  const displayName = user.familyName ? `${user.name} ${user.familyName}` : user.name;
+  const initials = getInitials(user.givenName, user.familyName, user.name);
+  const displayName =
+    user.givenName && user.familyName
+      ? `${user.givenName} ${user.familyName}`
+      : user.givenName ?? user.name;
   const isAdmin = user.roles.includes('admin');
   const isModerator = user.roles.includes('moderator');
 
@@ -63,7 +67,7 @@ export function AvatarDropdown({ user }: AvatarDropdownProps) {
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href="/nextapi/sign-out">Logout</a>
+          <a href="/auth/signout">Logout</a>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

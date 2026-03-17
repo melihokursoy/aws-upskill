@@ -1,25 +1,21 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Button } from '../ui/button';
 
 /**
- * Server component — renders Sign Up + Sign In buttons when the user is unauthenticated.
- * Links point to Cognito Hosted UI endpoints. Env vars are injected by the ECS task definition.
+ * Client component — renders a Sign In button for unauthenticated users.
+ *
+ * Links to /auth/signin?returnTo=<current-path> so the user is returned to the
+ * page they were on after the ALB completes the Cognito auth flow.
  */
 export function AuthButtons() {
-  const domain = process.env.COGNITO_DOMAIN ?? '';
-  const clientId = process.env.COGNITO_CLIENT_ID ?? '';
-  const appUrl = encodeURIComponent(process.env.NEXT_PUBLIC_APP_URL ?? '/');
-
-  const signUpUrl = `https://${domain}/signup?client_id=${clientId}&response_type=code&redirect_uri=${appUrl}`;
-  const signInUrl = `https://${domain}/login?client_id=${clientId}&response_type=code&redirect_uri=${appUrl}`;
+  const pathname = usePathname();
+  const signInUrl = `/auth/signin?returnTo=${encodeURIComponent(pathname)}`;
 
   return (
-    <div className="flex items-center gap-2">
-      <Button variant="secondary" asChild>
-        <a href={signUpUrl}>Sign Up</a>
-      </Button>
-      <Button variant="default" asChild>
-        <a href={signInUrl}>Sign In</a>
-      </Button>
-    </div>
+    <Button variant="default" asChild>
+      <a href={signInUrl}>Sign In</a>
+    </Button>
   );
 }

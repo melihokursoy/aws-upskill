@@ -123,9 +123,9 @@ log ""
 # ---------------------------------------------------------------------------
 
 declare -a USERS=(
-  "seed-admin:seed-admin@example.com:admin:Admin:Seed"
-  "seed-moderator:seed-moderator@example.com:moderator:Moderator:Seed"
-  "seed-user:seed-user@example.com:user:User:Seed"
+  "admin:admin@example.com:admin:Admin:Seed"
+  "moderator:moderator@example.com:moderator:Moderator:Seed"
+  "user:user@example.com:user:User:Seed"
 )
 
 for entry in "${USERS[@]}"; do
@@ -209,9 +209,9 @@ done
 log "==> Seed complete for environment: $ENV"
 log ""
 log "Test users:"
-log "  seed-admin@example.com      → group: admin"
-log "  seed-moderator@example.com  → group: moderator"
-log "  seed-user@example.com       → group: user"
+log "  admin@example.com      → group: admin"
+log "  moderator@example.com  → group: moderator"
+log "  user@example.com       → group: user"
 log ""
 log "Password for all users: \$COGNITO_SEED_PASSWORD (from .env)"
 log ""
