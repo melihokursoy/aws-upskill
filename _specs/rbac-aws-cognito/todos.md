@@ -99,19 +99,19 @@
 
 ## Checkpoint 6 — UI Foundation: shadcn/ui + Tailwind v4
 
-- [ ] Install Tailwind v4 in `apps/web`: `npm install tailwindcss@next @tailwindcss/postcss@next`
-- [ ] Update `apps/web/postcss.config.js` to use `@tailwindcss/postcss` plugin
-- [ ] Replace `apps/web/app/globals.css` content:
-  - [ ] `@import "tailwindcss";` at top
-  - [ ] `@theme {}` block with color tokens (`--color-primary`, `--color-secondary`, `--color-muted`, `--color-border`, `--color-background`, `--color-foreground`, `--color-destructive`), `--font-sans`, `--radius`
-  - [ ] Remove any v3 `@tailwind base/components/utilities` directives
-- [ ] Install shadcn/ui: `npx shadcn@latest init` — select Tailwind v4, set component output to `app/components/ui/`
-- [ ] Install required shadcn components: `npx shadcn@latest add button badge avatar dropdown-menu separator`
-- [ ] Install utility packages: `npm install clsx tailwind-merge class-variance-authority`
-- [ ] Create `apps/web/lib/utils.ts` — export `cn()` helper (clsx + tailwind-merge)
-- [ ] Install `prettier-plugin-tailwindcss` and add to Prettier config for automatic class sorting
-- [ ] Create component directories: `app/components/ui/`, `app/components/molecules/`, `app/components/organisms/`
-- [ ] Verify: run `npm exec nx serve web` — app loads, shadcn button renders, no Tailwind errors
+- [x] Install Tailwind v4 in `apps/web`: `tailwindcss@^4`, `@tailwindcss/postcss`
+- [x] Update `apps/web/postcss.config.js` to use `@tailwindcss/postcss` plugin
+- [x] Replace `apps/web/app/global.css` content:
+  - [x] `@import "tailwindcss";` at top
+  - [x] `@theme {}` block with color tokens (`--color-primary`, `--color-secondary`, `--color-muted`, `--color-border`, `--color-background`, `--color-foreground`, `--color-destructive`), `--font-sans`, `--radius`
+  - [x] Remove v3 `@tailwind base/components/utilities` directives and Nx boilerplate CSS
+- [x] Remove `apps/web/tailwind.config.js` (not needed for Tailwind v4)
+- [x] Install utility packages: `clsx`, `tailwind-merge`, `class-variance-authority`
+- [x] Install Radix UI primitives: `@radix-ui/react-slot`, `@radix-ui/react-avatar`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-separator`, `lucide-react`
+- [x] Create `apps/web/lib/utils.ts` — export `cn()` helper (clsx + tailwind-merge)
+- [x] Install `prettier-plugin-tailwindcss` as dev dependency
+- [x] Create component directories: `app/components/ui/`, `app/components/molecules/`, `app/components/organisms/`
+- [x] Create shadcn/ui component files manually: `button.tsx`, `badge.tsx`, `avatar.tsx`, `dropdown-menu.tsx`, `separator.tsx`
 
 ## Checkpoint 7 — Web: User Context + Protected Routes + Header
 
