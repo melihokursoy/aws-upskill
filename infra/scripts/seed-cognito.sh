@@ -21,9 +21,9 @@
 # Dependencies: aws, terraform, jq
 #
 # Seed users created:
-#   seed-admin@example.com      → group: admin
-#   seed-moderator@example.com  → group: moderator
-#   seed-user@example.com       → group: user
+#   admin@example.com      → group: admin
+#   moderator@example.com  → group: moderator
+#   user@example.com       → group: user
 # ---------------------------------------------------------------------------
 
 set -euo pipefail

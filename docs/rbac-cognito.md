@@ -131,11 +131,11 @@ Cognito clears its own session and redirects the browser to `<APP_URL>` (the hom
 
 The `infra/scripts/seed-cognito.sh` script creates three test users:
 
-| Username         | Group       | Password                 |
-| ---------------- | ----------- | ------------------------ |
-| `seed-admin`     | `admin`     | `$COGNITO_SEED_PASSWORD` |
-| `seed-moderator` | `moderator` | `$COGNITO_SEED_PASSWORD` |
-| `seed-user`      | `user`      | `$COGNITO_SEED_PASSWORD` |
+| Username                 | Group       | Password                 |
+| ------------------------ | ----------- | ------------------------ |
+| `admin@example.com`      | `admin`     | `$COGNITO_SEED_PASSWORD` |
+| `moderator@example.com`  | `moderator` | `$COGNITO_SEED_PASSWORD` |
+| `user@example.com`       | `user`      | `$COGNITO_SEED_PASSWORD` |
 
 ```bash
 cd infra

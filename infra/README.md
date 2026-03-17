@@ -203,11 +203,11 @@ After `terraform apply`, create one test user per role using `seed-cognito.sh`:
 
 The script is idempotent — safe to run multiple times. It creates:
 
-| Username                     | Group     | Avatar             |
-| ---------------------------- | --------- | ------------------ |
-| `seed-admin@example.com`     | admin     | DiceBear avataaars |
-| `seed-moderator@example.com` | moderator | DiceBear avataaars |
-| `seed-user@example.com`      | user      | DiceBear avataaars |
+| Username                | Group     | Avatar             |
+| ----------------------- | --------- | ------------------ |
+| `admin@example.com`     | admin     | DiceBear avataaars |
+| `moderator@example.com` | moderator | DiceBear avataaars |
+| `user@example.com`      | user      | DiceBear avataaars |
 
 **Requirements:**
 
