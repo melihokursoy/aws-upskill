@@ -97,7 +97,9 @@ export function proxy(request: NextRequest): NextResponse {
 
   // Tier 1 — authentication: no valid session header → redirect to Cognito
   if (!oidcData) {
-    return NextResponse.redirect(new URL(buildSignInUrl(pathname), request.url));
+    return NextResponse.redirect(
+      new URL(buildSignInUrl(pathname), request.url)
+    );
   }
 
   // Tier 2 — role check for protected routes
