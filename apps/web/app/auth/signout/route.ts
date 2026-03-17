@@ -14,7 +14,7 @@ export async function GET(): Promise<NextResponse> {
   // In local dev there is no real ALB session — skip Cognito logout and go straight home.
   if (process.env.LOCAL_AUTH_BYPASS === 'true') {
     return NextResponse.redirect(
-      new URL('/', process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3300')
+      new URL('/', process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000')
     );
   }
 
