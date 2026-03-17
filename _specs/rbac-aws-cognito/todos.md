@@ -83,21 +83,19 @@
 
 ## Checkpoint 5 — API Order: Auth Integration + Role Test Endpoints
 
-- [ ] Add `@org/auth` as a dependency in `apps/api-order/package.json` (or via `nx g @nx/nest:library` workspace link)
-- [ ] Import `AuthModule` from `@org/auth` in `apps/api-order/src/app/app.module.ts`
-- [ ] Register `AlbAuthMiddleware` globally for all routes in `app.module.ts`
-- [ ] Remove any local `auth/` directory from `api-order` (if it existed)
-- [ ] Create `apps/api-order/src/app/roles/roles.controller.ts`:
-  - [ ] `GET /roles/none` — no guard, no `@Roles()`; returns `{ message: "public endpoint" }`; works with or without auth header
-  - [ ] `GET /roles/user` — `@Roles('admin', 'moderator', 'user')` + `RolesGuard`; returns `{ user }` for any authenticated role, 401 if unauthenticated
-  - [ ] `GET /roles/moderator` — `@Roles('moderator', 'admin')` + `RolesGuard`; returns `{ user }` or 403
-  - [ ] `GET /roles/admin` — `@Roles('admin')` + `RolesGuard`; returns `{ user }` or 403
-- [ ] Register `RolesController` in `AppModule`
-- [ ] Unit tests for `RolesController`:
-  - [ ] `/roles/none` — always 200 regardless of user
-  - [ ] `/roles/user` — 200 with user payload when authenticated, 401 when not
-  - [ ] `/roles/moderator` — 200 for moderator/admin, 403 for user, 401 for unauthenticated
-  - [ ] `/roles/admin` — 200 for admin, 403 for moderator/user, 401 for unauthenticated
+- [x] Import `AuthModule` from `@org/auth` in `apps/api-order/src/app/app.module.ts`
+- [x] Register `AlbAuthMiddleware` globally for all routes in `app.module.ts`
+- [x] Create `apps/api-order/src/app/roles/roles.controller.ts`:
+  - [x] `GET /roles/none` — no guard, no `@Roles()`; returns `{ message: "public endpoint" }`; works with or without auth header
+  - [x] `GET /roles/user` — `@Roles('admin', 'moderator', 'user')` + `RolesGuard`; returns `{ user }` for any authenticated role, 401 if unauthenticated
+  - [x] `GET /roles/moderator` — `@Roles('moderator', 'admin')` + `RolesGuard`; returns `{ user }` or 403
+  - [x] `GET /roles/admin` — `@Roles('admin')` + `RolesGuard`; returns `{ user }` or 403
+- [x] Register `RolesController` in `AppModule`
+- [x] Unit tests for `RolesController`:
+  - [x] `/roles/none` — always 200 regardless of user
+  - [x] `/roles/user` — 200 with user payload when authenticated, 401 when not
+  - [x] `/roles/moderator` — 200 for moderator/admin, 403 for user, 401 for unauthenticated
+  - [x] `/roles/admin` — 200 for admin, 403 for moderator/user, 401 for unauthenticated
 
 ## Checkpoint 6 — UI Foundation: shadcn/ui + Tailwind v4
 
