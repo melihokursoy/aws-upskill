@@ -75,6 +75,16 @@
           }
         }
       },
+      "serve-e2e": {
+        "continuous": true,
+        "dependsOn": [
+          "build"
+        ],
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "LOCAL_AUTH_BYPASS=false node apps/api-order/dist/main.js"
+        }
+      },
       "test": {
         "options": {
           "passWithNoTests": true

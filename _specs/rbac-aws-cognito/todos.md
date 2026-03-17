@@ -179,17 +179,17 @@
 
 ## Checkpoint 9 — Integration & E2E Tests
 
-- [ ] API integration test: `GET /api/health` with no auth header → 200
-- [ ] API integration test: `GET /roles/none` with no auth header → 200
-- [ ] API integration test: `GET /roles/user` with valid `x-amzn-oidc-data` → 200 with user payload
-- [ ] API integration test: `GET /roles/admin` with moderator token → 403
-- [ ] API integration test: request with valid `x-amzn-oidc-data` → `request.user` populated
-- [ ] Web E2E test: unauthenticated request to `/` → 200 (public home, no redirect)
-- [ ] Web E2E test: unauthenticated request to `/manage` → 302 redirect to Cognito domain
-- [ ] Web E2E test: `/nextapi/health` with no auth header → 200 (exempt from auth)
-- [ ] Web E2E test: `user` role request to `/manage` → redirected to `/403`
-- [ ] Web E2E test: `moderator` role request to `/admin` → redirected to `/403`
-- [ ] Web E2E test: `admin` role request to `/admin` → 200
+- [x] API integration test: `GET /api/health` with no auth header → 200
+- [x] API integration test: `GET /roles/none` with no auth header → 200
+- [x] API integration test: `GET /roles/user` with valid `x-amzn-oidc-data` → 200 with user payload
+- [x] API integration test: `GET /roles/admin` with moderator token → 403
+- [x] API integration test: request with valid `x-amzn-oidc-data` → `request.user` populated
+- [x] Web E2E test: unauthenticated request to `/` → 200 (public home, no redirect)
+- [x] Web E2E test: unauthenticated request to `/manage` → 307 redirect to Cognito domain
+- [x] Web E2E test: `/nextapi/health` with no auth header → 200 (exempt from auth)
+- [x] Web E2E test: `user` role request to `/manage` → redirected to `/403`
+- [x] Web E2E test: `moderator` role request to `/admin` → redirected to `/403`
+- [x] Web E2E test: `admin` role request to `/admin` → 200
 
 ## Checkpoint 10 — Documentation
 
