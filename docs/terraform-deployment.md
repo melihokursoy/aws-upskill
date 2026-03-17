@@ -57,15 +57,22 @@ aws dynamodb create-table \
 ### First Deploy
 
 ```bash
-# Initialize (downloads providers, configures backend)
+# The deploy script handles init automatically — just run it:
+./scripts/deploy.sh dev plan   # review what will be created (~85 resources)
+./scripts/deploy.sh dev        # apply
+```
+
+> `backend.tf` intentionally omits the state key so it can be shared across environments.
+> The deploy script always runs `terraform init -reconfigure -backend-config="envs/<env>.backend.hcl"`
+> to point Terraform at the correct state file for the requested environment.
+> Never run a bare `terraform init` — it will fail or use the wrong state key.
+
+If you need to run Terraform commands directly (outside the deploy script):
+
+```bash
 cd infra/
-terraform init
-
-# Review what will be created (~85 resources)
-./scripts/deploy.sh dev plan
-
-# Apply
-./scripts/deploy.sh dev
+terraform init -reconfigure -backend-config="envs/dev.backend.hcl"
+terraform plan -var-file="envs/dev.tfvars"
 ```
 
 ### Subsequent Deploys
@@ -93,7 +100,7 @@ terraform init
 The deploy script:
 
 1. Validates `env` is `dev` or `staging`
-2. Runs `terraform init` if `.terraform/` doesn't exist
+2. Always runs `terraform init -reconfigure -backend-config="envs/<env>.backend.hcl"` (ensures correct state key even when switching environments)
 3. Uses `envs/{env}.tfvars` for all variable values
 4. Requires typing the environment name to confirm destroy
 
