@@ -105,6 +105,11 @@ module "alb" {
   public_subnet_ids = module.vpc.public_subnet_ids
   certificate_arn   = module.acm.certificate_arn
   tags              = local.common_tags
+
+  # Cognito — authenticate-cognito action on protected listener rules
+  cognito_user_pool_arn       = module.cognito.user_pool_arn
+  cognito_user_pool_client_id = module.cognito.client_id
+  cognito_user_pool_domain    = module.cognito.cognito_domain
 }
 
 # ---------------------------------------------------------------------------

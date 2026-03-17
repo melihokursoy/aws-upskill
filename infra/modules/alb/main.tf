@@ -148,7 +148,9 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# HTTPS (port 443) → default to web target group
+# HTTPS (port 443) → default forward to web service.
+# The catch-all rule at priority 100 handles authentication for all other paths.
+# This default action is a safety net and is never reached in practice.
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
   port              = 443
@@ -156,7 +158,6 @@ resource "aws_lb_listener" "https" {
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   certificate_arn   = var.certificate_arn
 
-  # Default action: forward to web service
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.web.arn
@@ -164,10 +165,175 @@ resource "aws_lb_listener" "https" {
 }
 
 # ---------------------------------------------------------------------------
-# Listener Rules — path-based routing on HTTPS listener
+# Listener Rules — HTTPS listener
+#
+# Evaluation order (lower priority number = evaluated first):
+#
+#   1   /_next/*             → allow → web   (Next.js static assets)
+#   2   /favicon.ico         → allow → web   (browser default icon)
+#   3   /403                 → allow → web   (access denied page — public)
+#   4   /nextapi/health      → allow → web   (web health check — no auth)
+#   5   /nextapi/sign-out    → allow → web   (logout redirect — no session needed)
+#   6   /api/health          → allow → api   (API health check — no auth)
+#      /api/db-health        → allow → api
+#   7   /                    → authenticate-cognito (allow) → web
+#                              ALB forwards OIDC headers if session exists,
+#                              passes through without headers if not.
+#                              Allows home page to show auth state.
+#  10   /api/*               → authenticate-cognito (authenticate) → api
+#                              All other API routes require authentication.
+# 100   /*                   → authenticate-cognito (authenticate) → web
+#                              Catch-all: all other web routes require auth.
 # ---------------------------------------------------------------------------
 
-# /api/* → API service (higher priority = evaluated first)
+locals {
+  # Shared Cognito session config used across all authenticate-cognito rules
+  cognito_session_timeout = 3600
+  cognito_scope           = "openid email profile phone"
+}
+
+# Priority 1 — Next.js static assets (/_next/*)
+# Must be exempt from auth so CSS/JS loads on the Cognito login redirect page
+resource "aws_lb_listener_rule" "public_next_static" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 1
+
+  condition {
+    path_pattern {
+      values = ["/_next/*"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# Priority 2 — Favicon
+resource "aws_lb_listener_rule" "public_favicon" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 2
+
+  condition {
+    path_pattern {
+      values = ["/favicon.ico"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# Priority 3 — 403 Forbidden page (public error page)
+resource "aws_lb_listener_rule" "public_403" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 3
+
+  condition {
+    path_pattern {
+      values = ["/403", "/403/*"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# Priority 4 — Web health check
+resource "aws_lb_listener_rule" "public_health_web" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 4
+
+  condition {
+    path_pattern {
+      values = ["/nextapi/health"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# Priority 5 — Sign-out route (no session required — user may have expired session)
+resource "aws_lb_listener_rule" "public_sign_out" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 5
+
+  condition {
+    path_pattern {
+      values = ["/nextapi/sign-out"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# Priority 6 — API health checks (must be before /api/* auth rule)
+resource "aws_lb_listener_rule" "public_health_api" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 6
+
+  condition {
+    path_pattern {
+      values = ["/api/health", "/api/db-health"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api.arn
+  }
+}
+
+# Priority 7 — Home page: auth-aware but not enforced
+# authenticate-cognito with on_unauthenticated_request = "allow":
+#   - If user has a valid ALB session cookie → forward with x-amzn-oidc-data header set
+#   - If no valid session → forward without the header (unauthenticated access allowed)
+# This lets the home page render the avatar dropdown for authenticated users.
+resource "aws_lb_listener_rule" "home_auth_aware" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 7
+
+  condition {
+    path_pattern {
+      values = ["/"]
+    }
+  }
+
+  action {
+    order = 1
+    type  = "authenticate-cognito"
+
+    authenticate_cognito {
+      user_pool_arn              = var.cognito_user_pool_arn
+      user_pool_client_id        = var.cognito_user_pool_client_id
+      user_pool_domain           = var.cognito_user_pool_domain
+      on_unauthenticated_request = "allow"
+      scope                      = local.cognito_scope
+      session_timeout            = local.cognito_session_timeout
+    }
+  }
+
+  action {
+    order            = 2
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# Priority 10 — API routes: authentication required
+# Unauthenticated requests are redirected to Cognito Hosted UI.
+# Health check paths (/api/health, /api/db-health) are exempt via higher-priority rules above.
 resource "aws_lb_listener_rule" "api" {
   listener_arn = aws_lb_listener.https.arn
   priority     = 10
@@ -179,7 +345,56 @@ resource "aws_lb_listener_rule" "api" {
   }
 
   action {
+    order = 1
+    type  = "authenticate-cognito"
+
+    authenticate_cognito {
+      user_pool_arn              = var.cognito_user_pool_arn
+      user_pool_client_id        = var.cognito_user_pool_client_id
+      user_pool_domain           = var.cognito_user_pool_domain
+      on_unauthenticated_request = "authenticate"
+      scope                      = local.cognito_scope
+      session_timeout            = local.cognito_session_timeout
+    }
+  }
+
+  action {
+    order            = 2
     type             = "forward"
     target_group_arn = aws_lb_target_group.api.arn
+  }
+}
+
+# Priority 100 — All other web routes: authentication required
+# Catch-all for /manage, /admin, and any future protected pages.
+# Unauthenticated requests are redirected to Cognito Hosted UI.
+resource "aws_lb_listener_rule" "web_authenticated" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 100
+
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+
+  action {
+    order = 1
+    type  = "authenticate-cognito"
+
+    authenticate_cognito {
+      user_pool_arn              = var.cognito_user_pool_arn
+      user_pool_client_id        = var.cognito_user_pool_client_id
+      user_pool_domain           = var.cognito_user_pool_domain
+      on_unauthenticated_request = "authenticate"
+      scope                      = local.cognito_scope
+      session_timeout            = local.cognito_session_timeout
+    }
+  }
+
+  action {
+    order            = 2
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
   }
 }

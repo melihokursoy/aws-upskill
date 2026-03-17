@@ -29,13 +29,14 @@
 
 ## Checkpoint 2 — Terraform: ALB Authentication
 
-- [ ] Add variables to `infra/modules/alb/variables.tf`: `cognito_user_pool_arn`, `cognito_user_pool_client_id`, `cognito_user_pool_domain`
-- [ ] Update `infra/modules/alb/main.tf`:
-  - [ ] Add high-priority `allow` listener rules for public paths: `/403`, `/nextapi/health`, `/api/health`, `/api/db-health`
-  - [ ] Add listener rule for `/` with `authenticate-cognito` action + `on_unauthenticated_request = "allow"` — forwards OIDC headers if session exists, passes through without headers if not (allows home page to show auth state)
-  - [ ] Add `authenticate-cognito` action to the default HTTPS listener rule (catches all other paths) with `on_unauthenticated_request = "authenticate"` and session cookie TTL 3600s
-- [ ] Pass Cognito outputs from `module "cognito"` to `module "alb"` in `infra/main.tf`
-- [ ] Verify: `terraform plan` shows updated ALB listener rules; public paths have `allow` rule at higher priority; all other paths require auth
+- [x] Add variables to `infra/modules/alb/variables.tf`: `cognito_user_pool_arn`, `cognito_user_pool_client_id`, `cognito_user_pool_domain`
+- [x] Update `infra/modules/alb/main.tf`:
+  - [x] Add high-priority `allow` listener rules for public paths: `/_next/*` (p1), `/favicon.ico` (p2), `/403` (p3), `/nextapi/health` (p4), `/nextapi/sign-out` (p5), `/api/health` + `/api/db-health` (p6)
+  - [x] Add listener rule for `/` (p7) with `authenticate-cognito` action + `on_unauthenticated_request = "allow"` — forwards OIDC headers if session exists, passes through without headers if not (allows home page to show auth state)
+  - [x] Update `/api/*` rule (p10) with `authenticate-cognito` + `on_unauthenticated_request = "authenticate"`
+  - [x] Add `/*` catch-all rule (p100) with `authenticate-cognito` + `on_unauthenticated_request = "authenticate"` → web
+- [x] Pass Cognito outputs from `module "cognito"` to `module "alb"` in `infra/main.tf`
+- [x] Verify: `terraform validate` passes
 
 ## Checkpoint 3 — Terraform: SSM Parameters
 
