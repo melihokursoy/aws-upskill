@@ -19,10 +19,6 @@ infra/
 ├── scripts/
 │   ├── deploy.sh                # Terraform deploy wrapper (plan/apply/destroy)
 │   ├── build-and-push-ecr.sh   # Build Docker image and push to ECR
-│   └── push-ecr.sh             # Push pre-built image to ECR
-├── scripts/
-│   ├── deploy.sh                # Terraform deploy wrapper (plan/apply/destroy)
-│   ├── build-and-push-ecr.sh   # Build Docker image and push to ECR
 │   ├── push-ecr.sh             # Push pre-built image to ECR
 │   ├── force-cleanup.sh        # Manual unblock for stuck terraform destroy
 │   └── test-connectivity.sh    # Post-deploy health check script
