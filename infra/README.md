@@ -24,8 +24,9 @@ infra/
 │   └── test-connectivity.sh    # Post-deploy health check script
 └── modules/
     ├── vpc/             # VPC, subnets, IGW, NAT Gateway, route tables
-    ├── alb/             # Application Load Balancer + HTTPS listeners
+    ├── alb/             # Application Load Balancer + HTTPS listeners + Cognito auth rules
     ├── acm/             # ACM certificate for HTTPS
+    ├── cognito/         # User Pool, Hosted UI, app client, user groups (admin/moderator/user)
     ├── ecr/             # Elastic Container Registry repositories
     ├── ecs/             # ECS Fargate cluster and services
     ├── autoscaling/     # Target tracking auto-scaling policies

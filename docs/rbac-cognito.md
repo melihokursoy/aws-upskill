@@ -55,6 +55,8 @@ Three Cognito user groups are provisioned:
 | `moderator` | `/manage` and all authenticated routes            |
 | `user`      | All authenticated routes only                     |
 
+> **Note:** Current role enforcement is route-level only (which paths are accessible). Fine-grained permission enforcement within a route (e.g. "only admins can delete records") is deferred and not yet implemented.
+
 ## NestJS API — decorators
 
 ### `@CurrentUser()`

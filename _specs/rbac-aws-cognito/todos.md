@@ -193,26 +193,26 @@
 
 ## Checkpoint 10 — Documentation
 
-- [ ] Create `docs/ui-standards.md`:
-  - [ ] Stack summary table (Tailwind v4, shadcn/ui, CVA, atomic design)
-  - [ ] Tailwind v4 setup: `@theme {}` tokens, no config file
-  - [ ] Component hierarchy diagram (`ui/` → `molecules/` → `organisms/`)
-  - [ ] Layer rules table (state, business logic, imports allowed)
-  - [ ] Server vs Client component decision guide
-  - [ ] `cn()` usage with examples
-  - [ ] CVA variants pattern with example
-  - [ ] Tailwind class ordering rule (defer to prettier-plugin-tailwindcss)
-  - [ ] Accessibility guidelines
-  - [ ] Anti-patterns section (inline styles, implicit any props, manual class concat)
-- [ ] Create `docs/rbac-cognito.md`:
-  - [ ] Architecture overview (ALB OIDC flow diagram)
-  - [ ] Roles: admin, moderator, user — what each maps to (note: permission enforcement deferred)
-  - [ ] How `x-amzn-oidc-data` header works and what claims it contains
-  - [ ] `@CurrentUser()` and `@Roles()` decorator usage examples
-  - [ ] Sign-out flow
-  - [ ] Local development setup
-  - [ ] Seed script: how to run `seed-cognito.sh`, what `COGNITO_SEED_PASSWORD` to set, what users are created
-  - [ ] Terraform: how to add users to groups via console or AWS CLI
-- [ ] Update `infra/README.md` to reference the new Cognito module
-- [ ] Run all tests: `npm exec -- nx run-many -t test`
-- [ ] Verify no regressions in existing health check tests
+- [x] Create `docs/ui-standards.md`:
+  - [x] Stack summary table (Tailwind v4, shadcn/ui, CVA, atomic design)
+  - [x] Tailwind v4 setup: `@theme {}` tokens, no config file
+  - [x] Component hierarchy diagram (`ui/` → `molecules/` → `organisms/`)
+  - [x] Layer rules table (state, business logic, imports allowed)
+  - [x] Server vs Client component decision guide
+  - [x] `cn()` usage with examples
+  - [x] CVA variants pattern with example
+  - [x] Tailwind class ordering rule (defer to prettier-plugin-tailwindcss)
+  - [x] Accessibility guidelines
+  - [x] Anti-patterns section (inline styles, implicit any props, manual class concat)
+- [x] Create `docs/rbac-cognito.md`:
+  - [x] Architecture overview (ALB OIDC flow diagram)
+  - [x] Roles: admin, moderator, user — what each maps to (note: permission enforcement deferred)
+  - [x] How `x-amzn-oidc-data` header works and what claims it contains
+  - [x] `@CurrentUser()` and `@Roles()` decorator usage examples
+  - [x] Sign-out flow
+  - [x] Local development setup
+  - [x] Seed script: how to run `seed-cognito.sh`, what `COGNITO_SEED_PASSWORD` to set, what users are created
+  - [x] Terraform: how to add users to groups via console or AWS CLI
+- [x] Update `infra/README.md` to reference the new Cognito module
+- [x] Run all tests: `npm exec -- nx run-many -t test`
+- [x] Verify no regressions in existing health check tests
