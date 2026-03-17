@@ -52,8 +52,10 @@ resource "aws_cognito_user_pool" "main" {
 # ---------------------------------------------------------------------------
 
 resource "aws_cognito_user_pool_domain" "main" {
-  # Domain prefix only — full URL is constructed in outputs
-  domain       = "${var.project_name}-${var.environment_name}"
+  # Domain prefix only — full URL is constructed in outputs.
+  # Strip "aws-" prefix: Cognito rejects domain names containing the reserved word "aws".
+  # e.g. "aws-upskill-dev" → "upskill-dev"
+  domain       = replace("${var.project_name}-${var.environment_name}", "aws-", "")
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
