@@ -89,9 +89,10 @@ describe('RolesGuard integration with RolesController', () => {
     reflector = module.get<Reflector>(Reflector);
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function makeCtx(
     user: AuthUser | null,
-    handler: (...args: unknown[]) => unknown
+    handler: (...args: any[]) => any
   ): ExecutionContext {
     return {
       getHandler: () => handler,

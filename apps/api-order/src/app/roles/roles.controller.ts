@@ -1,5 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { CurrentUser, AuthUser, Roles, RolesGuard } from '@org/auth';
+import { CurrentUser, Roles, RolesGuard } from '@org/auth';
+import type { AuthUser } from '@org/auth';
 
 @Controller('roles')
 export class RolesController {
