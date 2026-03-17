@@ -28,22 +28,29 @@ Browser → ALB (authenticate-cognito action)
 
 ### The `x-amzn-oidc-data` header
 
-A signed JWT injected by the ALB. The payload (middle base64url segment) contains standard OIDC claims:
+A signed JWT injected by the ALB. The payload contains standard OIDC userinfo claims — **`cognito:groups` is NOT present here**:
 
-| JWT claim        | Mapped field  |
-| ---------------- | ------------- |
-| `sub`            | `sub`         |
-| `email`          | `email`       |
-| `name`           | `name`        |
-| `family_name`    | `familyName`  |
-| `birthdate`      | `birthdate`   |
-| `phone_number`   | `phoneNumber` |
-| `address`        | `address`     |
-| `picture`        | `picture`     |
-| `gender`         | `gender`      |
-| `locale`         | `locale`      |
-| `zoneinfo`       | `zoneinfo`    |
-| `cognito:groups` | `roles`       |
+| JWT claim      | Mapped field  |
+| -------------- | ------------- |
+| `sub`          | `sub`         |
+| `email`        | `email`       |
+| `name`         | `name`        |
+| `family_name`  | `familyName`  |
+| `birthdate`    | `birthdate`   |
+| `phone_number` | `phoneNumber` |
+| `address`      | `address`     |
+| `picture`      | `picture`     |
+| `gender`       | `gender`      |
+| `locale`       | `locale`      |
+| `zoneinfo`     | `zoneinfo`    |
+
+### The `x-amzn-oidc-accesstoken` header
+
+The raw Cognito access token (opaque string, not decoded as a JWT by the ALB). The implementation base64url-decodes the middle segment to extract group membership:
+
+| JWT claim        | Mapped field |
+| ---------------- | ------------ |
+| `cognito:groups` | `roles`      |
 
 ## Roles
 
