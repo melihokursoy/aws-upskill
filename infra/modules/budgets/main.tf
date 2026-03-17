@@ -18,7 +18,7 @@ resource "aws_budgets_budget" "env" {
   # This ensures dev budget only counts dev resources and vice versa.
   cost_filter {
     name   = "TagKeyValue"
-    values = ["user:CostCenter$${var.cost_center}"]
+    values = [format("user:CostCenter$%s", var.cost_center)]
   }
 
   # Alert at 50% — early warning to investigate unexpected spend
