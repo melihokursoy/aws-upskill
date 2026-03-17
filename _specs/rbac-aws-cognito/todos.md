@@ -40,19 +40,19 @@
 
 ## Checkpoint 3 — Terraform: SSM Parameters
 
-- [ ] Add Cognito SSM parameters to `infra/modules/ssm/main.tf`:
-  - [ ] `/app/cognito/user_pool_id`
-  - [ ] `/app/cognito/client_id`
-  - [ ] `/app/cognito/issuer_url`
-  - [ ] `/app/cognito/domain`
-- [ ] Add corresponding variables to `infra/modules/ssm/variables.tf`
-- [ ] Pass Cognito outputs to `module "ssm"` in `infra/main.tf`
-- [ ] Add Cognito env vars to ECS task definitions in `infra/modules/ecs/main.tf`:
-  - [ ] API task: `COGNITO_USER_POOL_ID`, `COGNITO_CLIENT_ID`, `COGNITO_ISSUER_URL`
-  - [ ] Web task: `COGNITO_DOMAIN`, `COGNITO_CLIENT_ID`, `NEXT_PUBLIC_APP_URL`
-- [ ] Add corresponding variables to `infra/modules/ecs/variables.tf`
-- [ ] Pass new ECS variables from root `infra/main.tf`
-- [ ] Verify: `terraform plan` shows new SSM parameters and updated ECS task definitions
+- [x] Add Cognito SSM parameters to `infra/modules/ssm/main.tf`:
+  - [x] `/app/cognito/user_pool_id`
+  - [x] `/app/cognito/client_id`
+  - [x] `/app/cognito/issuer_url`
+  - [x] `/app/cognito/domain`
+- [x] Add corresponding variables to `infra/modules/ssm/variables.tf`
+- [x] Pass Cognito outputs to `module "ssm"` in `infra/main.tf`
+- [x] Add Cognito env vars to ECS task definitions in `infra/modules/ecs/main.tf`:
+  - [x] API task: `COGNITO_USER_POOL_ID`, `COGNITO_CLIENT_ID`, `COGNITO_ISSUER_URL`
+  - [x] Web task: `COGNITO_DOMAIN`, `COGNITO_CLIENT_ID`, `NEXT_PUBLIC_APP_URL`
+- [x] Add corresponding variables to `infra/modules/ecs/variables.tf`
+- [x] Pass new ECS variables from root `infra/main.tf`
+- [x] Verify: `terraform validate` passes
 
 ## Checkpoint 4 — Shared Auth Library (`libs/auth`)
 

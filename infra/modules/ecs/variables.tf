@@ -155,3 +155,34 @@ variable "db_password_secret_arn" {
   description = "Secrets Manager secret ARN for the RDS root password. App retrieves the password at runtime — never passed as a plaintext env var."
   type        = string
 }
+
+# ---------------------------------------------------------------------------
+# Environment Variables — Cognito
+# Injected into both task definitions so containers can validate JWTs and
+# build Hosted UI URLs without reading from Parameter Store at startup.
+# ---------------------------------------------------------------------------
+
+variable "cognito_user_pool_id" {
+  description = "Cognito User Pool ID. Injected into API task for JWT issuer validation."
+  type        = string
+}
+
+variable "cognito_client_id" {
+  description = "Cognito App Client ID. Injected into both web and API tasks."
+  type        = string
+}
+
+variable "cognito_issuer_url" {
+  description = "Cognito OIDC issuer URL. Injected into API task for JWT validation."
+  type        = string
+}
+
+variable "cognito_domain_url" {
+  description = "Full Cognito Hosted UI URL. Injected into web task for sign-in/sign-out redirects."
+  type        = string
+}
+
+variable "app_url" {
+  description = "Public application URL (https://<domain>). Injected into web task as NEXT_PUBLIC_APP_URL."
+  type        = string
+}

@@ -228,6 +228,12 @@ module "ssm" {
   rds_db_port  = module.rds.db_port
   rds_db_name  = module.rds.db_name
   log_level    = var.log_level
+
+  # Cognito — stored so containers can read config via GetParametersByPath
+  cognito_user_pool_id = module.cognito.user_pool_id
+  cognito_client_id    = module.cognito.client_id
+  cognito_issuer_url   = module.cognito.issuer_url
+  cognito_domain_url   = module.cognito.cognito_domain_url
 }
 
 # ---------------------------------------------------------------------------
@@ -273,6 +279,13 @@ module "ecs" {
   db_port                = module.rds.db_port
   db_name                = module.rds.db_name
   db_password_secret_arn = module.rds.root_password_secret_arn
+
+  # Cognito — injected into both task definitions as env vars
+  cognito_user_pool_id = module.cognito.user_pool_id
+  cognito_client_id    = module.cognito.client_id
+  cognito_issuer_url   = module.cognito.issuer_url
+  cognito_domain_url   = module.cognito.cognito_domain_url
+  app_url              = "https://${var.domain_name}"
 }
 
 # ---------------------------------------------------------------------------

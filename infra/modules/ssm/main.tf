@@ -100,3 +100,58 @@ resource "aws_ssm_parameter" "api_log_level" {
     Service = "api"
   })
 }
+
+# ---------------------------------------------------------------------------
+# Cognito Parameters
+#
+# Stored under /app/cognito/* so both services can read them with a single
+# GetParametersByPath call. Non-sensitive — stored as String, not SecureString.
+# ---------------------------------------------------------------------------
+
+resource "aws_ssm_parameter" "cognito_user_pool_id" {
+  name        = "/app/cognito/user_pool_id"
+  description = "Cognito User Pool ID. Sourced from cognito module output."
+  type        = "String"
+  value       = var.cognito_user_pool_id
+
+  tags = merge(var.tags, {
+    Name    = "/app/cognito/user_pool_id"
+    Service = "cognito"
+  })
+}
+
+resource "aws_ssm_parameter" "cognito_client_id" {
+  name        = "/app/cognito/client_id"
+  description = "Cognito App Client ID. Sourced from cognito module output."
+  type        = "String"
+  value       = var.cognito_client_id
+
+  tags = merge(var.tags, {
+    Name    = "/app/cognito/client_id"
+    Service = "cognito"
+  })
+}
+
+resource "aws_ssm_parameter" "cognito_issuer_url" {
+  name        = "/app/cognito/issuer_url"
+  description = "Cognito OIDC issuer URL. Sourced from cognito module output."
+  type        = "String"
+  value       = var.cognito_issuer_url
+
+  tags = merge(var.tags, {
+    Name    = "/app/cognito/issuer_url"
+    Service = "cognito"
+  })
+}
+
+resource "aws_ssm_parameter" "cognito_domain" {
+  name        = "/app/cognito/domain"
+  description = "Full Cognito Hosted UI URL. Sourced from cognito module output."
+  type        = "String"
+  value       = var.cognito_domain_url
+
+  tags = merge(var.tags, {
+    Name    = "/app/cognito/domain"
+    Service = "cognito"
+  })
+}

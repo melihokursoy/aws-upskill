@@ -154,6 +154,10 @@ resource "aws_ecs_task_definition" "web" {
         { name = "LOG_GROUP", value = aws_cloudwatch_log_group.web.name },
         # API integration — web service calls the API through the ALB
         { name = "API_ENDPOINT", value = var.api_endpoint },
+        # Cognito — used for sign-in/sign-out redirects and auth-aware rendering
+        { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
+        { name = "COGNITO_DOMAIN", value = var.cognito_domain_url },
+        { name = "NEXT_PUBLIC_APP_URL", value = var.app_url },
       ]
 
       logConfiguration = {
@@ -226,6 +230,10 @@ resource "aws_ecs_task_definition" "api" {
         { name = "DB_PASSWORD_SECRET_ARN", value = var.db_password_secret_arn },
         # Parameter Store prefix — app fetches config values under /app/api/* at startup
         { name = "PARAMETER_STORE_PREFIX", value = "/app/api" },
+        # Cognito — used for JWT validation (issuer, audience) and user pool access
+        { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
+        { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
+        { name = "COGNITO_ISSUER_URL", value = var.cognito_issuer_url },
       ]
 
       secrets = [

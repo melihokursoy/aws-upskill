@@ -46,3 +46,27 @@ variable "log_level" {
   type        = string
   default     = "info"
 }
+
+# ---------------------------------------------------------------------------
+# Cognito — stored in SSM so containers can read config at startup
+# ---------------------------------------------------------------------------
+
+variable "cognito_user_pool_id" {
+  description = "Cognito User Pool ID. Stored at /app/cognito/user_pool_id."
+  type        = string
+}
+
+variable "cognito_client_id" {
+  description = "Cognito App Client ID. Stored at /app/cognito/client_id."
+  type        = string
+}
+
+variable "cognito_issuer_url" {
+  description = "Cognito OIDC issuer URL. Stored at /app/cognito/issuer_url."
+  type        = string
+}
+
+variable "cognito_domain_url" {
+  description = "Full Cognito Hosted UI URL. Stored at /app/cognito/domain."
+  type        = string
+}

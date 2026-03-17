@@ -27,3 +27,23 @@ output "api_log_level_name" {
   description = "SSM parameter name for the API log level (/app/api/log_level)."
   value       = aws_ssm_parameter.api_log_level.name
 }
+
+output "cognito_user_pool_id_name" {
+  description = "SSM parameter name for the Cognito User Pool ID (/app/cognito/user_pool_id)."
+  value       = aws_ssm_parameter.cognito_user_pool_id.name
+}
+
+output "cognito_client_id_name" {
+  description = "SSM parameter name for the Cognito Client ID (/app/cognito/client_id)."
+  value       = aws_ssm_parameter.cognito_client_id.name
+}
+
+output "cognito_issuer_url_name" {
+  description = "SSM parameter name for the Cognito issuer URL (/app/cognito/issuer_url)."
+  value       = aws_ssm_parameter.cognito_issuer_url.name
+}
+
+output "cognito_domain_name" {
+  description = "SSM parameter name for the Cognito Hosted UI URL (/app/cognito/domain)."
+  value       = aws_ssm_parameter.cognito_domain.name
+}
