@@ -17,7 +17,7 @@
 #   ./infra/scripts/deploy.sh dev destroy
 #
 # Flow for apply:
-#   1. terraform init (if needed)
+#   1. terraform init -reconfigure (always — ensures correct backend for env)
 #   2. Apply VPC + ACM certificate (targeted)
 #   3. Run setup-dns-cloudflare.sh to add validation CNAME
 #   4. Wait for certificate to become ISSUED
@@ -78,12 +78,12 @@ log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
 cd "$INFRA_DIR"
 
-if [[ ! -d ".terraform" ]]; then
-  log "==> Initialising Terraform backend for: $ENV"
-  terraform init -backend-config="$BACKEND_CFG" -input=false
-else
-  log "==> Terraform already initialised"
-fi
+# Always reconfigure — ensures the backend points at the correct state key for
+# this environment. Skipping init when .terraform/ exists would leave the backend
+# configured for whichever environment was initialised last (e.g. running dev then
+# staging without -reconfigure would silently read/write dev state).
+log "==> Initialising Terraform backend for: $ENV"
+terraform init -reconfigure -backend-config="$BACKEND_CFG" -input=false
 
 # ---------------------------------------------------------------------------
 # Plan only — no apply
