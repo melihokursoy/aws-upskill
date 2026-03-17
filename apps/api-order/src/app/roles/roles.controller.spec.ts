@@ -13,6 +13,7 @@ function makeUser(roles: string[]): AuthUser {
     sub: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
+    givenName: null,
     familyName: 'User',
     birthdate: null,
     phoneNumber: null,
