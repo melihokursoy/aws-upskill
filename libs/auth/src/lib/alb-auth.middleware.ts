@@ -38,6 +38,7 @@ export class AlbAuthMiddleware implements NestMiddleware {
         sub: process.env['LOCAL_AUTH_SUB'] ?? 'local-dev-sub',
         email: process.env['LOCAL_AUTH_EMAIL'] ?? 'dev@localhost',
         name: process.env['LOCAL_AUTH_NAME'] ?? 'Dev User',
+        givenName: null,
         familyName: null,
         birthdate: null,
         phoneNumber: null,
