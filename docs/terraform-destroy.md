@@ -5,6 +5,7 @@
 This guide covers how to safely destroy the AWS infrastructure for any environment using Terraform.
 
 All resources are configured to allow clean destruction:
+
 - ECR repositories: `force_delete = true` (deletes images before destroying)
 - RDS instance: `deletion_protection = false` (allows immediate deletion)
 - No S3 application buckets to worry about (deferred feature)
@@ -90,16 +91,16 @@ Or run the connectivity test script — it will fail with clear errors if resour
 
 ## Expected Destroy Duration
 
-| Resource            | Approximate Time |
-|---------------------|-----------------|
-| ECS services        | 1–2 min         |
-| RDS instance        | 3–5 min         |
-| ALB                 | 1 min           |
-| NAT Gateway         | 1 min           |
-| VPC / subnets       | < 30s           |
-| IAM roles/policies  | < 30s           |
-| ECR repositories    | < 30s           |
-| **Total**           | **~7–10 min**   |
+| Resource           | Approximate Time |
+| ------------------ | ---------------- |
+| ECS services       | 1–2 min          |
+| RDS instance       | 3–5 min          |
+| ALB                | 1 min            |
+| NAT Gateway        | 1 min            |
+| VPC / subnets      | < 30s            |
+| IAM roles/policies | < 30s            |
+| ECR repositories   | < 30s            |
+| **Total**          | **~7–10 min**    |
 
 ---
 

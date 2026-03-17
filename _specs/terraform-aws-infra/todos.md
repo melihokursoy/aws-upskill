@@ -3,6 +3,7 @@
 ## Checkpoint 1 - Foundation (Terraform Setup & VPC)
 
 ### Root Module Configuration
+
 - [x] Create infra/ directory at project root with .gitignore for state files
 - [x] Set up Terraform project structure in infra/ with root module (main.tf)
 - [x] Create variables.tf with parameterized values:
@@ -29,6 +30,7 @@
 - [x] Environment variable files created: infra/envs/dev.tfvars and infra/envs/staging.tfvars
 
 ### Resource Tagging Configuration
+
 - [x] Create locals block for common tags in root main.tf
 - [x] Define standard tags: Environment, Project, ManagedBy, CreatedAt, Owner
 - [x] Create tags variable to pass to all modules
@@ -44,6 +46,7 @@
 ## Checkpoint 2 - Load Balancer & HTTPS
 
 ### ACM Certificate
+
 - [x] Create ACM certificate resource for custom domain (e.g. `dev.yourdomain.com`)
 - [x] Configure DNS validation method
 - [x] Output CNAME validation records for manual DNS entry in external DNS provider
@@ -51,10 +54,11 @@
 - [x] Store certificate ARN as Terraform output
 
 ### ALB Configuration
+
 - [x] Create alb module with ALB in public subnets
 - [x] Create ALB target groups for web service (port 3300, health check /api/health)
 - [x] Create ALB target groups for API service (port 3301, health check /health)
-- [x] Configure path-based routing rules (/ → web, /api/* → API)
+- [x] Configure path-based routing rules (/ → web, /api/\* → API)
 - [x] Configure health check paths and intervals (30s interval, 5s timeout, 2 thresholds)
 - [x] Create security group for ALB (allow port 80 and 443 inbound)
 - [x] Create HTTPS listener (port 443) with ACM certificate (TLS 1.3 policy)
@@ -62,6 +66,7 @@
 - [x] Verify ALB configuration with terraform plan (requires AWS credentials + backend setup)
 
 ### DNS Setup (Manual Step)
+
 - [x] Output ALB DNS name from Terraform (alb_dns_name output)
 - [x] Document: Create CNAME record in external DNS pointing to ALB DNS name
 - [x] Document: Add ACM validation CNAME record in external DNS (acm_validation_cnames output)
@@ -81,6 +86,7 @@
 ## Checkpoint 4 - Docker Images & ECR Push Scripts
 
 ### Dockerfiles for Applications
+
 - [x] Create `apps/web/Dockerfile` for Next.js application
   - [x] Use official Node.js image as base (node:20-alpine)
   - [x] Multi-stage build (deps → builder → runner)
@@ -103,6 +109,7 @@
   - [x] Keep image size minimal
 
 ### ECR Push Scripts
+
 - [x] Create `infra/scripts/build-and-push-ecr.sh`:
   - [x] Accept parameters: service name (web or api), env, version tag
   - [x] Retrieve ECR registry URL from Terraform outputs
@@ -117,6 +124,7 @@
 - [x] Add script documentation in README
 
 ### Docker Build Testing
+
 - [x] Test building web application image locally (manual — requires Docker)
 - [x] Test building API application image locally (manual — requires Docker)
 - [x] Verify image sizes are reasonable (< 500MB each)
@@ -164,6 +172,7 @@
 - [x] Create monitoring module with CloudWatch resources
 
 ### ALB Health Checks (for rolling deployment)
+
 - [x] Configure ALB health check for web service:
   - [x] Health check path: `/nextapi/health` (avoids ALB `/api/*` routing rule)
   - [x] Interval: 30 seconds
@@ -183,6 +192,7 @@
   - [x] Enables smooth rolling deployment transitions
 
 ### CloudWatch Log Groups (organized by service)
+
 - [x] Create `/aws/ecs/web` log group for Next.js application (done in checkpoint 3)
 - [x] Create `/aws/ecs/api` log group for NestJS API (done in checkpoint 3)
 - [x] Create `/aws/alb/web-api` log group for ALB access logs (done in checkpoint 3)
@@ -190,6 +200,7 @@
 - [x] Configure ECS task log driver to use correct log groups (done in checkpoint 5)
 
 ### CloudWatch Dashboards & Alarms
+
 - [x] Create unified CloudWatch dashboard for infrastructure overview
 - [x] Add ECS cluster metrics (CPU, memory, task count)
 - [x] Add ALB metrics (request count, latency, unhealthy targets)
@@ -200,10 +211,12 @@
 - [x] Configure Container Insights integration for ECS (done in checkpoint 3)
 
 ### X-Ray Distributed Tracing
+
 - [x] Enable X-Ray write access IAM policy for ECS task roles (web + api)
 - [ ] X-Ray daemon sidecar and app instrumentation (deferred — requires app code changes)
 
 ### Correlation ID / Request ID Tracking
+
 - [ ] Correlation ID propagation (deferred — see note below)
 
 > **Why deferred:** ALB cannot inject custom headers (e.g. `X-Correlation-ID`) natively —
@@ -218,6 +231,7 @@
 ## Checkpoint 7 - Database & Storage (RDS & S3)
 
 ### RDS PostgreSQL Configuration
+
 - [x] Create rds module with PostgreSQL RDS instance
 - [x] Set engine to PostgreSQL (latest stable version — v16)
 - [x] Configure single-AZ deployment (cost optimization for dev/staging)
@@ -237,6 +251,7 @@
 ## Checkpoint 8 - Security & IAM
 
 ### IAM Roles with Clear Documentation
+
 - [x] Create iam module for all IAM policies and roles (done in Checkpoint 5, expanded here)
 - [x] Create Task Execution Role (ecsTaskExecutionRole)
   - [x] Add clear purpose comment: "Allows ECS service to pull images from ECR and write logs to CloudWatch"
@@ -247,23 +262,25 @@
 - [x] Create Web Service Task Role (ecsTaskRoleWeb)
   - [x] Add clear purpose comment: "Allows Next.js web application to access S3, Secrets Manager, and Parameter Store"
   - [x] Attach S3 read/write policy with inline comments (scoped to project naming prefix, ready for future app buckets)
-  - [x] Attach Secrets Manager read policy with inline comments (scoped to {project}/{env}/web/*)
-  - [x] Attach Parameter Store read policy with inline comments (scoped to /app/web/*)
+  - [x] Attach Secrets Manager read policy with inline comments (scoped to {project}/{env}/web/\*)
+  - [x] Attach Parameter Store read policy with inline comments (scoped to /app/web/\*)
   - [x] Document trust relationship
 - [x] Create API Service Task Role (ecsTaskRoleAPI)
   - [x] Add clear purpose comment: "Allows NestJS API to access RDS, S3, Secrets Manager, and Parameter Store"
   - [x] Attach RDS connect policy with inline comments (rds-db:connect scoped to instance+user)
   - [x] Attach S3 read/write policy with inline comments (scoped to project naming prefix)
   - [x] Attach Secrets Manager read policy with inline comments (scoped to exact RDS secret ARN)
-  - [x] Attach Parameter Store read policy with inline comments (scoped to /app/api/*)
+  - [x] Attach Parameter Store read policy with inline comments (scoped to /app/api/\*)
   - [x] Document trust relationship
 
 ### Security Groups & Secrets Management
+
 - [x] Create security group for ECS tasks (done in ECS module, Checkpoint 5)
 - [x] Configure security group ingress from ALB (done in ECS module, Checkpoint 5)
 - [x] Configure security group egress rules (done in ECS module, Checkpoint 5)
 
 ### AWS Secrets Manager (Database Credentials)
+
 - [x] Create Secrets Manager secret for RDS root password (done in RDS module, Checkpoint 7)
   - [x] Secret name: `{project}/{env}/rds/postgres/root-password`
   - [x] Store auto-generated password from RDS module
@@ -271,6 +288,7 @@
 - [x] Grant ECS task IAM role read access to Secrets Manager (API task role scoped to RDS secret ARN)
 
 ### AWS Parameter Store (Application Configuration)
+
 - [x] Create Parameter Store entries for web service:
   - [x] `/app/web/api_endpoint` - ALB DNS name with /api path
   - [x] `/app/web/log_level` - Logging level
@@ -282,6 +300,7 @@
 - [x] Grant ECS task IAM role read access to Parameter Store (path-scoped policies)
 
 ### Verification
+
 - [x] Verify IAM permissions for Secrets Manager access (scoped to specific ARNs)
 - [x] Verify IAM permissions for Parameter Store access (path-prefix scoped)
 - [x] Verify IAM permissions with terraform validate (passes)
@@ -289,6 +308,7 @@
 ## Checkpoint 9 - Terraform Outputs & Environment Variables
 
 ### Module Outputs Configuration
+
 - [x] Define VPC module outputs (VPC ID, subnet IDs, security group IDs)
 - [x] Define ALB module outputs (ALB DNS, target group ARNs, listener ARNs)
 - [x] Define ECR module outputs (repository URLs for web and API)
@@ -300,6 +320,7 @@
 - [x] Aggregate all module outputs in root outputs.tf
 
 ### Environment Variables Configuration
+
 - [x] Create ECS task environment variable mapping from Terraform outputs
 - [x] Define environment variables for web service:
   - [x] `API_ENDPOINT` from ALB DNS (https://{alb_dns}/api)
@@ -324,6 +345,7 @@
 ## Checkpoint 10 - Multi-Environment Configuration
 
 ### Environment Variable Files
+
 - [x] Create `infra/envs/` directory
 - [x] Create `infra/envs/dev.tfvars` with all dev-specific values:
   - [x] `environment_name = "dev"`
@@ -342,6 +364,7 @@
 - [x] Both `envs/dev.tfvars` and `envs/staging.tfvars` committed to repo
 
 ### Deploy Script
+
 - [x] `infra/scripts/` directory exists
 - [x] `infra/scripts/deploy.sh` implemented with:
   - [x] Accept required `env` argument (`dev` or `staging`); exit with error if missing/invalid
@@ -359,6 +382,7 @@
 - [x] Deploy script documented in script header comments
 
 ### Verification
+
 - [x] `terraform validate` passes for all modules
 - [x] Env files have distinct values (different VPC CIDRs, domains, cost centers, budgets)
 - [x] `terraform.tfvars` excluded from git via `.gitignore`
@@ -377,6 +401,7 @@
 - [x] Verify CloudWatch logs are being collected (log streams present for web and API)
 
 ### Resource Tagging Verification
+
 - [x] Verify all resources have required tags (Environment, Project, ManagedBy, Owner — all present)
 - [x] Test AWS Console filtering by Environment tag (show all dev or staging)
 - [x] Test AWS Console filtering by Project tag
@@ -400,10 +425,10 @@
   - [x] No ALB/target groups remaining
 - [x] Document cleanup procedures (docs/terraform-destroy.md)
 
-
 ## Checkpoint 13 - Cost Tracking & Budget Alerts
 
 ### AWS Budgets Configuration
+
 - [x] Create AWS Budget for Dev environment (infra/modules/budgets/main.tf)
   - [x] Set monthly budget amount (from monthly_budget_amount tfvar)
   - [x] Configure alert at 50% of budget
@@ -414,6 +439,7 @@
 - [x] Create AWS Budget for Total infrastructure (deferred — cross-env budget doesn't fit per-env Terraform model; set up manually in AWS Console if needed)
 
 ### Cost Allocation & Reporting
+
 - [x] Apply CostCenter tag to all resources (cost_center variable in common_tags since checkpoint 1)
 - [x] Configure AWS Cost Explorer for tag-based filtering (activated Environment, Project, CostCenter, Owner, ManagedBy in Billing > Cost Allocation Tags)
 - [x] Set up monthly cost report export to S3 (deferred — no app S3 buckets yet)
@@ -422,6 +448,7 @@
 - [x] Create process for quarterly cost review (docs/cost-tracking.md)
 
 ### Cost Tracking Verification
+
 - [x] Verify all resources have CostCenter tag (confirmed in checkpoint 11 tag verification)
 - [x] Test AWS Cost Explorer filtering by Environment tag (tags activated — 24h propagation window)
 - [x] Test AWS Cost Explorer filtering by CostCenter tag (tags activated — 24h propagation window)
@@ -432,6 +459,7 @@
 ## Checkpoint 14 - Documentation
 
 ### Infrastructure Details Documentation (docs/terraform-infrastructure.md)
+
 - [x] Create comprehensive infrastructure details document in docs/ folder
 - [x] Document architecture overview with ASCII or visual diagram
 - [x] Document VPC and networking design
@@ -446,6 +474,7 @@
 - [x] Document module structure and dependencies
 
 ### Deployment Workflow Documentation (docs/terraform-deployment.md)
+
 - [x] Create comprehensive deployment workflow document in docs/ folder
 - [x] Document prerequisites and setup (AWS CLI, Terraform, credentials)
 - [x] Document environment-specific configuration (envs/dev.tfvars vs envs/staging.tfvars)
@@ -460,6 +489,7 @@
 - [x] Document cost tracking and budget management
 
 ### Additional Documentation
+
 - [x] Update infra/README.md with module structure, design decisions, outputs reference
 - [x] Document Terraform variables and outputs strategy (no magic strings, infra/README.md)
 - [x] IAM role documentation (docs/terraform-infrastructure.md — IAM Roles section)

@@ -59,7 +59,7 @@ Set up Infrastructure as Code (IaC) using Terraform to provision and manage AWS 
   - Build and push scripts in `infra/scripts/` folder
   - Manual push capability via `infra/scripts/build-and-push-ecr.sh`
 - **Infrastructure Deploy Script**: `infra/scripts/deploy.sh` accepts `env` (dev or staging) and optional operation (plan, apply, destroy); defaults to apply; destroy requires confirmation
-- **Load Balancing**: Application Load Balancer (ALB) with path-based routing (/ → web, /api/* → API)
+- **Load Balancing**: Application Load Balancer (ALB) with path-based routing (/ → web, /api/\* → API)
 - **DNS**: External DNS provider (Route53 out of scope) — user provides domain, creates CNAME to ALB DNS name
 - **HTTPS/TLS**: ACM certificate for custom domain, ALB listener on port 443, HTTP redirects to HTTPS
 - **Auto-Scaling Strategy**: Target tracking (CPU 70%, Memory 80%), min 2 tasks, max 4 tasks per service

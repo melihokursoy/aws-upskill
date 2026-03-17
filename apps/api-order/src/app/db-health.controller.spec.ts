@@ -19,7 +19,7 @@ beforeEach(() => {
         connect: mockConnect,
         query: mockQuery,
         end: mockEnd,
-      }) as unknown as Client
+      } as unknown as Client)
   );
   mockConnect.mockReset();
   mockQuery.mockReset();

@@ -2,12 +2,12 @@
 
 ## Prerequisites
 
-| Tool         | Version   | Install                                     |
-|-------------|-----------|---------------------------------------------|
-| Terraform    | >= 1.6    | `brew install terraform`                    |
-| AWS CLI      | >= 2.x    | `brew install awscli`                       |
-| Docker       | any       | Required for building and pushing images    |
-| jq           | any       | Required by `force-cleanup.sh`              |
+| Tool      | Version | Install                                  |
+| --------- | ------- | ---------------------------------------- |
+| Terraform | >= 1.6  | `brew install terraform`                 |
+| AWS CLI   | >= 2.x  | `brew install awscli`                    |
+| Docker    | any     | Required for building and pushing images |
+| jq        | any     | Required by `force-cleanup.sh`           |
 
 ### AWS Credentials
 
@@ -91,6 +91,7 @@ terraform init
 ```
 
 The deploy script:
+
 1. Validates `env` is `dev` or `staging`
 2. Runs `terraform init` if `.terraform/` doesn't exist
 3. Uses `envs/{env}.tfvars` for all variable values
@@ -171,6 +172,7 @@ Create a CNAME in your DNS: `dev.yourdomain.com` → `<alb_dns_name>`
 ```
 
 The script:
+
 1. Retrieves ECR URLs from `terraform output`
 2. Builds the Docker image for `linux/amd64`
 3. Authenticates Docker with ECR
@@ -319,6 +321,7 @@ Run the force-cleanup script first, then re-run destroy:
 ```
 
 The force-cleanup script handles:
+
 1. Deletes ALB (releases ALB ENIs, unblocks ALB security group)
 2. Stops ECS tasks (releases Fargate ENIs)
 3. Revokes cross-SG ingress rules

@@ -17,13 +17,13 @@ ECR container registries, Secrets Manager, CloudWatch, and ACM.
 Every AWS resource created by Terraform receives the following tags via `provider default_tags`.
 These tags enable per-environment cost filtering in AWS Cost Explorer and AWS Budgets.
 
-| Tag Key       | Example Value   | Purpose                                      |
-|---------------|-----------------|----------------------------------------------|
-| `Environment` | `dev`           | Isolate dev vs staging costs                 |
-| `Project`     | `aws-upskill`   | Group all project resources together         |
-| `ManagedBy`   | `terraform`     | Identify IaC-managed vs manual resources     |
-| `Owner`       | `platform-team` | Attribute costs to a responsible team        |
-| `CostCenter`  | `eng-training`  | Filter AWS Budgets by cost center            |
+| Tag Key       | Example Value   | Purpose                                  |
+| ------------- | --------------- | ---------------------------------------- |
+| `Environment` | `dev`           | Isolate dev vs staging costs             |
+| `Project`     | `aws-upskill`   | Group all project resources together     |
+| `ManagedBy`   | `terraform`     | Identify IaC-managed vs manual resources |
+| `Owner`       | `platform-team` | Attribute costs to a responsible team    |
+| `CostCenter`  | `eng-training`  | Filter AWS Budgets by cost center        |
 
 Tags are defined in `infra/main.tf` (`locals.common_tags`) and propagated to every module via the
 `tags` variable. The `CostCenter` tag is the primary filter used by AWS Budgets (see
@@ -39,6 +39,7 @@ Task sizing: 256 CPU units (0.25 vCPU), 512 MB memory per task.
 Minimum task count: 2 tasks per service (web + api = 4 tasks total).
 
 **Pricing (us-east-1, 2025):**
+
 - vCPU: $0.04048/vCPU-hour (FARGATE), $0.01218/vCPU-hour (FARGATE_SPOT)
 - Memory: $0.004445/GB-hour (FARGATE), $0.001335/GB-hour (FARGATE_SPOT)
 
@@ -46,10 +47,12 @@ Minimum task count: 2 tasks per service (web + api = 4 tasks total).
 standard FARGATE, remaining tasks on SPOT).
 
 Per task per month (720 hours):
+
 - Standard FARGATE: (0.25 × $0.04048) + (0.5 × $0.004445) × 720 = $8.90/task/month
 - FARGATE_SPOT: (0.25 × $0.01218) + (0.5 × $0.001335) × 720 = $2.68/task/month
 
 4 tasks total (2 web + 2 api), mixed capacity:
+
 - 2 base tasks on standard FARGATE: 2 × $8.90 = **$17.80**
 - 2 remaining tasks on FARGATE_SPOT: 2 × $2.68 = **$5.36**
 
@@ -62,11 +65,13 @@ Per task per month (720 hours):
 ### Application Load Balancer (ALB)
 
 **Pricing (us-east-1, 2025):**
+
 - ALB fixed hourly charge: $0.008/LCU-hour (minimum $0.008/hour)
 - ALB hourly: $0.0225/hour (fixed)
 - LCU cost: $0.008/LCU-hour
 
 For a dev environment with low traffic (assumed <1 GB/hour, <25 new connections/second):
+
 - Fixed ALB charge: $0.0225 × 720 hours = **$16.20**
 - LCU usage (1 LCU assumed at low traffic): $0.008 × 720 = **$5.76**
 
@@ -80,10 +85,12 @@ All ECS tasks run in the private subnet and route outbound traffic (ECR pulls, C
 Secrets Manager) through a single NAT Gateway.
 
 **Pricing (us-east-1, 2025):**
+
 - Hourly charge: $0.045/hour
 - Data processing: $0.045/GB
 
 For a dev environment (assumed ~10 GB/month outbound for ECR pulls, logs, API calls):
+
 - Hourly: $0.045 × 720 = **$32.40**
 - Data processing: 10 GB × $0.045 = **$0.45**
 
@@ -97,10 +104,12 @@ For a dev environment (assumed ~10 GB/month outbound for ECR pulls, logs, API ca
 ### RDS PostgreSQL (db.t3.micro, 20 GB gp2, Single-AZ)
 
 **Pricing (us-east-1, 2025):**
+
 - db.t3.micro On-Demand: $0.018/hour
 - gp2 storage: $0.115/GB-month
 
 Monthly cost:
+
 - Instance: $0.018 × 720 = **$12.96**
 - Storage: 20 GB × $0.115 = **$2.30**
 - Backups: $0.00 (backup_retention_period = 0, backups disabled)
@@ -115,10 +124,12 @@ ECR charges for storage and data transfer out of AWS. Data transfer to ECS withi
 is free when using VPC endpoints for ECR (or minimal if routing through NAT Gateway).
 
 **Pricing (us-east-1, 2025):**
+
 - Storage: $0.10/GB-month
 - Data transfer in: free
 
 Assumed storage (2 repositories, ~10 tagged images each, ~500 MB compressed per image):
+
 - ~5 GB total stored images
 
 - Storage: 5 GB × $0.10 = **$0.50**
@@ -134,10 +145,12 @@ Assumed storage (2 repositories, ~10 tagged images each, ~500 MB compressed per 
 1 secret: `{project}/{env}/rds/postgres/root-password`
 
 **Pricing (us-east-1, 2025):**
+
 - Per secret: $0.40/month
 - API calls: $0.05 per 10,000 calls
 
 For 4 ECS tasks reading the secret at startup + periodic rotations:
+
 - Secret storage: **$0.40**
 - API calls (low volume): **<$0.01**
 
@@ -148,6 +161,7 @@ For 4 ECS tasks reading the secret at startup + periodic rotations:
 ### CloudWatch (Logs, Alarms, Dashboard, Container Insights)
 
 Components:
+
 - 3 log groups: `/aws/ecs/web`, `/aws/ecs/api`, `/aws/alb/web-api` (7-day retention)
 - 1 log group auto-created by Container Insights: `/aws/ecs/containerinsights/{cluster}/performance`
 - 6 metric alarms (CPU high ×2, memory high ×2, unhealthy targets ×1, tasks low ×2)
@@ -155,6 +169,7 @@ Components:
 - Container Insights enabled on the ECS cluster
 
 **Pricing (us-east-1, 2025):**
+
 - Log ingestion: $0.50/GB
 - Log storage: $0.03/GB-month (7-day retention keeps stored GB low)
 - Metric alarms: $0.10/alarm/month (standard resolution)
@@ -162,6 +177,7 @@ Components:
 - Container Insights: $0.35/GB ingested metrics + $0.01 per 1,000 custom metrics
 
 Estimated monthly:
+
 - Log ingestion (assumed 2 GB/month across all groups): 2 GB × $0.50 = **$1.00**
 - Log storage (rolling 7 days ≈ 0.5 GB stored on average): $0.03 × 0.5 = **$0.02**
 - Alarms: 6 × $0.10 = **$0.60**
@@ -177,6 +193,7 @@ Estimated monthly:
 1 budget per environment with 3 alert thresholds (50%, 75%, 100%).
 
 **Pricing (us-east-1, 2025):**
+
 - First 2 budgets: free
 - Additional budgets: $0.02/day each
 - Alert actions: $0.10/action/month
@@ -197,18 +214,18 @@ AWS Certificate Manager certificates for use with ALB are free.
 
 ## Monthly Cost Summary
 
-| Service             | Estimated Monthly Cost |
-|---------------------|------------------------|
-| ECS Fargate         | $23.16                 |
-| ALB                 | $21.96                 |
-| NAT Gateway         | $32.85                 |
-| RDS PostgreSQL      | $15.26                 |
-| ECR                 | $0.50                  |
-| Secrets Manager     | $0.40                  |
-| CloudWatch          | $4.80                  |
-| AWS Budgets         | $0.00                  |
-| ACM                 | $0.00                  |
-| **Total (estimate)**| **~$98.93/month**      |
+| Service              | Estimated Monthly Cost |
+| -------------------- | ---------------------- |
+| ECS Fargate          | $23.16                 |
+| ALB                  | $21.96                 |
+| NAT Gateway          | $32.85                 |
+| RDS PostgreSQL       | $15.26                 |
+| ECR                  | $0.50                  |
+| Secrets Manager      | $0.40                  |
+| CloudWatch           | $4.80                  |
+| AWS Budgets          | $0.00                  |
+| ACM                  | $0.00                  |
+| **Total (estimate)** | **~$98.93/month**      |
 
 > All figures are estimates. Actual costs vary based on traffic volume, task scale-out events,
 > NAT Gateway data transfer volume, and CloudWatch log ingestion rates. Monitor actuals in AWS
@@ -221,6 +238,7 @@ AWS Certificate Manager certificates for use with ALB are free.
 ### 1. FARGATE_SPOT Capacity Provider
 
 Configured in `infra/modules/ecs/main.tf`. The cluster uses a mixed capacity provider strategy:
+
 - 1 base task per service always runs on standard FARGATE (reliability floor).
 - All additional tasks use FARGATE_SPOT, which is up to 70% cheaper than standard FARGATE.
 
@@ -259,6 +277,7 @@ cost.
 
 Both ECR repositories (`web`, `api-order`) have lifecycle policies (defined in
 `infra/modules/ecr/main.tf`) that:
+
 - Expire untagged (intermediate build) images after 1 day.
 - Retain only the last 10 tagged releases per repository.
 
@@ -319,12 +338,12 @@ $12.96 to ~$3.89/month.
 
 ### Useful Cost Explorer Views
 
-| View                          | How to configure                                              |
-|-------------------------------|---------------------------------------------------------------|
-| Per-service breakdown         | Group by: Service; Filter: Environment = dev                  |
-| Daily spend trend             | Granularity: Daily; Group by: Service                         |
-| Environment comparison        | Group by: Tag: Environment (compare dev vs staging side by side) |
-| NAT Gateway data charges      | Filter: Service = EC2-Other; Group by: Usage Type            |
+| View                     | How to configure                                                 |
+| ------------------------ | ---------------------------------------------------------------- |
+| Per-service breakdown    | Group by: Service; Filter: Environment = dev                     |
+| Daily spend trend        | Granularity: Daily; Group by: Service                            |
+| Environment comparison   | Group by: Tag: Environment (compare dev vs staging side by side) |
+| NAT Gateway data charges | Filter: Service = EC2-Other; Group by: Usage Type                |
 
 > Note: Tags on resources must be activated as Cost Allocation Tags in the Billing console before
 > they appear in Cost Explorer. Navigate to **Billing > Cost allocation tags** and activate
@@ -353,10 +372,12 @@ The budget is provisioned via Terraform in `infra/modules/budgets/main.tf`. It:
   `infra/envs/dev.tfvars`).
 
 **Recommended budget amounts:**
+
 - Dev: $120/month (provides ~20% buffer above the ~$99 baseline estimate)
 - Staging: $150/month (accounts for more frequent deployments and higher load testing)
 
 **Alert thresholds:**
+
 - 50% (~$60): Early warning — investigate if mid-month spend is unexpectedly high.
 - 75% (~$90): Review running tasks, NAT Gateway data transfer, and any unexpected services.
 - 100% ($120): Immediate action — check for runaway tasks, data transfer spikes, or misconfigured
@@ -381,6 +402,7 @@ Compare each service line against the estimates in the Monthly Cost Summary tabl
 Investigate any service that is >20% over estimate.
 
 Common causes of overrun:
+
 - NAT Gateway: higher than expected ECR pull frequency or CloudWatch log volume.
 - ECS Fargate: scale-out events sustained longer than expected; review auto-scaling thresholds.
 - RDS: storage autoscaling triggered (if enabled); review `allocated_storage`.
@@ -458,12 +480,12 @@ same AWS account.
 
 ### Relevant Terraform Files
 
-| File                                       | Relevance                                     |
-|--------------------------------------------|-----------------------------------------------|
-| `infra/main.tf`                            | `common_tags` definition, module wiring       |
-| `infra/variables.tf`                       | `cost_center`, `monthly_budget_amount` vars   |
-| `infra/modules/budgets/main.tf`            | AWS Budgets resource and alert thresholds     |
-| `infra/modules/ecs/main.tf`                | FARGATE_SPOT capacity provider, task sizing   |
-| `infra/modules/rds/main.tf`                | Single-AZ, no backups, no Performance Insights|
-| `infra/modules/ecr/main.tf`                | Lifecycle policies for image expiry           |
-| `infra/modules/monitoring/main.tf`         | CloudWatch alarms and dashboard               |
+| File                               | Relevance                                      |
+| ---------------------------------- | ---------------------------------------------- |
+| `infra/main.tf`                    | `common_tags` definition, module wiring        |
+| `infra/variables.tf`               | `cost_center`, `monthly_budget_amount` vars    |
+| `infra/modules/budgets/main.tf`    | AWS Budgets resource and alert thresholds      |
+| `infra/modules/ecs/main.tf`        | FARGATE_SPOT capacity provider, task sizing    |
+| `infra/modules/rds/main.tf`        | Single-AZ, no backups, no Performance Insights |
+| `infra/modules/ecr/main.tf`        | Lifecycle policies for image expiry            |
+| `infra/modules/monitoring/main.tf` | CloudWatch alarms and dashboard                |

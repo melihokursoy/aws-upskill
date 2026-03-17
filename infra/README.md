@@ -113,13 +113,13 @@ terraform destroy -var-file="envs/staging.tfvars"
 
 Both dev and staging are single-AZ for cost optimization. VPC CIDRs are kept separate so they do not overlap.
 
-| Setting | Dev | Staging |
-|---|---|---|
-| VPC CIDR | 10.0.0.0/16 | 10.1.0.0/16 |
-| Min tasks | 2 | 2 |
-| Max tasks | 4 | 4 |
-| Log retention | 7 days | 7 days |
-| Monthly budget | $50 | $75 |
+| Setting        | Dev         | Staging     |
+| -------------- | ----------- | ----------- |
+| VPC CIDR       | 10.0.0.0/16 | 10.1.0.0/16 |
+| Min tasks      | 2           | 2           |
+| Max tasks      | 4           | 4           |
+| Log retention  | 7 days      | 7 days      |
+| Monthly budget | $50         | $75         |
 
 See `docs/terraform-infrastructure.md` and `docs/terraform-deployment.md` for full details.
 
@@ -162,15 +162,15 @@ waiters (`aws_ecs_service` waits for INACTIVE state, `aws_db_instance` waits for
 
 After `terraform apply`, run `terraform output` to see all values. Key outputs:
 
-| Output                            | Description                                     |
-|----------------------------------|-------------------------------------------------|
-| `alb_dns_name`                   | ALB hostname — use as DNS CNAME target          |
-| `acm_validation_cnames`          | DNS records needed to validate ACM certificate  |
-| `ecs_cluster_name`               | ECS cluster name                                |
-| `ecr_repository_urls`            | Map of ECR URLs keyed by service name           |
-| `rds_endpoint`                   | RDS hostname (also written to SSM)              |
-| `rds_root_password_secret_name`  | Secrets Manager secret name for RDS password    |
-| `ecs_tasks_security_group_id`    | ECS tasks SG ID                                 |
+| Output                          | Description                                    |
+| ------------------------------- | ---------------------------------------------- |
+| `alb_dns_name`                  | ALB hostname — use as DNS CNAME target         |
+| `acm_validation_cnames`         | DNS records needed to validate ACM certificate |
+| `ecs_cluster_name`              | ECS cluster name                               |
+| `ecr_repository_urls`           | Map of ECR URLs keyed by service name          |
+| `rds_endpoint`                  | RDS hostname (also written to SSM)             |
+| `rds_root_password_secret_name` | Secrets Manager secret name for RDS password   |
+| `ecs_tasks_security_group_id`   | ECS tasks SG ID                                |
 
 Full list: `infra/outputs.tf`
 
@@ -215,6 +215,7 @@ The `service` argument matches the folder name under `apps/`. The Dockerfile pat
 ```
 
 **How it works:**
+
 - `service` = folder name under `apps/` (e.g. `web` → `apps/web/`, `api-order` → `apps/api-order/`)
 - Dockerfile path: `apps/<service>/Dockerfile`
 - ECR URL: looked up from `terraform output ecr_repository_urls` (a map keyed by service name)

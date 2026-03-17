@@ -5,6 +5,7 @@
 Deploy web applications and APIs to AWS using ECS Fargate for container orchestration. Terraform manages all infrastructure as code, enabling reproducible deployments across environments.
 
 **Key Technologies:**
+
 - AWS ECS Fargate (serverless containers)
 - AWS ECR (Elastic Container Registry)
 - Application Load Balancer (ALB) for routing
@@ -17,24 +18,28 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ## Architecture Decision
 
 **Container Deployment: ECS Fargate**
+
 - Serverless container platform (no EC2 management required)
 - Pay per container usage (cost-efficient)
 - Integrates with ALB for load balancing
 - CloudWatch Logs for container output
 
 **Container Registry: AWS ECR (Elastic Container Registry)**
+
 - Private, native AWS service
 - Integrated with ECS for easy image deployment
 - Vulnerability scanning support
 - Per-region registries for resilience
 
 **Load Balancing: Application Load Balancer (ALB)**
+
 - Layer 7 routing (path-based, hostname-based)
 - Good for both web applications and REST APIs
 - Integrated health checks with ECS
 - Connection draining for graceful shutdowns
 
 **Auto-Scaling: Target Tracking (Dev/Staging)**
+
 - Target Tracking: CPU 70%, Memory 80% utilization targets
 - Minimum tasks: 2 per service (ensures availability)
 - Maximum tasks: 4 per service (cost-controlled scaling)
@@ -43,6 +48,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ## Terraform State Management Strategy
 
 **Remote State Storage (S3 + DynamoDB):**
+
 - State files stored in AWS S3 (not in project folder)
 - S3 bucket configured for:
   - Server-side encryption (AES-256)
@@ -55,6 +61,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
   - Ensures data consistency across team
 
 **Local State File Management:**
+
 - Local `.terraform/terraform.tfstate` files generated during planning
 - `.gitignore` explicitly prevents committing:
   - `*.tfstate` - State files
@@ -65,6 +72,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 - Team members always use S3 backend (not local state)
 
 **State File Access:**
+
 - Only authorized AWS credentials can access S3 state bucket
 - Team members must have IAM permissions for:
   - S3 bucket read/write
@@ -75,11 +83,13 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ## Terraform Outputs and Environment Variables Strategy
 
 **No Magic Strings Policy:**
+
 - All infrastructure identifiers derived from Terraform outputs
 - Environment names (dev/staging) passed as variables, never hardcoded
 - All application configuration sourced from Terraform outputs
 
 **Terraform Outputs Required:**
+
 - VPC and networking: VPC ID, subnet IDs, security group IDs
 - ALB: ALB DNS name, target group ARNs, listener ARNs
 - ACM: Certificate ARN, validation CNAME records (for external DNS setup)
@@ -92,6 +102,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 - X-Ray: Daemon endpoint for tracing
 
 **Environment Variables Flow:**
+
 - Terraform outputs → Root module outputs.tf
 - Root outputs → Application environment variable injection
 - ECS task definitions receive environment variables from Terraform
@@ -99,6 +110,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 - Environment variable names consistent across dev/staging (values differ)
 
 **Environment Configuration:**
+
 - Separate variable files per environment (never shared):
   - `infra/envs/dev.tfvars` - Development environment values
   - `infra/envs/staging.tfvars` - Staging environment values
@@ -113,6 +125,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ## Implementation Architecture
 
 ### Web Application Deployment
+
 - Docker container running Next.js application
 - ECR repository for image storage
 - ECS Task Definition specifying container, CPU, memory, environment
@@ -121,11 +134,12 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 - CloudWatch Logs for application logs
 
 ### API Service Deployment
+
 - Docker container running NestJS API
 - ECR repository for image storage
 - ECS Task Definition (similar to web)
 - ECS Service with API-specific configuration
-- ALB target group with path-based routing (e.g., /api/*)
+- ALB target group with path-based routing (e.g., /api/\*)
 - CloudWatch Logs for API logs
 
 ## Implementation Tasks
@@ -133,12 +147,14 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ### Phase 1: Terraform Foundation
 
 1. Set up Terraform project structure
+
    - Root module configuration
    - Variables and outputs
    - Backend setup (S3 + DynamoDB for state)
    - VPC and networking modules
 
 2. Create VPC and Networking
+
    - VPC with configurable CIDR block
    - Public subnets (for ALB)
    - Private subnets (for ECS tasks)
@@ -147,9 +163,10 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
    - Route tables and associations
 
 3. Configure Application Load Balancer
+
    - ALB in public subnets
    - Target groups for web and API services
-   - Path-based routing rules (/ → web, /api/* → API)
+   - Path-based routing rules (/ → web, /api/\* → API)
    - Health check configuration
    - Security groups for ALB (port 80 and 443 inbound)
    - HTTPS listener (port 443) with ACM certificate
@@ -165,18 +182,21 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ### Phase 2: ECS and Container Infrastructure
 
 1. Set up ECR Repositories
+
    - ECR repo for web application image
    - ECR repo for API application image
    - Image retention policies
    - Lifecycle rules for cleanup
 
 2. Configure ECS Cluster
+
    - ECS cluster resource
    - CloudWatch Log Groups for container logs
    - IAM roles for ECS task execution
    - IAM roles for task permissions (S3, RDS, etc.)
 
 3. Create ECS Task Definitions
+
    - Web application task definition (CPU: 512, Memory: 1024)
    - API application task definition (CPU: 512, Memory: 1024)
    - Environment variables for app configuration
@@ -198,6 +218,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ### Phase 3: Auto-Scaling and Monitoring
 
 1. Configure Auto-Scaling Policies
+
    - Target tracking policy for CPU utilization (70% target)
    - Target tracking policy for memory utilization (80% target)
    - Minimum tasks: 2 per service
@@ -205,6 +226,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
    - No step scaling or scheduled scaling (deferred)
 
 2. Set up CloudWatch Monitoring
+
    - **Log Groups Organization**:
      - `/aws/ecs/web` - Next.js application logs
      - `/aws/ecs/api` - NestJS API application logs
@@ -225,6 +247,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
      - Database connection pool exhaustion
 
 3. Set up X-Ray Tracing
+
    - Enable X-Ray daemon in ECS cluster
    - X-Ray service map for distributed tracing
    - Trace sampling: 10% for dev/staging (cost optimization)
@@ -238,6 +261,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
      - Request path and method
 
 4. Configure Correlation ID / Request ID Tracking
+
    - **Header Strategy**:
      - Use `X-Correlation-ID` header for tracing (or `x-amzn-trace-id` from X-Ray)
      - ALB passes through `X-Correlation-ID` header from client or generates one
@@ -262,6 +286,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ### Phase 4: Database and Data Services
 
 1. Provision RDS Database (PostgreSQL)
+
    - Engine: PostgreSQL (latest stable version)
    - Single-AZ deployment (dev/staging cost optimization)
    - Auto-generate root password (random 32-char string)
@@ -280,19 +305,23 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
 ### Phase 5: Security and Compliance
 
 1. IAM Configuration with Clear Documentation
+
    - **Task Execution Role** (ecsTaskExecutionRole)
+
      - Purpose: Allows ECS to pull images from ECR and write logs to CloudWatch
      - Permissions: ECR pull, CloudWatch Logs write, X-Ray write
      - Documentation: Clear comment in tf files describing purpose
      - Applied to: Both web and API ECS tasks
 
    - **Web Service Task Role** (ecsTaskRoleWeb)
+
      - Purpose: Permissions for Next.js application runtime operations
      - Permissions: S3 read/write, Secrets Manager read, Parameter Store read
      - Documentation: Clear comment explaining web service requirements
      - Applied to: Web application ECS tasks
 
    - **API Service Task Role** (ecsTaskRoleAPI)
+
      - Purpose: Permissions for NestJS API runtime operations
      - Permissions: RDS connect, S3 read/write, Secrets Manager read, Parameter Store read
      - Documentation: Clear comment explaining API service requirements
@@ -306,6 +335,7 @@ Deploy web applications and APIs to AWS using ECS Fargate for container orchestr
      - Comprehensive IAM documentation in docs/terraform-infrastructure.md
 
 2. Network Security
+
    - Security groups for ALB
    - Security groups for ECS tasks
    - Security groups for RDS
@@ -388,12 +418,14 @@ infra/
 ## Deployment Environments
 
 **Development**
+
 - Single AZ (cost optimization)
 - Task scaling: min 2, max 4 per service
 - Target tracking auto-scaling (CPU 70%, Memory 80%)
 - Basic monitoring and 7-day log retention
 
 **Staging**
+
 - Single AZ (cost optimization)
 - Task scaling: min 2, max 4 per service
 - Target tracking auto-scaling (CPU 70%, Memory 80%)
@@ -402,6 +434,7 @@ infra/
 ## Docker Image Building and ECR Push Strategy
 
 **Docker Configuration:**
+
 - Dockerfiles for each application:
   - `apps/web/Dockerfile` - Next.js application (multi-stage build)
   - `apps/api-order/Dockerfile` - NestJS API (multi-stage build)
@@ -418,12 +451,14 @@ infra/
 **Purpose:** Wrapper script that runs Terraform commands for a given environment, simplifying the deployment workflow.
 
 **Usage:**
+
 ```bash
 ./infra/scripts/deploy.sh dev      # Deploy dev environment
 ./infra/scripts/deploy.sh staging  # Deploy staging environment
 ```
 
 **Script behavior:**
+
 - Accepts a single required argument: `env` (must be `dev` or `staging`)
 - Validates the `env` argument and exits with error if invalid
 - Changes directory to `infra/` before running Terraform commands
@@ -440,12 +475,14 @@ infra/
 - Exits with non-zero code on any failure
 
 **Important notes:**
+
 - `destroy` operation requires explicit confirmation (not auto-approved)
 - Script uses `set -euo pipefail` for safe shell execution
 - All Terraform operations run from the `infra/` working directory
 - Both infrastructure and ECR scripts live under `infra/scripts/`
 
 **ECR Push Scripts:**
+
 - Location: `infra/scripts/` folder (same as deploy script)
 - Script: `infra/scripts/build-and-push-ecr.sh`
   - Parameters: service name (web or api), version/tag
@@ -458,6 +495,7 @@ infra/
 - Documentation: Scripts should be idempotent and safe
 
 **CI/CD Integration:**
+
 - Scripts can be called manually for local testing
 - Scripts can be integrated into GitHub Actions workflow (optional)
 - Environment variables: AWS_REGION, ECR_REGISTRY_URL
@@ -465,6 +503,7 @@ infra/
 ## Cost Tracking and Budget Management
 
 **Cost Allocation Tags:**
+
 - All resources tagged with cost allocation tags
 - Tag: `CostCenter` (team or project identifier)
 - Tag: `Environment` (dev/staging - already included in standard tags)
@@ -472,6 +511,7 @@ infra/
 - Monthly cost reports by environment and service
 
 **AWS Budgets Configuration:**
+
 - Budget 1: Dev environment monthly budget
   - Alert at 50%, 75%, 100% of budget
   - Notification to team email
@@ -483,12 +523,14 @@ infra/
   - Escalation notification for overages
 
 **Cost Monitoring:**
+
 - CloudWatch dashboard for cost metrics (optional)
 - AWS Cost Explorer integration
 - Monthly cost reports exported to S3
 - Cost optimization recommendations reviewed quarterly
 
 **Cost Optimization Strategies:**
+
 - Dev/Staging: Single-AZ, minimal task counts (min 2, max 4)
 - S3 lifecycle policies: deferred (no app buckets yet)
 - RDS backups disabled for dev/staging
@@ -499,6 +541,7 @@ infra/
 ## Resource Tagging and Cleanup Strategy
 
 **Tagging Standard:**
+
 - All AWS resources tagged with consistent naming convention
 - Required tags on all resources:
   - `Environment`: dev or staging (from variable)
@@ -508,12 +551,14 @@ infra/
   - `Owner`: team or organization name
 
 **AWS Console Filtering:**
+
 - Resources filterable by `Environment` tag (show all dev or all staging)
 - Resources filterable by `Project` tag (show all project resources)
 - Resources filterable by `ManagedBy: terraform` (identify managed vs manual)
 - ALB and ECS resources tagged for easy identification
 
 **Terraform Destroy Cleanup:**
+
 - `terraform destroy` removes ALL resources created by Terraform
 - No orphaned resources left behind (databases, buckets, etc.)
 - All resources must be managed by Terraform (no manual creation)
@@ -522,6 +567,7 @@ infra/
 - RDS deletion protection disabled for dev/staging (enables cleanup)
 
 **Cleanup Verification:**
+
 - AWS Console shows no remaining resources after destroy
 - CloudWatch log groups cleaned up by Terraform
 - IAM roles and policies cleaned up completely
@@ -551,7 +597,9 @@ infra/
 Two comprehensive documents should be created in the `docs/` folder at project root:
 
 ### 1. Infrastructure Details Documentation (`docs/terraform-infrastructure.md`)
+
 Complete reference for the infrastructure setup including:
+
 - Architecture overview with diagrams (ASCII or visual)
 - VPC and networking design
 - ECS Fargate cluster configuration
@@ -564,7 +612,9 @@ Complete reference for the infrastructure setup including:
 - Cost estimation and optimization strategies
 
 ### 2. Deployment Workflow Documentation (`docs/terraform-deployment.md`)
+
 Step-by-step operational guide including:
+
 - Prerequisites and setup (AWS CLI, Terraform, credentials)
 - Environment-specific configuration
 - Running `terraform plan` and reviewing output
