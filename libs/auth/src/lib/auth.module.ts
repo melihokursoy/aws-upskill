@@ -5,11 +5,15 @@ import { RolesGuard } from './roles.guard';
 /**
  * AuthModule — import this in your AppModule to enable ALB OIDC auth.
  *
- * After importing, register AlbAuthMiddleware globally in AppModule.configure():
+ * Exports the AlbAuthMiddleware and RolesGuard providers so they can be
+ * injected by NestJS. Register the middleware globally in AppModule.configure():
  *
  *   consumer.apply(AlbAuthMiddleware).forRoutes('*');
  *
- * Use @Roles() + @UseGuards(RolesGuard) on individual route handlers.
+ * @CurrentUser() and @Roles() are plain TypeScript decorators — import them
+ * directly from '@org/auth', not via this NestJS module:
+ *
+ *   import { CurrentUser, Roles, RolesGuard } from '@org/auth';
  */
 @Module({
   providers: [AlbAuthMiddleware, RolesGuard],
