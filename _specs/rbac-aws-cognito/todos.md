@@ -56,30 +56,30 @@
 
 ## Checkpoint 4 — Shared Auth Library (`libs/auth`)
 
-- [ ] Scaffold the Nx library: `npm exec nx -- g @nx/nest:library auth --directory=libs/auth`
-- [ ] Create `libs/auth/src/alb-auth.middleware.ts`:
-  - [ ] Read `x-amzn-oidc-data` header from request
-  - [ ] Base64-decode the middle JWT segment (payload only — no signature check)
-  - [ ] Map decoded claims to camelCase: `{ sub, email, name, familyName, birthdate, phoneNumber, address, picture, gender, locale, zoneinfo, roles }` — `family_name` → `familyName`, `phone_number` → `phoneNumber`, `cognito:groups` → `roles`; optional string claims default to `null`; `roles` defaults to `[]`
-  - [ ] Set `request.user` to decoded object; set `null` if header absent, malformed base64, or invalid JSON
-- [ ] Create `libs/auth/src/current-user.decorator.ts` — parameter decorator returning `request.user`
-- [ ] Create `libs/auth/src/roles.decorator.ts` — `@Roles(...roles)` metadata decorator
-- [ ] Create `libs/auth/src/roles.guard.ts`:
-  - [ ] If no `@Roles()` metadata on handler → allow through
-  - [ ] If `request.user` is null → throw `UnauthorizedException` (401)
-  - [ ] If `request.user.roles` does not intersect required roles → throw `ForbiddenException` (403)
-- [ ] Create `libs/auth/src/auth.module.ts` — NestJS module that exports `AlbAuthMiddleware`, `RolesGuard`, `CurrentUser`, `Roles`
-- [ ] Update `libs/auth/src/index.ts` — barrel export for all public symbols
-- [ ] Unit tests for `AlbAuthMiddleware`:
-  - [ ] Valid `x-amzn-oidc-data` → `request.user` populated correctly
-  - [ ] Missing header → `request.user` is null
-  - [ ] Malformed base64 → `request.user` is null
-  - [ ] `cognito:groups` absent → `roles` defaults to `[]`
-- [ ] Unit tests for `RolesGuard`:
-  - [ ] No `@Roles()` decorator → passes through
-  - [ ] User with matching role → passes
-  - [ ] User with wrong role → 403
-  - [ ] Null `request.user` → 401
+- [x] Scaffold the Nx library: `npm exec nx -- g @nx/nest:library auth --directory=libs/auth`
+- [x] Create `libs/auth/src/alb-auth.middleware.ts`:
+  - [x] Read `x-amzn-oidc-data` header from request
+  - [x] Base64-decode the middle JWT segment (payload only — no signature check)
+  - [x] Map decoded claims to camelCase: `{ sub, email, name, familyName, birthdate, phoneNumber, address, picture, gender, locale, zoneinfo, roles }` — `family_name` → `familyName`, `phone_number` → `phoneNumber`, `cognito:groups` → `roles`; optional string claims default to `null`; `roles` defaults to `[]`
+  - [x] Set `request.user` to decoded object; set `null` if header absent, malformed base64, or invalid JSON
+- [x] Create `libs/auth/src/current-user.decorator.ts` — parameter decorator returning `request.user`
+- [x] Create `libs/auth/src/roles.decorator.ts` — `@Roles(...roles)` metadata decorator
+- [x] Create `libs/auth/src/roles.guard.ts`:
+  - [x] If no `@Roles()` metadata on handler → allow through
+  - [x] If `request.user` is null → throw `UnauthorizedException` (401)
+  - [x] If `request.user.roles` does not intersect required roles → throw `ForbiddenException` (403)
+- [x] Create `libs/auth/src/auth.module.ts` — NestJS module that exports `AlbAuthMiddleware`, `RolesGuard`, `CurrentUser`, `Roles`
+- [x] Update `libs/auth/src/index.ts` — barrel export for all public symbols
+- [x] Unit tests for `AlbAuthMiddleware`:
+  - [x] Valid `x-amzn-oidc-data` → `request.user` populated correctly
+  - [x] Missing header → `request.user` is null
+  - [x] Malformed base64 → `request.user` is null
+  - [x] `cognito:groups` absent → `roles` defaults to `[]`
+- [x] Unit tests for `RolesGuard`:
+  - [x] No `@Roles()` decorator → passes through
+  - [x] User with matching role → passes
+  - [x] User with wrong role → 403
+  - [x] Null `request.user` → 401
 
 ## Checkpoint 5 — API Order: Auth Integration + Role Test Endpoints
 
