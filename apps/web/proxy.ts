@@ -31,8 +31,10 @@ function decodeRoles(accessToken: string | null): string[] {
       '='
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
     const claims: Record<string, any> = JSON.parse(
-      Buffer.from(padded, 'base64').toString('utf8')
+      new TextDecoder().decode(bytes)
     );
     return Array.isArray(claims['cognito:groups'])
       ? claims['cognito:groups']
