@@ -29,9 +29,9 @@ describe('HealthController', () => {
     expect(result.status).toBe('healthy');
   });
 
-  it('should return service as api', () => {
+  it('should return service as order-api', () => {
     const result = controller.getHealth();
-    expect(result.service).toBe('api');
+    expect(result.service).toBe('order-api');
   });
 
   it('should return valid ISO8601 timestamp', () => {
