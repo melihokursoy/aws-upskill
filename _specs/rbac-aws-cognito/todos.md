@@ -2,30 +2,30 @@
 
 ## Checkpoint 1 — Terraform: Cognito Module
 
-- [ ] Create `infra/modules/cognito/variables.tf` with inputs: `project_name`, `environment_name`, `region`, `tags`, `allow_self_registration`, `app_domain` (for callback/logout URLs)
-- [ ] Create `infra/modules/cognito/main.tf`:
-  - [ ] `aws_cognito_user_pool` with email as username, self-registration controlled by variable
-  - [ ] `aws_cognito_user_pool_domain` for hosted UI
-  - [ ] `aws_cognito_user_pool_client` with Authorization Code Grant, `generate_secret = true`, `allowed_oauth_scopes = ["openid", "email", "profile", "phone"]`; `callback_urls = ["https://${app_domain}/oauth2/idpresponse"]`; `logout_urls = ["https://${app_domain}"]`; `read_attributes` and `write_attributes` include all standard OIDC claims: `email`, `name`, `given_name`, `family_name`, `picture`, `birthdate`, `phone_number`, `address`, `gender`, `locale`, `zoneinfo`
-  - [ ] `aws_cognito_user_group` × 3: `admin`, `moderator`, `user`
-- [ ] Create `infra/modules/cognito/outputs.tf`: `user_pool_id`, `user_pool_arn`, `client_id`, `cognito_domain`, `issuer_url`
-- [ ] Add `module "cognito"` to `infra/main.tf`
-- [ ] Pass `var.domain_name` to Cognito module as `app_domain` in `infra/main.tf`
-- [ ] Add Cognito values to `infra/envs/dev.tfvars` and `infra/envs/staging.tfvars`
-- [ ] Verify: `terraform plan` shows new Cognito resources without errors
-- [ ] Create `infra/scripts/seed-cognito.sh`:
-  - [ ] Add script header: `set -euo pipefail`, `log/ok/skip` helpers, `.env` loader, `INFRA_DIR` setup
-  - [ ] Validate `<env>` argument and `COGNITO_SEED_PASSWORD` env var (exit with error if unset)
-  - [ ] Read `USER_POOL_ID` from `terraform output -raw cognito_user_pool_id`
-  - [ ] For each seed user (`seed-admin`, `seed-moderator`, `seed-user`):
-    - [ ] Check if user already exists via `aws cognito-idp admin-get-user`; skip creation if found
-    - [ ] Create user with `aws cognito-idp admin-create-user --temporary-password --message-action SUPPRESS --user-attributes` including: `picture` = `https://api.dicebear.com/9.x/avataaars/svg?seed=<username>`, `given_name`, `family_name`, `birthdate`, `gender`, `locale`, `zoneinfo` (sample values to test full claim pipeline)
-    - [ ] Set permanent password with `aws cognito-idp admin-set-user-password --permanent`
-    - [ ] Add user to group with `aws cognito-idp admin-add-user-to-group`
-  - [ ] Print usage instructions at end of script
-- [ ] Make script executable: `chmod +x infra/scripts/seed-cognito.sh`
-- [ ] Add `COGNITO_SEED_PASSWORD=` to `infra/.env.example`
-- [ ] Document usage in `infra/README.md` seed section
+- [x] Create `infra/modules/cognito/variables.tf` with inputs: `project_name`, `environment_name`, `region`, `tags`, `allow_self_registration`, `app_domain` (for callback/logout URLs)
+- [x] Create `infra/modules/cognito/main.tf`:
+  - [x] `aws_cognito_user_pool` with email as username, self-registration controlled by variable
+  - [x] `aws_cognito_user_pool_domain` for hosted UI
+  - [x] `aws_cognito_user_pool_client` with Authorization Code Grant, `generate_secret = true`, `allowed_oauth_scopes = ["openid", "email", "profile", "phone"]`; `callback_urls = ["https://${app_domain}/oauth2/idpresponse"]`; `logout_urls = ["https://${app_domain}"]`; `read_attributes` and `write_attributes` include all standard OIDC claims: `email`, `name`, `given_name`, `family_name`, `picture`, `birthdate`, `phone_number`, `address`, `gender`, `locale`, `zoneinfo`
+  - [x] `aws_cognito_user_group` × 3: `admin`, `moderator`, `user`
+- [x] Create `infra/modules/cognito/outputs.tf`: `user_pool_id`, `user_pool_arn`, `client_id`, `cognito_domain`, `cognito_domain_url`, `issuer_url`
+- [x] Add `module "cognito"` to `infra/main.tf`
+- [x] Pass `var.domain_name` to Cognito module as `app_domain` in `infra/main.tf`
+- [x] Add Cognito outputs to `infra/outputs.tf`
+- [x] Verify: `terraform validate` passes
+- [x] Create `infra/scripts/seed-cognito.sh`:
+  - [x] Add script header: `set -euo pipefail`, `log/ok/skip` helpers, `.env` loader, `INFRA_DIR` setup
+  - [x] Validate `<env>` argument and `COGNITO_SEED_PASSWORD` env var (exit with error if unset)
+  - [x] Read `USER_POOL_ID` from `terraform output -raw cognito_user_pool_id`
+  - [x] For each seed user (`seed-admin`, `seed-moderator`, `seed-user`):
+    - [x] Check if user already exists via `aws cognito-idp admin-get-user`; skip creation if found
+    - [x] Create user with `aws cognito-idp admin-create-user --temporary-password --message-action SUPPRESS --user-attributes` including: `picture` = `https://api.dicebear.com/9.x/avataaars/svg?seed=<username>`, `given_name`, `family_name`, `birthdate`, `gender`, `locale`, `zoneinfo` (sample values to test full claim pipeline)
+    - [x] Set permanent password with `aws cognito-idp admin-set-user-password --permanent`
+    - [x] Add user to group with `aws cognito-idp admin-add-user-to-group`
+  - [x] Print usage instructions at end of script
+- [x] Make script executable: `chmod +x infra/scripts/seed-cognito.sh`
+- [x] Add `COGNITO_SEED_PASSWORD=` to `infra/.env.example`
+- [x] Document usage in `infra/README.md` seed section
 
 ## Checkpoint 2 — Terraform: ALB Authentication
 

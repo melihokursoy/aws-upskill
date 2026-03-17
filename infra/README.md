@@ -190,6 +190,32 @@ Full list: `infra/outputs.tf`
 
 The `verify` command builds, starts both containers in the background, hits `/api/health` on each, prints image sizes, then stops everything.
 
+## Seeding Cognito Test Users
+
+After `terraform apply`, create one test user per role using `seed-cognito.sh`:
+
+```bash
+# Add COGNITO_SEED_PASSWORD to infra/.env first, then:
+./infra/scripts/seed-cognito.sh dev
+./infra/scripts/seed-cognito.sh staging
+```
+
+The script is idempotent — safe to run multiple times. It creates:
+
+| Username                      | Group     | Avatar              |
+| ----------------------------- | --------- | ------------------- |
+| `seed-admin@example.com`      | admin     | DiceBear avataaars  |
+| `seed-moderator@example.com`  | moderator | DiceBear avataaars  |
+| `seed-user@example.com`       | user      | DiceBear avataaars  |
+
+**Requirements:**
+
+- `terraform apply` must have been run first (User Pool must exist)
+- `COGNITO_SEED_PASSWORD` set in `infra/.env` — min 8 chars, uppercase, lowercase, number, special char (e.g. `MyTestPass1!`)
+- AWS credentials with Cognito admin permissions
+
+---
+
 ## Pushing Docker Images to ECR
 
 The `service` argument matches the folder name under `apps/`. The Dockerfile path and ECR repository URL are derived automatically.

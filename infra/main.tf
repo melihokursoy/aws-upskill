@@ -78,6 +78,21 @@ module "iam" {
 }
 
 # ---------------------------------------------------------------------------
+# Cognito — User Pool, Hosted UI, App Client, Groups
+# ---------------------------------------------------------------------------
+
+module "cognito" {
+  source = "./modules/cognito"
+
+  environment_name        = var.environment_name
+  project_name            = var.project_name
+  region                  = var.region
+  tags                    = local.common_tags
+  allow_self_registration = true
+  app_domain              = var.domain_name
+}
+
+# ---------------------------------------------------------------------------
 # Application Load Balancer
 # ---------------------------------------------------------------------------
 

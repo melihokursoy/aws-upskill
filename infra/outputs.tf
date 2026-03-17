@@ -263,6 +263,40 @@ output "ssm_api_log_level" {
 }
 
 # ---------------------------------------------------------------------------
+# Cognito
+# ---------------------------------------------------------------------------
+
+output "cognito_user_pool_id" {
+  description = "Cognito User Pool ID. Used by seed-cognito.sh after terraform apply."
+  value       = module.cognito.user_pool_id
+}
+
+output "cognito_user_pool_arn" {
+  description = "Cognito User Pool ARN. Passed to ALB authenticate-cognito action."
+  value       = module.cognito.user_pool_arn
+}
+
+output "cognito_client_id" {
+  description = "Cognito App Client ID."
+  value       = module.cognito.client_id
+}
+
+output "cognito_domain" {
+  description = "Hosted UI domain prefix (e.g. aws-upskill-dev). Passed to ALB."
+  value       = module.cognito.cognito_domain
+}
+
+output "cognito_domain_url" {
+  description = "Full Hosted UI HTTPS URL for sign-in/sign-out links and SSM."
+  value       = module.cognito.cognito_domain_url
+}
+
+output "cognito_issuer_url" {
+  description = "Cognito OIDC issuer URL."
+  value       = module.cognito.issuer_url
+}
+
+# ---------------------------------------------------------------------------
 # Budgets
 # ---------------------------------------------------------------------------
 
