@@ -273,11 +273,23 @@ resource "aws_ecs_service" "web" {
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.web.arn
   desired_count   = var.min_task_count
-  launch_type     = "FARGATE"
+
+  # Use capacity provider strategy instead of launch_type so FARGATE_SPOT is
+  # actually used for scale-out tasks. launch_type overrides the cluster's
+  # capacity provider configuration and prevents FARGATE_SPOT from being selected.
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+    weight            = 1
+    base              = 1 # 1 base task always on standard FARGATE for reliability
+  }
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 4 # Scale-out tasks go to SPOT for cost savings
+  }
 
   # Rolling deployment — ECS stops one old task, starts one new task at a time
   deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
+  deployment_maximum_percent         = 100
   health_check_grace_period_seconds  = 120
 
   deployment_controller {
@@ -314,10 +326,19 @@ resource "aws_ecs_service" "api" {
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.api.arn
   desired_count   = var.min_task_count
-  launch_type     = "FARGATE"
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+    weight            = 1
+    base              = 1
+  }
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 4
+  }
 
   deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
+  deployment_maximum_percent         = 100
   health_check_grace_period_seconds  = 120
 
   deployment_controller {

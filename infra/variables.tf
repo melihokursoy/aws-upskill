@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # Root Module Variables
 # All environment-specific values come from envs/dev.tfvars or envs/staging.tfvars
-# No hardcoded environment names anywhere in this codebase
+# No hardcoded environment names in Terraform resource definitions; env-specific values come from tfvars
 # ---------------------------------------------------------------------------
 
 variable "environment_name" {
