@@ -52,7 +52,7 @@ log "ENV=$ENV  REGION=$REGION  CLUSTER=$CLUSTER"
 # Lookup by name tag if describe-load-balancers by name fails.
 # ---------------------------------------------------------------------------
 
-log "==> [1/5] ALB: $ALB_NAME"
+log "==> [1/6] ALB: $ALB_NAME"
 
 # Always list all ALBs and grep — avoids silent failures from --names throwing exceptions
 ALB_ARN=$(aws elbv2 describe-load-balancers \
@@ -89,7 +89,7 @@ fi
 # 2. Stop ECS tasks
 # ---------------------------------------------------------------------------
 
-log "==> [2/5] ECS tasks in cluster: $CLUSTER"
+log "==> [2/6] ECS tasks in cluster: $CLUSTER"
 TASKS=$(aws ecs list-tasks \
   --cluster "$CLUSTER" \
   --region  "$REGION" \
@@ -114,7 +114,7 @@ fi
 # 3. Revoke cross-module SG ingress rules
 # ---------------------------------------------------------------------------
 
-log "==> [3/5] Cross-SG ingress rules"
+log "==> [3/6] Cross-SG ingress rules"
 
 if [[ -n "$ECS_SG" ]]; then
   # Revoke rules in OTHER SGs that reference the ECS tasks SG (e.g. RDS SG)
@@ -175,7 +175,7 @@ fi
 # 4. Delete orphaned ENIs on ECS SG
 # ---------------------------------------------------------------------------
 
-log "==> [4/5] Orphaned ENIs"
+log "==> [4/6] Orphaned ENIs"
 
 if [[ -n "$ECS_SG" ]]; then
   ENIS=$(aws ec2 describe-network-interfaces \
@@ -213,7 +213,7 @@ fi
 # 5. Delete RDS instance
 # ---------------------------------------------------------------------------
 
-log "==> [5/5] RDS: $DB_ID"
+log "==> [5/6] RDS: $DB_ID"
 STATUS=$(aws rds describe-db-instances \
   --db-instance-identifier "$DB_ID" \
   --region "$REGION" \
