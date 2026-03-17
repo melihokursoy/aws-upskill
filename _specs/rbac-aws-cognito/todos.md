@@ -115,57 +115,57 @@
 
 ## Checkpoint 7 — Web: User Context + Protected Routes + Header
 
-- [ ] Create `apps/web/lib/get-user.ts`:
-  - [ ] Read `x-amzn-oidc-data` from Next.js headers
-  - [ ] Decode payload (base64 middle segment), return `{ sub, email, name, familyName, birthdate, phoneNumber, address, picture, gender, locale, zoneinfo, roles }` or `null` — same shape as API `request.user`
-- [ ] Create `apps/web/middleware.ts`:
-  - [ ] Define public paths: `/`, `/403`, `/nextapi/health`, `/nextapi/sign-out`, `/_next/`, `/favicon.ico`
-  - [ ] Tier 1 — authentication: if `x-amzn-oidc-data` absent on a non-public path, redirect to Cognito sign-in URL (built from `COGNITO_DOMAIN` + `COGNITO_CLIENT_ID` + `NEXT_PUBLIC_APP_URL`)
-  - [ ] Tier 2 — role guard: decode roles; `/manage` requires `['admin','moderator']`, `/admin` requires `['admin']`; others → redirect to `/403`
-- [ ] Create `apps/web/app/nextapi/sign-out/route.ts`:
-  - [ ] Build logout URL: `https://${COGNITO_DOMAIN}/logout?client_id=${COGNITO_CLIENT_ID}&logout_uri=${NEXT_PUBLIC_APP_URL}`
-  - [ ] Return 302 redirect to Cognito Hosted UI logout endpoint on `amazoncognito.com`
-- [ ] Create `apps/web/app/components/molecules/auth-buttons.tsx`:
-  - [ ] Server component — renders two `<Button>` atoms side by side, shown when unauthenticated
-  - [ ] **Sign Up** (left, `variant="secondary"`): `https://${COGNITO_DOMAIN}/signup?client_id=${COGNITO_CLIENT_ID}&response_type=code&redirect_uri=${NEXT_PUBLIC_APP_URL}`
-  - [ ] **Sign In** (right, `variant="primary"`): `https://${COGNITO_DOMAIN}/login?client_id=${COGNITO_CLIENT_ID}&response_type=code&redirect_uri=${NEXT_PUBLIC_APP_URL}`
-  - [ ] Uses `cn()` for class composition, no inline styles
-  - [ ] Env vars injected by ECS task definition from SSM
-- [ ] Create `apps/web/app/components/molecules/avatar-dropdown.tsx`:
-  - [ ] Accepts `user: { name, familyName, picture, roles }` prop
-  - [ ] Trigger: circular avatar + "FirstName LastName" text + chevron
-    - [ ] If `user.picture` is set: render as `<img src={picture}>` with circular clip
-    - [ ] If `user.picture` is null/absent: render initials (first letter of `name` + first letter of `familyName`)
-  - [ ] Dropdown items (role-conditional, not rendered if inaccessible):
-    - [ ] "Manage" link → `/manage` (shown for `moderator` + `admin`)
-    - [ ] "Admin" link → `/admin` (shown for `admin` only)
-    - [ ] Separator
-    - [ ] "Logout" link → `/nextapi/sign-out`
-  - [ ] Dropdown closes on outside click or Escape key
-  - [ ] Unit test: `user` role → only Logout; `moderator` → Manage + Logout; `admin` → Manage + Admin + Logout
-- [ ] Create `apps/web/app/components/organisms/header.tsx`:
-  - [ ] Server component — left side: app name + "Home" link; right side: calls `getUser()` — renders `<AuthButtons>` when null, `<AvatarDropdown>` when authenticated
-  - [ ] Uses `<Separator>` atom from `ui/` for visual dividers if needed
-- [ ] Replace `apps/web/app/page.tsx` (home):
-  - [ ] Remove all Nx boilerplate (SVGs, external links, Nx branding)
-  - [ ] Clean heading and page content (public — works for authenticated and unauthenticated)
-- [ ] Create `apps/web/app/manage/page.tsx`:
-  - [ ] Heading: "Manage"
-  - [ ] Shows authenticated user's name and role
-  - [ ] Placeholder content for future management features
-- [ ] Create `apps/web/app/admin/page.tsx`:
-  - [ ] Heading: "Admin"
-  - [ ] Shows authenticated user's name and role
-  - [ ] Placeholder content for future admin features
-- [ ] Create `apps/web/app/403/page.tsx`:
-  - [ ] Heading: "Access Denied"
-  - [ ] Message: "You don't have permission to view this page."
-  - [ ] Link back to home (`/`)
-- [ ] Update `apps/web/app/layout.tsx`:
-  - [ ] Include `<Header>` in shared layout
-  - [ ] Remove Nx boilerplate styles/classes
-- [ ] Unit tests for `getUser()` (valid header → decoded object, missing header → null, malformed payload → null)
-- [ ] Unit tests for middleware (unauthenticated on protected path → Cognito redirect, public path → passes, `moderator` on `/admin` → `/403`, `admin` on `/admin` → passes)
+- [x] Create `apps/web/lib/get-user.ts`:
+  - [x] Read `x-amzn-oidc-data` from Next.js headers
+  - [x] Decode payload (base64 middle segment), return `{ sub, email, name, familyName, birthdate, phoneNumber, address, picture, gender, locale, zoneinfo, roles }` or `null` — same shape as API `request.user`
+- [x] Create `apps/web/middleware.ts`:
+  - [x] Define public paths: `/`, `/403`, `/nextapi/health`, `/nextapi/sign-out`, `/_next/`, `/favicon.ico`
+  - [x] Tier 1 — authentication: if `x-amzn-oidc-data` absent on a non-public path, redirect to Cognito sign-in URL (built from `COGNITO_DOMAIN` + `COGNITO_CLIENT_ID` + `NEXT_PUBLIC_APP_URL`)
+  - [x] Tier 2 — role guard: decode roles; `/manage` requires `['admin','moderator']`, `/admin` requires `['admin']`; others → redirect to `/403`
+- [x] Create `apps/web/app/nextapi/sign-out/route.ts`:
+  - [x] Build logout URL: `https://${COGNITO_DOMAIN}/logout?client_id=${COGNITO_CLIENT_ID}&logout_uri=${NEXT_PUBLIC_APP_URL}`
+  - [x] Return 302 redirect to Cognito Hosted UI logout endpoint on `amazoncognito.com`
+- [x] Create `apps/web/app/components/molecules/auth-buttons.tsx`:
+  - [x] Server component — renders two `<Button>` atoms side by side, shown when unauthenticated
+  - [x] **Sign Up** (left, `variant="secondary"`): `https://${COGNITO_DOMAIN}/signup?client_id=${COGNITO_CLIENT_ID}&response_type=code&redirect_uri=${NEXT_PUBLIC_APP_URL}`
+  - [x] **Sign In** (right, `variant="primary"`): `https://${COGNITO_DOMAIN}/login?client_id=${COGNITO_CLIENT_ID}&response_type=code&redirect_uri=${NEXT_PUBLIC_APP_URL}`
+  - [x] Uses `cn()` for class composition, no inline styles
+  - [x] Env vars injected by ECS task definition from SSM
+- [x] Create `apps/web/app/components/molecules/avatar-dropdown.tsx`:
+  - [x] Accepts `user: { name, familyName, picture, roles }` prop
+  - [x] Trigger: circular avatar + "FirstName LastName" text + chevron
+    - [x] If `user.picture` is set: render as `<img src={picture}>` with circular clip
+    - [x] If `user.picture` is null/absent: render initials (first letter of `name` + first letter of `familyName`)
+  - [x] Dropdown items (role-conditional, not rendered if inaccessible):
+    - [x] "Manage" link → `/manage` (shown for `moderator` + `admin`)
+    - [x] "Admin" link → `/admin` (shown for `admin` only)
+    - [x] Separator
+    - [x] "Logout" link → `/nextapi/sign-out`
+  - [x] Dropdown closes on outside click or Escape key
+  - [x] Unit test: `user` role → only Logout; `moderator` → Manage + Logout; `admin` → Manage + Admin + Logout
+- [x] Create `apps/web/app/components/organisms/header.tsx`:
+  - [x] Server component — left side: app name + "Home" link; right side: calls `getUser()` — renders `<AuthButtons>` when null, `<AvatarDropdown>` when authenticated
+  - [x] Uses `<Separator>` atom from `ui/` for visual dividers if needed
+- [x] Replace `apps/web/app/page.tsx` (home):
+  - [x] Remove all Nx boilerplate (SVGs, external links, Nx branding)
+  - [x] Clean heading and page content (public — works for authenticated and unauthenticated)
+- [x] Create `apps/web/app/manage/page.tsx`:
+  - [x] Heading: "Manage"
+  - [x] Shows authenticated user's name and role
+  - [x] Placeholder content for future management features
+- [x] Create `apps/web/app/admin/page.tsx`:
+  - [x] Heading: "Admin"
+  - [x] Shows authenticated user's name and role
+  - [x] Placeholder content for future admin features
+- [x] Create `apps/web/app/403/page.tsx`:
+  - [x] Heading: "Access Denied"
+  - [x] Message: "You don't have permission to view this page."
+  - [x] Link back to home (`/`)
+- [x] Update `apps/web/app/layout.tsx`:
+  - [x] Include `<Header>` in shared layout
+  - [x] Remove Nx boilerplate styles/classes
+- [x] Unit tests for `getUser()` (valid header → decoded object, missing header → null, malformed payload → null)
+- [x] Unit tests for middleware (unauthenticated on protected path → Cognito redirect, public path → passes, `moderator` on `/admin` → `/403`, `admin` on `/admin` → passes)
 
 ## Checkpoint 8 — Local Dev Support
 
