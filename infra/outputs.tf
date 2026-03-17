@@ -282,7 +282,7 @@ output "cognito_client_id" {
 }
 
 output "cognito_domain" {
-  description = "Hosted UI domain prefix (e.g. aws-upskill-dev). Passed to ALB."
+  description = "Hosted UI domain prefix (e.g. upskill-dev). Passed to ALB. Note: aws- prefix is stripped by Cognito as it is reserved."
   value       = module.cognito.cognito_domain
 }
 

@@ -43,6 +43,6 @@ variable "cognito_user_pool_client_id" {
 }
 
 variable "cognito_user_pool_domain" {
-  description = "Cognito Hosted UI domain prefix (e.g. aws-upskill-dev). Used in authenticate-cognito action."
+  description = "Cognito Hosted UI domain prefix (e.g. upskill-dev). Used in authenticate-cognito action. Note: aws- prefix is stripped by Cognito as it is reserved."
   type        = string
 }

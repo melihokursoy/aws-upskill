@@ -18,12 +18,12 @@ output "client_id" {
 }
 
 output "cognito_domain" {
-  description = "Hosted UI domain prefix (e.g. aws-upskill-dev). Passed to ALB authenticate-cognito action."
+  description = "Hosted UI domain prefix (e.g. upskill-dev). Passed to ALB authenticate-cognito action. Note: the aws- prefix is stripped by Cognito as it is a reserved substring."
   value       = aws_cognito_user_pool_domain.main.domain
 }
 
 output "cognito_domain_url" {
-  description = "Full Hosted UI HTTPS URL (e.g. https://aws-upskill-dev.auth.us-east-1.amazoncognito.com). Stored in SSM for web container sign-in/sign-out links."
+  description = "Full Hosted UI HTTPS URL (e.g. https://upskill-dev.auth.us-east-1.amazoncognito.com). Stored in SSM for web container sign-in/sign-out links."
   value       = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com"
 }
 
