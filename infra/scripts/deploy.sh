@@ -16,6 +16,8 @@
 #   ./infra/scripts/deploy.sh staging apply
 #   ./infra/scripts/deploy.sh dev destroy
 #
+# Dependencies: aws, terraform, jq
+#
 # Flow for apply:
 #   1. terraform init -reconfigure (always — ensures correct backend for env)
 #   2. Apply VPC + ACM certificate (targeted)
@@ -71,6 +73,17 @@ BACKEND_CFG="envs/${ENV}.backend.hcl"
 # ---------------------------------------------------------------------------
 
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
+
+# ---------------------------------------------------------------------------
+# Dependency check
+# ---------------------------------------------------------------------------
+
+for cmd in aws terraform jq; do
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "ERROR: required command not found: $cmd"
+    exit 1
+  fi
+done
 
 # ---------------------------------------------------------------------------
 # Step 1 — Init
